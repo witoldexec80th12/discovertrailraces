@@ -235,7 +235,7 @@ export default async function CostPage() {
 
           {/* Hero content */}
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-4 sm:py-8 md:py-10">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-10 items-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-1 sm:gap-6 md:gap-10 items-center">
               <div>
                 <Image
                   src="/images/cost_per_km_white.png"
@@ -254,11 +254,11 @@ export default async function CostPage() {
                   you plan goal races, discover new places, and compare across
                   clear price points.
                 </p>
-                <p className="mt-3 sm:mt-5 text-lg sm:text-xl md:text-2xl font-semibold tracking-tight">
+                <p className="mt-1.5 sm:mt-5 text-lg sm:text-xl md:text-2xl font-semibold tracking-tight">
                   Plan your best trail season yet.
                 </p>
 
-                <div className="mt-4 sm:mt-6 md:mt-8 flex flex-wrap gap-3">
+                <div className="mt-2.5 sm:mt-6 md:mt-8 flex flex-wrap gap-3">
                   <a
                     href="#cost-index"
                     className="inline-flex items-center rounded-full bg-white px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-neutral-900 hover:bg-white/90"
