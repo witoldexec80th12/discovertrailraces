@@ -204,88 +204,89 @@ export default async function CostPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-neutral-50 to-white">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-     
-          {/* HERO */}
+        {/* HERO */}
         <section className="relative isolate overflow-hidden min-h-[75vh]">
-            {/* Background image */}
-            <div className="absolute inset-0 -z-10">
-              <Image
-                src="/images/hero.jpg"
-                alt="Mountain ridge"
-                fill
-                priority
-                className="object-cover"
-              />
-              {/* Dark overlay */}
-              <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/20" />
-            </div>
+          {/* Background image */}
+          <div className="absolute inset-0 -z-10">
+            <Image
+              src="/images/hero.jpg"
+              alt="Mountain ridge"
+              fill
+              priority
+              className="object-cover"
+            />
+            {/* Dark overlay */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/20" />
+          </div>
 
-            {/* Top bar */}
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-6">
-              <div className="flex items-center justify-between">
+          {/* Top bar */}
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-6">
+            <div className="flex items-center justify-between">
+              <Image
+                src="/images/logo_white.png"
+                alt="DiscoverTrailRaces.com"
+                width={360}
+                height={72}
+                className="h-20 sm:h-24 md:h-28 lg:h-32 w-auto"
+                priority
+              />
+              {/* Optional: add nav later */}
+            </div>
+          </div>
+
+          {/* Hero content */}
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10 sm:py-20">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+              <div>
                 <Image
-                  src="/images/logo_white.png"
-                  alt="DiscoverTrailRaces.com"
-                  width={360}
-                  height={72}
-                  className="h-10 sm:h-12 w-auto"
+                  src="/images/cost_per_km_white.png"
+                  alt="COST-PER-KM"
+                  width={900}
+                  height={300}
+                  className="w-full max-w-[560px] h-auto"
                   priority
                 />
-                {/* Optional: add nav later */}
               </div>
-            </div>
 
-            {/* Hero content */}
-            <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10 sm:py-20">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-                <div>
-                  <Image
-                    src="/images/cost_per_km_white.png"
-                    alt="COST-PER-KM"
-                    width={900}
-                    height={300}
-                    className="w-full max-w-[560px] h-auto"
-                    priority
-                  />
-                </div>
+              <div className="text-white">
+                <p className="text-base sm:text-lg text-white/85 leading-relaxed">
+                  Cost Per KM compares entry fees across trail races per km run.
+                  Applied to Europe&rsquo;s independent trail races, it helps
+                  you plan goal races, discover new places, and compare across
+                  clear price points.
+                </p>
+                <p className="mt-5 text-xl sm:text-2xl font-semibold tracking-tight">
+                  Plan your best trail season yet.
+                </p>
 
-                <div className="text-white">
-                  <p className="text-base sm:text-lg text-white/85 leading-relaxed">
-                    Cost Per KM compares entry fees across trail races per km run.
-                    Applied to Europe&rsquo;s independent trail races, it helps you plan
-                    goal races, discover new places, and compare across clear price
-                    points.
-                  </p>
-                  <p className="mt-5 text-xl sm:text-2xl font-semibold tracking-tight">
-                    Plan your best trail season yet.
-                  </p>
-
-                  <div className="mt-8 flex flex-wrap gap-3">
-                    <a
-                      href="#cost-index"
-                      className="inline-flex items-center rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-neutral-900 hover:bg-white/90"
-                    >
-                      Explore the Cost Index
-                    </a>
-                    <a
-                      href="#method"
-                      className="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/15"
-                    >
-                      How this works
-                    </a>
-                  </div>
+                <div className="mt-8 flex flex-wrap gap-3">
+                  <a
+                    href="#cost-index"
+                    className="inline-flex items-center rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-neutral-900 hover:bg-white/90"
+                  >
+                    Explore the Cost Index
+                  </a>
+                  <a
+                    href="#method"
+                    className="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/15"
+                  >
+                    How this works
+                  </a>
                 </div>
               </div>
             </div>
-          </section>
-
-          {/* CONTENT */}
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-6 pb-4">
-            {/* ...keep the rest of your page content here... */}
           </div>
-     
+        </section>
 
-        <p id="cost-index" className="text-[11px] font-semibold uppercase tracking-[0.15em] text-neutral-400 mb-4">
+        {/* CONTENT */}
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-6 pb-4">
+          {/* ...keep the rest of your page content here... */}
+        </div>
+
+        <p
+          id="cost-index"
+          className="text-[11px] font-semibold uppercase tracking-[0.15em] text-neutral-400 mb-4"
+        >
           Cost Transparency
         </p>
 
