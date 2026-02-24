@@ -234,7 +234,7 @@ export default async function CostPage() {
           </div>
 
           {/* Hero content */}
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-4 sm:py-8 md:py-10">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-2 sm:py-8 md:py-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-1 sm:gap-6 md:gap-10 items-center">
               <div>
                 <Image
