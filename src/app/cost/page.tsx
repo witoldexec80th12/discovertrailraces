@@ -364,10 +364,10 @@ export default async function CostPage() {
                           <img
                             src={thumbUrl}
                             alt={raceName}
-                            className="w-32 h-[88px] sm:w-40 sm:h-[108px] rounded-lg object-cover"
+                            className="w-32 h-32 sm:w-40 sm:h-[108px] rounded-lg object-cover"
                           />
                         ) : (
-                          <div className="w-32 h-[88px] sm:w-40 sm:h-[108px] rounded-lg bg-neutral-50 border border-neutral-200 flex items-center justify-center">
+                          <div className="w-32 h-32 sm:w-40 sm:h-[108px] rounded-lg bg-neutral-50 border border-neutral-200 flex items-center justify-center">
                             <ImageIcon className="w-6 h-6 text-neutral-300" />
                           </div>
                         )}
@@ -394,7 +394,7 @@ export default async function CostPage() {
                             </p>
                           )}
                           {blurb && (
-                            <p className="text-sm text-neutral-600 mt-1.5 line-clamp-2 leading-relaxed">
+                            <p className="text-[11px] sm:text-sm text-neutral-600 mt-1.5 line-clamp-2 leading-relaxed">
                               {blurb}
                             </p>
                           )}
@@ -408,7 +408,7 @@ export default async function CostPage() {
                                 : "\u2014"}
                             </span>
                             <span className="text-[10px] uppercase tracking-wider text-neutral-400 mt-0.5">
-                              per km
+                              price per km
                             </span>
                             {fee !== null && (
                               <span className="text-xs tabular-nums text-neutral-400 mt-1.5">
@@ -441,25 +441,31 @@ export default async function CostPage() {
                           </div>
                         </div>
 
-                        <div className="flex sm:hidden items-start justify-between mt-1">
-                          <div className="flex flex-col">
-                            <span className="text-sm font-bold text-neutral-900">
+                        <div className="flex sm:hidden items-start justify-between mt-2 px-1">
+                          <div className="flex flex-col items-start">
+                            <span className="text-base font-bold text-neutral-900">
                               {startDate || "No 2026 Date"}
+                            </span>
+                            <span className="text-[8px] uppercase tracking-wider text-neutral-400 mt-0.5">
+                              Verified Date
                             </span>
                           </div>
                           <div className="flex flex-col items-center">
-                            <span className="text-lg font-bold tabular-nums text-neutral-900 tracking-tight">
+                            <span className="text-xl font-bold tabular-nums text-neutral-900 tracking-tight">
                               {epk !== null
                                 ? `\u20AC${epk.toFixed(2)}`
                                 : "\u2014"}
                             </span>
-                            <span className="text-[9px] uppercase tracking-wider text-neutral-400">
-                              per km
+                            <span className="text-[8px] uppercase tracking-wider text-neutral-400 mt-0.5">
+                              Price Per KM
                             </span>
                           </div>
                           <div className="flex flex-col items-end">
-                            <span className="text-sm font-semibold tabular-nums text-neutral-900">
+                            <span className="text-base font-semibold tabular-nums text-neutral-900">
                               {distance || "\u2014"}
+                            </span>
+                            <span className="text-[8px] uppercase tracking-wider text-neutral-400 mt-0.5">
+                              Distance
                             </span>
                           </div>
                         </div>
