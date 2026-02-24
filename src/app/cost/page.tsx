@@ -219,6 +219,9 @@ export default async function CostPage() {
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/20" />
           </div>
 
+          {/* ONE wrapper that controls spacing */}
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 flex-1 flex flex-col justify-between py-5 sm:py-14">
+          
           {/* Top bar */}
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 sm:py-20">
             <div className="flex items-center justify-between">
