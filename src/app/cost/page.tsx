@@ -227,7 +227,7 @@ export default async function CostPage() {
                 alt="DiscoverTrailRaces.com"
                 width={360}
                 height={72}
-                className="h-14 sm:h-20 md:h-24 lg:h-28 w-auto"
+                className="h-20 sm:h-28 md:h-36 lg:h-[168px] w-auto"
                 priority
               />
             </div>
