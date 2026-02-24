@@ -205,7 +205,7 @@ export default async function CostPage() {
     <main className="min-h-screen bg-gradient-to-b from-neutral-50 to-white">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         {/* HERO */}
-        <section className="relative isolate overflow-hidden min-h-[75vh]">
+        <section className="relative isolate overflow-hidden h-[60vh] sm:h-[75vh]">
           {/* Background image */}
           <div className="absolute inset-0 -z-10">
             <Image
@@ -220,7 +220,7 @@ export default async function CostPage() {
           </div>
 
           {/* Top bar */}
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-6">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 sm:py-20">
             <div className="flex items-center justify-between">
               <Image
                 src="/images/logo_white.png"
