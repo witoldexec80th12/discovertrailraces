@@ -220,55 +220,54 @@ export default async function CostPage() {
           </div>
 
           {/* Top bar */}
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8 sm:py-20">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
             <div className="flex items-center justify-between">
               <Image
                 src="/images/logo_white.png"
                 alt="DiscoverTrailRaces.com"
                 width={360}
                 height={72}
-                className="h-20 sm:h-24 md:h-28 lg:h-32 w-auto"
+                className="h-14 sm:h-20 md:h-24 lg:h-28 w-auto"
                 priority
               />
-              {/* Optional: add nav later */}
             </div>
           </div>
 
           {/* Hero content */}
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10 sm:py-20">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-4 sm:py-8 md:py-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 md:gap-10 items-center">
               <div>
                 <Image
                   src="/images/cost_per_km_white.png"
                   alt="COST-PER-KM"
                   width={900}
                   height={300}
-                  className="w-full max-w-[560px] h-auto"
+                  className="w-full max-w-[280px] sm:max-w-[400px] md:max-w-[560px] h-auto"
                   priority
                 />
               </div>
 
               <div className="text-white">
-                <p className="text-base sm:text-lg text-white/85 leading-relaxed">
+                <p className="text-sm sm:text-base md:text-lg text-white/85 leading-relaxed">
                   Cost Per KM compares entry fees across trail races per km run.
                   Applied to Europe&rsquo;s independent trail races, it helps
                   you plan goal races, discover new places, and compare across
                   clear price points.
                 </p>
-                <p className="mt-5 text-xl sm:text-2xl font-semibold tracking-tight">
+                <p className="mt-3 sm:mt-5 text-lg sm:text-xl md:text-2xl font-semibold tracking-tight">
                   Plan your best trail season yet.
                 </p>
 
-                <div className="mt-8 flex flex-wrap gap-3">
+                <div className="mt-4 sm:mt-6 md:mt-8 flex flex-wrap gap-3">
                   <a
                     href="#cost-index"
-                    className="inline-flex items-center rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-neutral-900 hover:bg-white/90"
+                    className="inline-flex items-center rounded-full bg-white px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-neutral-900 hover:bg-white/90"
                   >
                     Explore the Cost Index
                   </a>
                   <a
                     href="#method"
-                    className="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/15"
+                    className="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
                   >
                     How this works
                   </a>
