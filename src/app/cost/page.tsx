@@ -376,7 +376,7 @@ export default async function CostPage() {
                       </div>
 
                       <div className="flex flex-1 min-w-0 flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                        <div className="min-w-0 flex-1">
+                        <div className="min-w-0 flex-1 sm:max-w-[50%]">
                           <h3 className="font-bold text-neutral-900 text-base sm:text-lg leading-snug tracking-tight">
                             <span
                               className={
@@ -401,9 +401,51 @@ export default async function CostPage() {
                           )}
                         </div>
 
-                        <div className="flex sm:flex-col items-start sm:items-end gap-3 sm:gap-1.5 shrink-0 sm:text-right sm:min-w-[120px]">
-                          <div className="flex items-baseline gap-3 sm:gap-0 sm:flex-col sm:items-end">
-                            <span className="text-xl sm:text-2xl font-bold tabular-nums text-neutral-900 tracking-tight">
+                        <div className="hidden sm:flex items-center gap-8 shrink-0">
+                          <div className="flex flex-col items-center">
+                            <span className="text-2xl md:text-3xl font-bold tabular-nums text-neutral-900 tracking-tight">
+                              {epk !== null
+                                ? `\u20AC${epk.toFixed(2)}`
+                                : "\u2014"}
+                            </span>
+                            <span className="text-[10px] uppercase tracking-wider text-neutral-400 mt-0.5">
+                              per km
+                            </span>
+                            <div className="flex items-center gap-2 mt-1.5">
+                              {asText(f["Distance (km)"]) && (
+                                <span className="text-xs tabular-nums text-neutral-400">
+                                  {asText(f["Distance (km)"])} km
+                                </span>
+                              )}
+                              {fee !== null && asText(f["Distance (km)"]) && (
+                                <span className="text-neutral-300">·</span>
+                              )}
+                              {fee !== null && (
+                                <span className="text-xs tabular-nums text-neutral-400">
+                                  {fee.toLocaleString("en", {
+                                    maximumFractionDigits: 0,
+                                  })}{" "}
+                                  {f.Currency ?? ""}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col items-center">
+                            <div className="bg-neutral-900 text-white rounded-md px-4 py-2 text-center min-w-[110px]">
+                              <span className="text-sm font-semibold tracking-tight">
+                                {startDate || "No 2026 Date"}
+                              </span>
+                            </div>
+                            <span className="text-[10px] uppercase tracking-wider text-neutral-400 mt-1.5">
+                              Verified Date
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex sm:hidden items-start gap-3">
+                          <div className="flex items-baseline gap-2">
+                            <span className="text-xl font-bold tabular-nums text-neutral-900 tracking-tight">
                               {epk !== null
                                 ? `\u20AC${epk.toFixed(2)}`
                                 : "\u2014"}
@@ -412,12 +454,7 @@ export default async function CostPage() {
                               per km
                             </span>
                           </div>
-                          {startDate && (
-                            <span className="hidden sm:inline text-xs font-semibold text-neutral-600">
-                              {startDate}
-                            </span>
-                          )}
-                          <div className="flex items-center gap-3 sm:gap-0 sm:flex-col sm:items-end sm:mt-1">
+                          <div className="flex items-center gap-2">
                             {asText(f["Distance (km)"]) && (
                               <span className="text-xs tabular-nums text-neutral-400">
                                 {asText(f["Distance (km)"])} km
@@ -425,7 +462,7 @@ export default async function CostPage() {
                             )}
                             {fee !== null && (
                               <span className="text-xs tabular-nums text-neutral-400">
-                                {fee.toLocaleString("en", {
+                                · {fee.toLocaleString("en", {
                                   maximumFractionDigits: 0,
                                 })}{" "}
                                 {f.Currency ?? ""}
