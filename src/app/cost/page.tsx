@@ -327,7 +327,8 @@ export default async function CostPage() {
                     : "";
                 const thumbUrl = f["Featured Image"]?.[0]?.url;
                 const blurb = asText(f["Featured Blurb"]);
-                const raceName = asText(f["ID"]) || asText(f["Race Event"]);
+                const raceName = asText(f["Race Event"]) || asText(f["ID"]);
+                const distance = asText(f["Distance"]);
                 const rowHref = slug ? `/races/${slug}` : null;
 
                 const Wrapper = rowHref
@@ -411,24 +412,23 @@ export default async function CostPage() {
                             <span className="text-[10px] uppercase tracking-wider text-neutral-400 mt-0.5">
                               per km
                             </span>
-                            <div className="flex items-center gap-2 mt-1.5">
-                              {asText(f["Distance (km)"]) && (
-                                <span className="text-xs tabular-nums text-neutral-400">
-                                  {asText(f["Distance (km)"])} km
-                                </span>
-                              )}
-                              {fee !== null && asText(f["Distance (km)"]) && (
-                                <span className="text-neutral-300">·</span>
-                              )}
-                              {fee !== null && (
-                                <span className="text-xs tabular-nums text-neutral-400">
-                                  {fee.toLocaleString("en", {
-                                    maximumFractionDigits: 0,
-                                  })}{" "}
-                                  {f.Currency ?? ""}
-                                </span>
-                              )}
-                            </div>
+                            {fee !== null && (
+                              <span className="text-xs tabular-nums text-neutral-400 mt-1.5">
+                                {fee.toLocaleString("en", {
+                                  maximumFractionDigits: 0,
+                                })}{" "}
+                                {f.Currency ?? ""}
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="flex flex-col items-center">
+                            <span className="text-lg md:text-xl font-semibold tabular-nums text-neutral-900 tracking-tight underline underline-offset-4 decoration-neutral-300">
+                              {distance || "\u2014"}
+                            </span>
+                            <span className="text-[10px] uppercase tracking-wider text-neutral-400 mt-1.5">
+                              Race Distance
+                            </span>
                           </div>
 
                           <div className="flex flex-col items-center">
