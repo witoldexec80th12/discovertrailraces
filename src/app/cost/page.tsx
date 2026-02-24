@@ -36,6 +36,7 @@ type EntryFeeFields = {
   "Featured Image"?: AirtableAttachment[];
   "Featured Blurb"?: string | string[];
   "Race Slug"?: string[];
+  "Distance Start Date"?: string;
 };
 
 function asText(v: unknown): string {
@@ -316,6 +317,14 @@ export default async function CostPage() {
                 const country = asText(f["Country (from Race)"]);
                 const region = asText(f["Region (from Race)"]);
                 const location = [country, region].filter(Boolean).join(" · ");
+                const startDateRaw = f["Distance Start Date"];
+                const startDate =
+                  typeof startDateRaw === "string" && startDateRaw
+                    ? new Date(startDateRaw).toLocaleDateString("en-US", {
+                        month: "long",
+                        day: "numeric",
+                      })
+                    : "";
                 const thumbUrl = f["Featured Image"]?.[0]?.url;
                 const blurb = asText(f["Featured Blurb"]);
                 const raceName = asText(f["ID"]) || asText(f["Race Event"]);
@@ -347,17 +356,24 @@ export default async function CostPage() {
                     className={`group/card rounded-xl border border-neutral-200 bg-white p-5 transition-all duration-200 ${rowHref ? "hover:shadow-[0_4px_20px_rgba(0,0,0,0.08)] hover:scale-[1.01] hover:border-neutral-300" : ""}`}
                   >
                     <div className="flex gap-5">
-                      {thumbUrl ? (
-                        <img
-                          src={thumbUrl}
-                          alt={raceName}
-                          className="w-32 h-[88px] sm:w-40 sm:h-[108px] rounded-lg object-cover shrink-0"
-                        />
-                      ) : (
-                        <div className="w-32 h-[88px] sm:w-40 sm:h-[108px] rounded-lg bg-neutral-50 border border-neutral-200 shrink-0 flex items-center justify-center">
-                          <ImageIcon className="w-6 h-6 text-neutral-300" />
-                        </div>
-                      )}
+                      <div className="shrink-0">
+                        {thumbUrl ? (
+                          <img
+                            src={thumbUrl}
+                            alt={raceName}
+                            className="w-32 h-[88px] sm:w-40 sm:h-[108px] rounded-lg object-cover"
+                          />
+                        ) : (
+                          <div className="w-32 h-[88px] sm:w-40 sm:h-[108px] rounded-lg bg-neutral-50 border border-neutral-200 flex items-center justify-center">
+                            <ImageIcon className="w-6 h-6 text-neutral-300" />
+                          </div>
+                        )}
+                        {startDate && (
+                          <p className="sm:hidden mt-1.5 text-xs font-bold text-neutral-700 text-center">
+                            {startDate}
+                          </p>
+                        )}
+                      </div>
 
                       <div className="flex flex-1 min-w-0 flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                         <div className="min-w-0 flex-1">
@@ -396,11 +412,11 @@ export default async function CostPage() {
                               per km
                             </span>
                           </div>
-                          <span
-                            className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${getBandColor(f["AUTO Price Bands"])}`}
-                          >
-                            {formatBand(f["AUTO Price Bands"])}
-                          </span>
+                          {startDate && (
+                            <span className="hidden sm:inline text-xs font-semibold text-neutral-600">
+                              {startDate}
+                            </span>
+                          )}
                           <div className="flex items-center gap-3 sm:gap-0 sm:flex-col sm:items-end sm:mt-1">
                             {asText(f["Distance (km)"]) && (
                               <span className="text-xs tabular-nums text-neutral-400">
