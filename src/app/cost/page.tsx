@@ -327,8 +327,10 @@ export default async function CostPage() {
                     : "";
                 const thumbUrl = f["Featured Image"]?.[0]?.url;
                 const blurb = asText(f["Featured Blurb"]);
-                const raceName = asText(f["Race Event"]) || asText(f["ID"]);
-                const distance = asText(f["Distance"]);
+                const idText = asText(f["ID"]);
+                const idParts = idText.split(/\s[–—-]\s/);
+                const raceName = idParts.length > 1 ? idParts.slice(0, -1).join(" – ") : idText;
+                const distance = idParts.length > 1 ? idParts[idParts.length - 1] : (asText(f["Distance (km)"]) ? `${asText(f["Distance (km)"])} km` : "");
                 const rowHref = slug ? `/races/${slug}` : null;
 
                 const Wrapper = rowHref
