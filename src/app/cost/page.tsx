@@ -35,6 +35,7 @@ type EntryFeeFields = {
   "Last Checked"?: string;
   "Featured Image"?: AirtableAttachment[];
   "Featured Blurb"?: string | string[];
+  final_blurb?: string | string[];
   "Race Slug"?: string[];
   "Distance Start Date"?: string;
 };
@@ -326,11 +327,19 @@ export default async function CostPage() {
                       })
                     : "";
                 const thumbUrl = f["Featured Image"]?.[0]?.url;
-                const blurb = asText(f["Featured Blurb"]);
+                const blurb = asText(f["final_blurb"]);
                 const idText = asText(f["ID"]);
                 const idParts = idText.split(/\s[–—-]\s/);
-                const raceName = idParts.length > 1 ? idParts.slice(0, -1).join(" – ") : idText;
-                const distance = idParts.length > 1 ? idParts[idParts.length - 1] : (asText(f["Distance (km)"]) ? `${asText(f["Distance (km)"])} km` : "");
+                const raceName =
+                  idParts.length > 1
+                    ? idParts.slice(0, -1).join(" – ")
+                    : idText;
+                const distance =
+                  idParts.length > 1
+                    ? idParts[idParts.length - 1]
+                    : asText(f["Distance (km)"])
+                      ? `${asText(f["Distance (km)"])} km`
+                      : "";
                 const rowHref = slug ? `/races/${slug}` : null;
 
                 const Wrapper = rowHref
