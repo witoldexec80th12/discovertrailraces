@@ -7,6 +7,7 @@ export const AIRTABLE = {
     ENTRY_FEES_PUBLIC: "entry_fees_public",
     RACE_EVENTS_PUBLIC: "race_events_public",
     HOMEPAGE_FEATURED: "homepage_featured",
+    RACE_PAGES_PRIMARY: "race_pages_primary",
 
     // optional explore paths
     EXPLORE_VALUE_1_1P5: "explore_value_1_1p5",

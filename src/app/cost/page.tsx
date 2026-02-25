@@ -24,8 +24,8 @@ type AirtableAttachment = {
 type EntryFeeFields = {
   ID?: string | number;
   "Race Event"?: string | string[];
-  "Country (from Race)"?: string | string[];
-  "Region (from Race)"?: string | string[];
+  LKP_country?: string | string[];
+  LKP_region?: string | string[];
   Distance?: string | string[];
   "Distance (km)"?: string | string[];
   Currency?: string;
@@ -33,9 +33,10 @@ type EntryFeeFields = {
   "AUTO €/km"?: number;
   "AUTO Price Bands"?: string;
   "Last Checked"?: string;
-  "Featured Image"?: AirtableAttachment[];
+  LKP_featured_image?: AirtableAttachment[];
+  temporary_image?: AirtableAttachment[];
   "Featured Blurb"?: string | string[];
-  final_blurb?: string | string[];
+  FINAL_blurb?: string | string[];
   "Race Slug"?: string[];
   "Distance Start Date"?: string;
 };
@@ -44,82 +45,6 @@ function asText(v: unknown): string {
   if (Array.isArray(v)) return v.filter(Boolean).join(", ");
   if (v === null || v === undefined) return "";
   return String(v);
-}
-
-const COUNTRY_CODES: Record<string, string> = {
-  france: "fr",
-  spain: "es",
-  italy: "it",
-  portugal: "pt",
-  germany: "de",
-  austria: "at",
-  switzerland: "ch",
-  "united kingdom": "gb",
-  uk: "gb",
-  greece: "gr",
-  turkey: "tr",
-  sweden: "se",
-  norway: "no",
-  denmark: "dk",
-  finland: "fi",
-  iceland: "is",
-  ireland: "ie",
-  belgium: "be",
-  netherlands: "nl",
-  "the netherlands": "nl",
-  luxembourg: "lu",
-  poland: "pl",
-  "czech republic": "cz",
-  czechia: "cz",
-  slovakia: "sk",
-  hungary: "hu",
-  romania: "ro",
-  bulgaria: "bg",
-  croatia: "hr",
-  slovenia: "si",
-  serbia: "rs",
-  montenegro: "me",
-  albania: "al",
-  "north macedonia": "mk",
-  macedonia: "mk",
-  "bosnia and herzegovina": "ba",
-  bosnia: "ba",
-  estonia: "ee",
-  latvia: "lv",
-  lithuania: "lt",
-  cyprus: "cy",
-  malta: "mt",
-  andorra: "ad",
-  monaco: "mc",
-  liechtenstein: "li",
-  "san marino": "sm",
-  morocco: "ma",
-  usa: "us",
-  "united states": "us",
-  canada: "ca",
-  mexico: "mx",
-  brazil: "br",
-  argentina: "ar",
-  chile: "cl",
-  colombia: "co",
-  japan: "jp",
-  china: "cn",
-  australia: "au",
-  "new zealand": "nz",
-  "south africa": "za",
-  kenya: "ke",
-  nepal: "np",
-  india: "in",
-};
-
-function countryToCode(country: string): string | null {
-  if (!country) return null;
-  const lower = country.toLowerCase().trim();
-  return COUNTRY_CODES[lower] || null;
-}
-
-function flagUrl(countryCode: string): string {
-  return `https://flagcdn.com/w320/${countryCode}.png`;
 }
 
 function getBandColor(band: unknown): string {
@@ -315,19 +240,25 @@ export default async function CostPage() {
                 const rawEpk = f["AUTO €/km"];
                 const epk =
                   typeof rawEpk === "number" && rawEpk > 0 ? rawEpk : null;
-                const country = asText(f["Country (from Race)"]);
-                const region = asText(f["Region (from Race)"]);
+                const country = asText(f["LKP_country"]);
+                const region = asText(f["LKP_region"]);
                 const location = [country, region].filter(Boolean).join(" · ");
                 const startDateRaw = f["Distance Start Date"];
                 const startDate =
                   typeof startDateRaw === "string" && startDateRaw
-                    ? new Date(startDateRaw).toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "numeric",
-                      })
+                    ? new Date(startDateRaw + "T00:00:00Z").toLocaleDateString(
+                        "en-US",
+                        {
+                          month: "long",
+                          day: "numeric",
+                        },
+                      )
                     : "";
-                const thumbUrl = f["Featured Image"]?.[0]?.url;
-                const blurb = asText(f["final_blurb"]);
+                const thumbUrl =
+                  f["LKP_featured_image"]?.[0]?.url ||
+                  f.temporary_image?.[0]?.url ||
+                  null;
+                const blurb = asText(f["FINAL_blurb"]);
                 const idText = asText(f["ID"]);
                 const idParts = idText.split(/\s[–—-]\s/);
                 const raceName =
