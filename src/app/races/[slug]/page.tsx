@@ -304,7 +304,11 @@ export default async function RacePage({
                 </p>
                 {pctIncrease && (
                   <p className="mt-3 text-xs leading-relaxed text-neutral-500">
-                    In a circular course, on your average climb, you'll be going up {pctIncrease} meters per KM. For context, the Tor des Géants 330 loop averages <span className="font-bold underline">145 meters</span> per km of climbing.
+                    In a circular course, on your average climb, you'll be going
+                    up {pctIncrease} meters per KM. For context, the Tor des
+                    Géants 330 loop averages{" "}
+                    <span className="font-bold underline">145 meters</span> per
+                    km of climbing.
                   </p>
                 )}
               </div>
