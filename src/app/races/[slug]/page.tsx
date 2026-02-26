@@ -267,7 +267,7 @@ export default async function RacePage({
                   Series
                 </p>
                 <p className="mt-1 text-sm font-semibold text-neutral-900">
-                  {isUtmb ? "UTMB" : "Independent"}
+                  {isUtmb ? "UTMB" : ""}
                 </p>
               </div>
             </div>
@@ -292,7 +292,7 @@ export default async function RacePage({
               </div>
               <div className="rounded-xl border border-neutral-200 p-4 bg-neutral-50">
                 <p className="text-[10px] uppercase tracking-wider text-neutral-500">
-                  Elevation / % increase
+                  Elevation Data
                 </p>
                 <p className="mt-1 text-sm font-semibold text-neutral-900">
                   {[
@@ -304,7 +304,7 @@ export default async function RacePage({
                 </p>
                 {pctIncrease && (
                   <p className="mt-3 text-xs leading-relaxed text-neutral-500">
-                    In a circular course, on your average climb, you'll be going up {pctIncrease} meters per KM. For context, the Tor des Géants 330 loop averages 145 meters per km of climbing.
+                    In a circular course, on your average climb, you'll be going up {pctIncrease} meters per KM. For context, the Tor des Géants 330 loop averages <span className="font-bold underline">145 meters</span> per km of climbing.
                   </p>
                 )}
               </div>
