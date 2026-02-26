@@ -33,9 +33,12 @@ args = "Start application"
 name = "Start application"
 author = "agent"
 
+[workflows.workflow.metadata]
+outputType = "webview"
+
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npm run dev"
+args = "NEXT_TELEMETRY_DISABLED=1 npx next dev --webpack -p 5000 -H 0.0.0.0"
 waitForPort = 5000
 
 [userenv]
