@@ -43,7 +43,7 @@ export default function FilterBar({
       <select
         value={selectedCountry}
         onChange={(e) => updateFilter("country", e.target.value)}
-        className="rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-sm text-neutral-700 font-medium focus:outline-none focus:ring-2 focus:ring-neutral-300 cursor-pointer"
+        className="rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-sm text-neutral-700 font-semibold focus:outline-none focus:ring-2 focus:ring-neutral-300 cursor-pointer"
       >
         <option value="">Country</option>
         {countries.map((c) => (
@@ -56,7 +56,7 @@ export default function FilterBar({
       <select
         value={selectedMonth}
         onChange={(e) => updateFilter("month", e.target.value)}
-        className="rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-sm text-neutral-700 font-medium focus:outline-none focus:ring-2 focus:ring-neutral-300 cursor-pointer"
+        className="rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-sm text-neutral-700 font-semibold focus:outline-none focus:ring-2 focus:ring-neutral-300 cursor-pointer"
       >
         <option value="">Month</option>
         {months.map((m) => (
