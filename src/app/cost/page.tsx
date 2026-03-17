@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import type React from "react";
 import { ImageIcon, ArrowUpRight } from "lucide-react";
+import { Suspense } from "react";
+import FilterBar from "./FilterBar";
 
 export const metadata: Metadata = {
   title: "Cost Per KM | Discover Trail Races",
@@ -113,20 +115,62 @@ function formatBand(band: unknown): string {
   return String(band);
 }
 
-export default async function CostPage() {
+export default async function CostPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ country?: string; month?: string }>;
+}) {
+  const { country: selectedCountry = "", month: selectedMonth = "" } =
+    await searchParams;
+
   let records: Awaited<ReturnType<typeof airtableFetch<EntryFeeFields>>> = [];
   let error: string | null = null;
 
   try {
     records = await airtableFetch<EntryFeeFields>(AIRTABLE.TABLES.ENTRY_FEES, {
       view: AIRTABLE.VIEWS.ENTRY_FEES_PUBLIC,
-      "sort[0][field]": "AUTO €/km", // or your cleaned field name if renamed
+      "sort[0][field]": "AUTO €/km",
       "sort[0][direction]": "asc",
-      pageSize: 20,
+      pageSize: 100,
     });
   } catch (e) {
     error = e instanceof Error ? e.message : "Failed to load data";
   }
+
+  const allCountries = Array.from(
+    new Set(
+      records
+        .map((r) => asText(r.fields["LKP_country"]))
+        .filter(Boolean),
+    ),
+  ).sort();
+
+  const allMonths = Array.from(
+    new Set(
+      records
+        .map((r) => {
+          const d = r.fields["Distance Start Date"];
+          if (!d) return "";
+          const date = new Date(d + "T00:00:00Z");
+          if (isNaN(date.getTime())) return "";
+          return date.toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+        })
+        .filter(Boolean),
+    ),
+  ).sort((a, b) => new Date("1 " + a).getTime() - new Date("1 " + b).getTime());
+
+  const filteredRecords = records.filter((r) => {
+    const f = r.fields;
+    if (selectedCountry && asText(f["LKP_country"]) !== selectedCountry) return false;
+    if (selectedMonth) {
+      const d = f["Distance Start Date"];
+      if (!d) return false;
+      const date = new Date(d + "T00:00:00Z");
+      const label = date.toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+      if (label !== selectedMonth) return false;
+    }
+    return true;
+  });
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-neutral-50 to-white">
@@ -209,12 +253,19 @@ export default async function CostPage() {
           {/* ...keep the rest of your page content here... */}
         </div>
 
-        <p
-          id="cost-index"
-          className="text-[11px] font-semibold uppercase tracking-[0.15em] text-neutral-400 mb-4"
-        >
-          Cost Transparency
-        </p>
+        <div id="cost-index" className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-neutral-400">
+            Cost Transparency
+          </p>
+          <Suspense fallback={null}>
+            <FilterBar
+              countries={allCountries}
+              months={allMonths}
+              selectedCountry={selectedCountry}
+              selectedMonth={selectedMonth}
+            />
+          </Suspense>
+        </div>
 
         {error ? (
           <div className="rounded-xl border border-rose-200 bg-rose-50 p-6 text-center">
@@ -224,14 +275,14 @@ export default async function CostPage() {
               correctly.
             </p>
           </div>
-        ) : records.length === 0 ? (
+        ) : filteredRecords.length === 0 ? (
           <div className="rounded-xl border border-neutral-200 bg-white p-12 text-center">
-            <p className="text-sm text-neutral-500">No records found.</p>
+            <p className="text-sm text-neutral-500">No races found for this filter.</p>
           </div>
         ) : (
           <>
             <div className="space-y-3">
-              {records.map((r) => {
+              {filteredRecords.map((r) => {
                 const f = r.fields;
                 const slug = f["Race Slug"]?.[0];
                 const rawFee = f["AUTO Fee used"];
@@ -418,7 +469,7 @@ export default async function CostPage() {
             </div>
 
             <p className="mt-8 text-xs text-neutral-400 text-center">
-              Showing {records.length} results · sorted by &euro;/km
+              Showing {filteredRecords.length} of {records.length} results · sorted by &euro;/km
             </p>
           </>
         )}
