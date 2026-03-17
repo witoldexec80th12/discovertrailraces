@@ -50,6 +50,8 @@ type EntryFeeFields = {
   "LKP_%increase"?: number | string;
   LKP_utmb?: boolean;
   "UTMB_series?"?: string | string[];
+  "WSER?"?: string | string[];
+  "Tor?"?: string | string[];
   LKP_logistics?: string | string[];
   LKP_primaryairport?: string | string[];
   LKP_airportcode?: string | string[];
@@ -191,6 +193,8 @@ export default async function RacePage({
     : "";
   const utmbSeries = asText(f["UTMB_series?"]);
   const isUtmb = utmbSeries.toLowerCase().includes("utmb");
+  const wserSeries = asText(f["WSER?"]);
+  const torSeries = asText(f["Tor?"]);
 
   const logistics = asText(f.LKP_logistics);
   const airport = asText(f.LKP_primaryairport);
@@ -273,9 +277,17 @@ export default async function RacePage({
                 <p className="text-[10px] uppercase tracking-wider text-neutral-400">
                   Series
                 </p>
-                <p className="mt-1 text-sm font-semibold text-neutral-900">
-                  {isUtmb ? "UTMB" : "—"}
-                </p>
+                <div className="mt-1 flex flex-col gap-0.5">
+                  <p className="text-sm font-semibold text-neutral-900">
+                    {isUtmb ? utmbSeries : "—"}
+                  </p>
+                  <p className="text-sm font-semibold text-neutral-900">
+                    {wserSeries || "—"}
+                  </p>
+                  <p className="text-sm font-semibold text-neutral-900">
+                    {torSeries || "—"}
+                  </p>
+                </div>
               </div>
             </div>
 
