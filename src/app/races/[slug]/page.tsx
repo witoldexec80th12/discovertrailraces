@@ -182,7 +182,12 @@ export default async function RacePage({
 
   const terrain = asText(f.LKP_terrain);
   const elevation = f.LKP_elevation ?? "";
-  const pctIncrease = f["LKP_%increase"] ?? "";
+  const pctIncreaseRaw = f["LKP_%increase"];
+  const pctIncrease = pctIncreaseRaw !== undefined && pctIncreaseRaw !== ""
+    ? (typeof pctIncreaseRaw === "number"
+        ? parseFloat(pctIncreaseRaw.toFixed(2))
+        : parseFloat(parseFloat(String(pctIncreaseRaw)).toFixed(2)) || pctIncreaseRaw)
+    : "";
   const isUtmb = !!f.LKP_utmb;
 
   const logistics = asText(f.LKP_logistics);
