@@ -49,6 +49,7 @@ type EntryFeeFields = {
   LKP_elevation?: number | string;
   "LKP_%increase"?: number | string;
   LKP_utmb?: boolean;
+  "UTMB_series?"?: string | string[];
   LKP_logistics?: string | string[];
   LKP_primaryairport?: string | string[];
   LKP_airportcode?: string | string[];
@@ -188,7 +189,8 @@ export default async function RacePage({
         ? parseFloat(pctIncreaseRaw.toFixed(2))
         : parseFloat(parseFloat(String(pctIncreaseRaw)).toFixed(2)) || pctIncreaseRaw)
     : "";
-  const isUtmb = !!f.LKP_utmb;
+  const utmbSeries = asText(f["UTMB_series?"]);
+  const isUtmb = utmbSeries.toLowerCase().includes("utmb");
 
   const logistics = asText(f.LKP_logistics);
   const airport = asText(f.LKP_primaryairport);
@@ -272,7 +274,7 @@ export default async function RacePage({
                   Series
                 </p>
                 <p className="mt-1 text-sm font-semibold text-neutral-900">
-                  {isUtmb ? "UTMB" : ""}
+                  {isUtmb ? "UTMB" : "—"}
                 </p>
               </div>
             </div>
