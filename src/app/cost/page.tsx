@@ -236,12 +236,12 @@ export default async function CostPage({
                   >
                     Explore the Cost Index
                   </a>
-                  <a
-                    href="#method"
+                  <Link
+                    href="/how-this-works"
                     className="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
                   >
                     How this works
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
