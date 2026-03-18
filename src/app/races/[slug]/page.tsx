@@ -29,6 +29,16 @@ type EntryFeeFields = {
   "AUTO €/km"?: number;
   "AUTO Price Bands"?: string;
   "Last Checked"?: string;
+  voices_name?: string;
+  voices_main_description?: string;
+  voices_surprise?: string;
+  voices_technicality?: string;
+  voices_shoes_poles_pack?: string;
+  voices_logistics?: string;
+  voices_tip?: string;
+  voices_full_transcript_url?: string;
+  voices_year_ran?: string | number;
+  voices_finish_time?: string;
 
   // images + blurbs
   LKP_featured_image?: AirtableAttachment[];
@@ -57,6 +67,18 @@ type EntryFeeFields = {
   LKP_airportcode?: string | string[];
   LKP_lessthan30?: boolean;
   LKP_cartransfertime?: string | number;
+
+  // Runner Voice
+  voices_name?: string;
+  voices_main_description?: string;
+  voices_surprise?: string;
+  voices_technicality?: string;
+  voices_shoes_poles_pack?: string;
+  voices_logistics?: string;
+  voices_tip?: string;
+  voices_full_transcript_url?: string;
+  voices_year_ran?: string | number;
+  voices_finish_time?: string;
 };
 
 function asText(v: unknown): string {
@@ -186,11 +208,13 @@ export default async function RacePage({
   const terrain = asText(f.LKP_terrain);
   const elevation = f.LKP_elevation ?? "";
   const pctIncreaseRaw = f["LKP_%increase"];
-  const pctIncrease = pctIncreaseRaw !== undefined && pctIncreaseRaw !== ""
-    ? (typeof pctIncreaseRaw === "number"
+  const pctIncrease =
+    pctIncreaseRaw !== undefined && pctIncreaseRaw !== ""
+      ? typeof pctIncreaseRaw === "number"
         ? parseFloat(pctIncreaseRaw.toFixed(2))
-        : parseFloat(parseFloat(String(pctIncreaseRaw)).toFixed(2)) || pctIncreaseRaw)
-    : "";
+        : parseFloat(parseFloat(String(pctIncreaseRaw)).toFixed(2)) ||
+          pctIncreaseRaw
+      : "";
   const utmbSeries = asText(f["UTMB_series?"]);
   const isUtmb = utmbSeries.toLowerCase().includes("utmb");
   const wserSeries = asText(f["WSER?"]);
@@ -367,6 +391,96 @@ export default async function RacePage({
                       {logistics || "—"}
                     </p>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* Runner Voice */}
+            {f.voices_main_description && (
+              <div className="mt-10">
+                <h2 className="text-sm font-bold tracking-tight text-neutral-900">
+                  Runner Voice
+                </h2>
+
+                <div className="mt-4 rounded-2xl border border-neutral-200 bg-white p-5">
+                  {/* Header */}
+                  <div className="text-xs text-neutral-500 mb-3">
+                    {[
+                      asText(f.voices_name),
+                      f.voices_year_ran ? `Ran in ${f.voices_year_ran}` : "",
+                      asText(f.voices_finish_time),
+                      f.voices_itra_index ? `ITRA ${f.voices_itra_index}` : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </div>
+
+                  {/* Main quote */}
+                  <p className="text-base leading-relaxed text-neutral-900 font-medium">
+                    “{asText(f.voices_main_description)}”
+                  </p>
+
+                  {/* Structured details */}
+                  <div className="mt-5 space-y-3 text-sm text-neutral-700">
+                    {f.voices_surprise && (
+                      <div>
+                        <span className="font-semibold text-neutral-900">
+                          What surprised them:
+                        </span>{" "}
+                        {asText(f.voices_surprise)}
+                      </div>
+                    )}
+
+                    {f.voices_technicality && (
+                      <div>
+                        <span className="font-semibold text-neutral-900">
+                          Technicality:
+                        </span>{" "}
+                        {asText(f.voices_technicality)}
+                      </div>
+                    )}
+
+                    {f.voices_shoes_poles_pack && (
+                      <div>
+                        <span className="font-semibold text-neutral-900">
+                          Shoes / poles / pack:
+                        </span>{" "}
+                        {asText(f.voices_shoes_poles_pack)}
+                      </div>
+                    )}
+
+                    {f.voices_logistics && (
+                      <div>
+                        <span className="font-semibold text-neutral-900">
+                          Logistics:
+                        </span>{" "}
+                        {asText(f.voices_logistics)}
+                      </div>
+                    )}
+
+                    {f.voices_tip && (
+                      <div>
+                        <span className="font-semibold text-neutral-900">
+                          Tip:
+                        </span>{" "}
+                        {asText(f.voices_tip)}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Full interview link */}
+                  {f.voices_full_transcript_url && (
+                    <div className="mt-5">
+                      <a
+                        href={asText(f.voices_full_transcript_url)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-semibold text-neutral-900 underline hover:text-neutral-600"
+                      >
+                        Read full interview →
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
