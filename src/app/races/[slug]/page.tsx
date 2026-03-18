@@ -278,15 +278,24 @@ export default async function RacePage({
                   Series
                 </p>
                 <div className="mt-1 flex flex-col gap-0.5">
-                  <p className="text-sm font-semibold text-neutral-900">
-                    {isUtmb ? utmbSeries : "—"}
-                  </p>
-                  <p className="text-sm font-semibold text-neutral-900">
-                    {wserSeries || "—"}
-                  </p>
-                  <p className="text-sm font-semibold text-neutral-900">
-                    {torSeries || "—"}
-                  </p>
+                  {isUtmb && (
+                    <p className="text-sm font-semibold text-neutral-900">
+                      {utmbSeries}
+                    </p>
+                  )}
+                  {wserSeries && (
+                    <p className="text-sm font-semibold text-neutral-900">
+                      {wserSeries}
+                    </p>
+                  )}
+                  {torSeries && (
+                    <p className="text-sm font-semibold text-neutral-900">
+                      {torSeries}
+                    </p>
+                  )}
+                  {!isUtmb && !wserSeries && !torSeries && (
+                    <p className="text-sm font-semibold text-neutral-900">—</p>
+                  )}
                 </div>
               </div>
             </div>
