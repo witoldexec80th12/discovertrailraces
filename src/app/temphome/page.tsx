@@ -43,14 +43,10 @@ export default async function TempHomePage() {
   let races: { fields: FeaturedRaceEventFields }[] = [];
 
   try {
-    const raw = await airtableFetch<FeaturedRaceEventFields>(AIRTABLE.TABLES.RACE_EVENTS, {
-      filterByFormula: "{Featured}=TRUE()",
+    races = await airtableFetch<FeaturedRaceEventFields>(AIRTABLE.TABLES.RACE_EVENTS, {
+      view: AIRTABLE.VIEWS.HOMEPAGE_REMOTE_FEATURED,
       pageSize: 9,
     });
-    races = raw.sort(
-      (a, b) =>
-        (a.fields["Featured Order"] ?? 999) - (b.fields["Featured Order"] ?? 999),
-    );
   } catch {
     // silently fail — placeholder skeleton shows
   }
