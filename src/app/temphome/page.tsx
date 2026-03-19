@@ -39,17 +39,84 @@ function asText(v: unknown): string {
   return String(v);
 }
 
-export default async function TempHomePage() {
-  let races: { fields: FeaturedRaceEventFields }[] = [];
+type RaceRecord = { fields: FeaturedRaceEventFields };
 
+function RaceCard({ r, index }: { r: RaceRecord; index: number }) {
+  const f = r.fields;
+  const slug = f.Slug;
+  const name = asText(f["Race Name"]);
+  const country = asText(f.Country);
+  const region = asText(f.Region);
+  const terrain = asText(f["Type Terrain"]);
+  const imgUrl = f["Featured Image"]?.[0]?.url ?? null;
+
+  const card = (
+    <div className="group relative overflow-hidden rounded-2xl bg-neutral-900 aspect-[4/3] cursor-pointer">
+      {imgUrl ? (
+        <Image
+          src={imgUrl}
+          alt={name}
+          fill
+          className="object-cover transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-90"
+          priority={index < 3}
+        />
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-neutral-700 to-neutral-900" />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+      {terrain && (
+        <div className="absolute top-3 left-3">
+          <span className="inline-flex items-center gap-1 rounded-full bg-white/15 backdrop-blur-sm px-2.5 py-0.5 text-[10px] font-semibold text-white/90 uppercase tracking-wide border border-white/20">
+            <Mountain className="w-2.5 h-2.5" />
+            {terrain}
+          </span>
+        </div>
+      )}
+      <div className="absolute bottom-0 left-0 right-0 p-4">
+        <h3 className="text-base font-bold text-white leading-tight line-clamp-2">{name}</h3>
+        <div className="mt-1.5 flex items-center gap-1.5">
+          <MapPin className="w-3 h-3 text-white/60 shrink-0" />
+          <span className="text-xs text-white/70">
+            {[country, region].filter(Boolean).join(", ")}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+
+  return slug ? (
+    <Link href={`/events/${slug}`}>{card}</Link>
+  ) : (
+    <div>{card}</div>
+  );
+}
+
+function RaceGrid({ races }: { races: RaceRecord[] }) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {races.map((r, i) => (
+        <RaceCard key={i} r={r} index={i} />
+      ))}
+    </div>
+  );
+}
+
+async function fetchView(view: string, pageSize: number): Promise<RaceRecord[]> {
   try {
-    races = await airtableFetch<FeaturedRaceEventFields>(AIRTABLE.TABLES.RACE_EVENTS, {
-      view: AIRTABLE.VIEWS.HOMEPAGE_REMOTE_FEATURED,
-      pageSize: 9,
+    return await airtableFetch<FeaturedRaceEventFields>(AIRTABLE.TABLES.RACE_EVENTS, {
+      view,
+      pageSize,
     });
   } catch {
-    // silently fail — placeholder skeleton shows
+    return [];
   }
+}
+
+export default async function TempHomePage() {
+  const [featuredRaces, remoteRaces] = await Promise.all([
+    fetchView(AIRTABLE.VIEWS.HOMEPAGE_FEATURED, 9),
+    fetchView(AIRTABLE.VIEWS.HOMEPAGE_REMOTE_FEATURED, 3),
+  ]);
 
   const articles = [
     {
@@ -150,75 +217,28 @@ export default async function TempHomePage() {
           </Link>
         </div>
 
-        {races.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {races.map((r, i) => {
-              const f = r.fields;
-              const slug = f.Slug;
-              const name = asText(f["Race Name"]);
-              const country = asText(f.Country);
-              const region = asText(f.Region);
-              const terrain = asText(f["Type Terrain"]);
-              const imgUrl = f["Featured Image"]?.[0]?.url ?? null;
-
-              const card = (
-                <div
-                  key={i}
-                  className="group relative overflow-hidden rounded-2xl bg-neutral-900 aspect-[4/3] cursor-pointer"
-                >
-                  {imgUrl ? (
-                    <Image
-                      src={imgUrl}
-                      alt={name}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105 opacity-80 group-hover:opacity-90"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-neutral-700 to-neutral-900" />
-                  )}
-
-                  {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-
-                  {/* Terrain tag */}
-                  {terrain && (
-                    <div className="absolute top-3 left-3">
-                      <span className="inline-flex items-center gap-1 rounded-full bg-white/15 backdrop-blur-sm px-2.5 py-0.5 text-[10px] font-semibold text-white/90 uppercase tracking-wide border border-white/20">
-                        <Mountain className="w-2.5 h-2.5" />
-                        {terrain}
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Bottom info */}
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <h3 className="text-base font-bold text-white leading-tight line-clamp-2">
-                      {name}
-                    </h3>
-                    <div className="mt-1.5 flex items-center gap-1.5">
-                      <MapPin className="w-3 h-3 text-white/60 shrink-0" />
-                      <span className="text-xs text-white/70">
-                        {[country, region].filter(Boolean).join(", ")}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              );
-
-              return slug ? (
-                <Link key={i} href={`/events/${slug}`}>
-                  {card}
-                </Link>
-              ) : (
-                <div key={i}>{card}</div>
-              );
-            })}
-          </div>
+        {/* Main featured grid — 9 cards (homepage_featured) */}
+        {featuredRaces.length > 0 ? (
+          <RaceGrid races={featuredRaces} />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 9 }).map((_, i) => (
               <div key={i} className="rounded-2xl bg-neutral-100 aspect-[4/3] animate-pulse" />
             ))}
+          </div>
+        )}
+
+        {/* Remote featured — 3 cards below (homepage_remote_featured) */}
+        {remoteRaces.length > 0 && (
+          <div className="mt-10">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="h-px flex-1 bg-neutral-200" />
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-neutral-400 whitespace-nowrap">
+                Remote Destinations
+              </p>
+              <div className="h-px flex-1 bg-neutral-200" />
+            </div>
+            <RaceGrid races={remoteRaces} />
           </div>
         )}
 
