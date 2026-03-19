@@ -200,24 +200,21 @@ export default async function TempHomePage() {
 
       {/* ── FEATURED RACES ─────────────────────────────────────── */}
       <section className="px-6 sm:px-10 lg:px-16 py-14 sm:py-20 bg-white">
-        <div className="flex items-start justify-between mb-8">
-          <div className="max-w-xl">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-neutral-400 mb-1">
-              Curated Selection
-            </p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight">
-              Featured Races
-            </h2>
-            <p className="mt-2 text-sm text-neutral-500 leading-relaxed">
+        <div className="flex items-start justify-between gap-8 mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight shrink-0">
+            Featured Races
+          </h2>
+          <div className="flex items-start gap-6">
+            <p className="text-base text-neutral-500 leading-snug text-right max-w-xs sm:max-w-sm">
               Selected trail races in Europe with an emphasis on good cost value, shorter drives from airports, and strong race culture.
             </p>
+            <Link
+              href="/cost"
+              className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold text-neutral-500 hover:text-neutral-900 transition-colors shrink-0"
+            >
+              View all races <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
-          <Link
-            href="/cost"
-            className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold text-neutral-500 hover:text-neutral-900 transition-colors shrink-0 mt-1 ml-6"
-          >
-            View all races <ArrowRight className="w-4 h-4" />
-          </Link>
         </div>
 
         {/* Main featured grid — 9 cards (homepage_featured) */}
@@ -234,14 +231,11 @@ export default async function TempHomePage() {
         {/* Remote featured — 3 cards below (homepage_remote_featured) */}
         {remoteRaces.length > 0 && (
           <div className="mt-12 pt-10 border-t border-neutral-200">
-            <div className="mb-8">
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-neutral-400 mb-1">
-                Further Afield
-              </p>
-              <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight">
+            <div className="flex items-start justify-between gap-8 mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight shrink-0">
                 Remote Destinations
               </h2>
-              <p className="mt-2 text-sm text-neutral-500 leading-relaxed max-w-xl">
+              <p className="text-base text-neutral-500 leading-snug text-right max-w-xs sm:max-w-sm">
                 Epic trail races, 3 hours or more from major airports.
               </p>
             </div>
