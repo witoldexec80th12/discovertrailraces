@@ -17,18 +17,20 @@ type AirtableAttachment = {
   filename: string;
   width?: number;
   height?: number;
+  thumbnails?: Record<string, { url: string; width: number; height: number }>;
 };
 
-type FeaturedRaceFields = {
-  ID?: string | number;
-  LKP_country?: string | string[];
-  LKP_region?: string | string[];
-  LKP_featured_image?: AirtableAttachment[];
-  temporary_image?: AirtableAttachment[];
-  LKP_terrain?: string | string[];
-  "Race Slug"?: string[];
-  "AUTO €/km"?: number;
-  "Distance (km)"?: string | string[];
+type FeaturedRaceEventFields = {
+  "Race Name"?: string;
+  Slug?: string;
+  Country?: string;
+  Region?: string;
+  "Featured Image"?: AirtableAttachment[];
+  "Type Terrain"?: string;
+  Featured?: boolean;
+  "Featured Order"?: number;
+  "Hero Tag"?: string[];
+  "Featured Blurb"?: string;
 };
 
 function asText(v: unknown): string {
@@ -37,41 +39,34 @@ function asText(v: unknown): string {
   return String(v);
 }
 
-function extractName(id: unknown): string {
-  const raw = asText(id);
-  const parts = raw.split(/\s[–—-]\s/);
-  return parts.length > 1 ? parts.slice(0, -1).join(" – ") : raw;
-}
-
 export default async function TempHomePage() {
-  let races: { fields: FeaturedRaceFields }[] = [];
+  let races: { fields: FeaturedRaceEventFields }[] = [];
 
   try {
-    // Once you add a "Featured" checkbox field in Airtable and check it for
-    // the races you want, swap this for: filterByFormula: "{Featured}=TRUE()"
-    races = await airtableFetch<FeaturedRaceFields>(AIRTABLE.TABLES.ENTRY_FEES, {
-      view: AIRTABLE.VIEWS.ENTRY_FEES_PUBLIC,
+    const raw = await airtableFetch<FeaturedRaceEventFields>(AIRTABLE.TABLES.RACE_EVENTS, {
+      filterByFormula: "{Featured}=TRUE()",
       pageSize: 9,
     });
+    races = raw.sort(
+      (a, b) =>
+        (a.fields["Featured Order"] ?? 999) - (b.fields["Featured Order"] ?? 999),
+    );
   } catch {
-    // silently fail — placeholder skeleton shows instead
+    // silently fail — placeholder skeleton shows
   }
 
   const articles = [
     {
       tag: "Training & Planning",
       title: "3 ways to collect 10 Running Stones in 2026",
-      img: null,
     },
     {
       tag: "Inspiration & Planning",
       title: "Run with Kilian: Kilian Jornet's runnable 2026 race schedule",
-      img: null,
     },
     {
       tag: "Travel & Racing",
       title: "7 races you can visit by train in Europe",
-      img: null,
     },
   ];
 
@@ -86,7 +81,6 @@ export default async function TempHomePage() {
           className="object-cover"
           priority
         />
-        {/* gradient: dark left, fades right */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-black/10" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
@@ -109,8 +103,10 @@ export default async function TempHomePage() {
         </div>
 
         {/* Hero text */}
-        <div className="relative z-10 flex flex-col justify-end h-full px-6 sm:px-10 lg:px-16 pb-14 sm:pb-20"
-          style={{ minHeight: "inherit" }}>
+        <div
+          className="relative z-10 flex flex-col justify-end h-full px-6 sm:px-10 lg:px-16 pb-14 sm:pb-20"
+          style={{ minHeight: "inherit" }}
+        >
           <div className="max-w-2xl">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.05] tracking-tight">
               Plan your strongest<br className="hidden sm:block" /> trail season yet.
@@ -162,14 +158,12 @@ export default async function TempHomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {races.map((r, i) => {
               const f = r.fields;
-              const slug = f["Race Slug"]?.[0];
-              const name = extractName(f.ID);
-              const country = asText(f.LKP_country);
-              const region = asText(f.LKP_region);
-              const terrain = asText(f.LKP_terrain);
-              const imgUrl =
-                f.LKP_featured_image?.[0]?.url ?? f.temporary_image?.[0]?.url ?? null;
-              const epk = f["AUTO €/km"];
+              const slug = f.Slug;
+              const name = asText(f["Race Name"]);
+              const country = asText(f.Country);
+              const region = asText(f.Region);
+              const terrain = asText(f["Type Terrain"]);
+              const imgUrl = f["Featured Image"]?.[0]?.url ?? null;
 
               const card = (
                 <div
@@ -205,38 +199,29 @@ export default async function TempHomePage() {
                     <h3 className="text-base font-bold text-white leading-tight line-clamp-2">
                       {name}
                     </h3>
-                    <div className="mt-1.5 flex items-center justify-between">
-                      <span className="flex items-center gap-1 text-xs text-white/70">
-                        <MapPin className="w-3 h-3" />
+                    <div className="mt-1.5 flex items-center gap-1.5">
+                      <MapPin className="w-3 h-3 text-white/60 shrink-0" />
+                      <span className="text-xs text-white/70">
                         {[country, region].filter(Boolean).join(", ")}
                       </span>
-                      {epk && epk > 0 && (
-                        <span className="text-xs font-bold text-white bg-white/15 backdrop-blur-sm px-2 py-0.5 rounded-full border border-white/20">
-                          €{epk.toFixed(2)}/km
-                        </span>
-                      )}
                     </div>
                   </div>
                 </div>
               );
 
               return slug ? (
-                <Link key={i} href={`/races/${slug}`}>
+                <Link key={i} href={`/events/${slug}`}>
                   {card}
                 </Link>
               ) : (
-                card
+                <div key={i}>{card}</div>
               );
             })}
           </div>
         ) : (
-          /* Placeholder grid if Airtable empty */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 9 }).map((_, i) => (
-              <div
-                key={i}
-                className="rounded-2xl bg-neutral-100 aspect-[4/3] animate-pulse"
-              />
+              <div key={i} className="rounded-2xl bg-neutral-100 aspect-[4/3] animate-pulse" />
             ))}
           </div>
         )}
@@ -272,7 +257,6 @@ export default async function TempHomePage() {
               </p>
             </div>
             <div className="relative z-10 mt-8">
-              {/* mini price band illustration */}
               <div className="flex gap-1 mb-6">
                 {["Very affordable", "Affordable", "Mid-range", "Premium"].map((label, i) => (
                   <div key={i} className="flex-1">
@@ -342,7 +326,6 @@ export default async function TempHomePage() {
                 key={i}
                 className="group rounded-2xl border border-neutral-200 bg-white overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
               >
-                {/* Placeholder image block */}
                 <div className="aspect-[16/9] bg-gradient-to-br from-neutral-100 to-neutral-200 relative overflow-hidden">
                   <div className="absolute inset-0 flex items-center justify-center">
                     <Mountain className="w-8 h-8 text-neutral-300" />
