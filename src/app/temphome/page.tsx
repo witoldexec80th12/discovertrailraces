@@ -47,12 +47,14 @@ export default async function TempHomePage() {
   let races: { fields: FeaturedRaceFields }[] = [];
 
   try {
+    // Once you add a "Featured" checkbox field in Airtable and check it for
+    // the races you want, swap this for: filterByFormula: "{Featured}=TRUE()"
     races = await airtableFetch<FeaturedRaceFields>(AIRTABLE.TABLES.ENTRY_FEES, {
-      view: AIRTABLE.VIEWS.HOMEPAGE_FEATURED,
+      view: AIRTABLE.VIEWS.ENTRY_FEES_PUBLIC,
       pageSize: 9,
     });
   } catch {
-    // silently fail — placeholders still show
+    // silently fail — placeholder skeleton shows instead
   }
 
   const articles = [
