@@ -39,6 +39,8 @@ type EntryFeeFields = {
   voices_full_transcript_url?: string;
   voices_year_ran?: string | number;
   voices_finish_time?: string;
+  voices_aid_stations?: string;
+  voices_views_and_vibes?: string;
 
   // images + blurbs
   LKP_featured_image?: AirtableAttachment[];
@@ -416,21 +418,17 @@ export default async function RacePage({
                   </div>
 
                   {/* Main quote */}
-                  <p className="text-base leading-relaxed text-neutral-900 font-medium">
+                  <div className="mb-1">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                      Summary
+                    </span>
+                  </div>
+                  <p className="text-[1.2rem] leading-relaxed text-neutral-900 font-medium italic">
                     “{asText(f.voices_main_description)}”
                   </p>
 
                   {/* Structured details */}
                   <div className="mt-5 space-y-3 text-sm text-neutral-700">
-                    {f.voices_surprise && (
-                      <div>
-                        <span className="font-semibold text-neutral-900">
-                          What surprised them:
-                        </span>{" "}
-                        {asText(f.voices_surprise)}
-                      </div>
-                    )}
-
                     {f.voices_technicality && (
                       <div>
                         <span className="font-semibold text-neutral-900">
@@ -458,10 +456,19 @@ export default async function RacePage({
                       </div>
                     )}
 
+                    {f.voices_surprise && (
+                      <div>
+                        <span className="font-semibold text-neutral-900">
+                          What surprised them:
+                        </span>{" "}
+                        {asText(f.voices_surprise)}
+                      </div>
+                    )}
+
                     {f.voices_tip && (
                       <div>
                         <span className="font-semibold text-neutral-900">
-                          Tip:
+                          One Tip for Runners:
                         </span>{" "}
                         {asText(f.voices_tip)}
                       </div>
