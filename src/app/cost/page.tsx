@@ -129,6 +129,7 @@ export default async function CostPage({
   try {
     records = await airtableFetch<EntryFeeFields>(AIRTABLE.TABLES.ENTRY_FEES, {
       view: AIRTABLE.VIEWS.ENTRY_FEES_PUBLIC,
+      filterByFormula: "NOT({series_stage}=TRUE())",
       "sort[0][field]": "AUTO €/km",
       "sort[0][direction]": "asc",
       pageSize: 100,

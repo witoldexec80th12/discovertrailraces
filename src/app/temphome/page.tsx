@@ -73,7 +73,9 @@ function RaceCard({ r, index }: { r: RaceRecord; index: number }) {
         </div>
       )}
       <div className="absolute bottom-0 left-0 right-0 p-4">
-        <h3 className="text-base font-bold text-white leading-tight line-clamp-2">{name}</h3>
+        <h3 className="text-base font-bold text-white leading-tight line-clamp-2">
+          {name}
+        </h3>
         <div className="mt-1.5 flex items-center gap-1.5">
           <MapPin className="w-3 h-3 text-white/60 shrink-0" />
           <span className="text-xs text-white/70">
@@ -101,12 +103,18 @@ function RaceGrid({ races }: { races: RaceRecord[] }) {
   );
 }
 
-async function fetchView(view: string, pageSize: number): Promise<RaceRecord[]> {
+async function fetchView(
+  view: string,
+  pageSize: number,
+): Promise<RaceRecord[]> {
   try {
-    return await airtableFetch<FeaturedRaceEventFields>(AIRTABLE.TABLES.RACE_EVENTS, {
-      view,
-      pageSize,
-    });
+    return await airtableFetch<FeaturedRaceEventFields>(
+      AIRTABLE.TABLES.RACE_EVENTS,
+      {
+        view,
+        pageSize,
+      },
+    );
   } catch {
     return [];
   }
@@ -136,7 +144,10 @@ export default async function TempHomePage() {
   return (
     <main className="min-h-screen bg-white">
       {/* ── HERO ───────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden" style={{ minHeight: "62vh" }}>
+      <section
+        className="relative overflow-hidden"
+        style={{ minHeight: "62vh" }}
+      >
         <Image
           src="/images/hero.jpg"
           alt="Trail runner in the mountains"
@@ -160,8 +171,15 @@ export default async function TempHomePage() {
             />
           </Link>
           <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-white/80">
-            <Link href="/cost" className="hover:text-white transition-colors">Cost Index</Link>
-            <Link href="/how-this-works" className="hover:text-white transition-colors">How This Works</Link>
+            <Link href="/cost" className="hover:text-white transition-colors">
+              Cost Index
+            </Link>
+            <Link
+              href="/how-this-works"
+              className="hover:text-white transition-colors"
+            >
+              How This Works
+            </Link>
           </nav>
         </div>
 
@@ -172,13 +190,16 @@ export default async function TempHomePage() {
         >
           <div className="max-w-2xl">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-[1.05] tracking-tight">
-              Plan your strongest<br className="hidden sm:block" /> trail season yet.
+              Plan your strongest
+              <br className="hidden sm:block" /> trail season yet.
             </h1>
             <p className="mt-4 text-base sm:text-lg text-white/75 font-medium">
-              Transparent cost per kilometre&nbsp;&middot;&nbsp;Verified logistics&nbsp;&middot;&nbsp;Real runner insight
+              Transparent cost per kilometre&nbsp;&middot;&nbsp;Verified
+              logistics&nbsp;&middot;&nbsp;Real runner insight
             </p>
             <p className="mt-1.5 text-sm sm:text-base text-white/60">
-              Everything you need to choose the right race and prepare with confidence.
+              Everything you need to choose the right race and prepare with
+              confidence.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -206,7 +227,8 @@ export default async function TempHomePage() {
           </h2>
           <div className="flex items-start gap-6">
             <p className="text-base text-neutral-500 leading-snug text-right max-w-xs sm:max-w-sm">
-              Selected trail races in Europe with an emphasis on good cost value, shorter drives from airports, and strong race culture.
+              Selected trail races in Europe with an emphasis on good value,
+              culture, and shorter drives from airports.
             </p>
             <Link
               href="/cost"
@@ -223,7 +245,10 @@ export default async function TempHomePage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 9 }).map((_, i) => (
-              <div key={i} className="rounded-2xl bg-neutral-100 aspect-[4/3] animate-pulse" />
+              <div
+                key={i}
+                className="rounded-2xl bg-neutral-100 aspect-[4/3] animate-pulse"
+              />
             ))}
           </div>
         )}
@@ -256,7 +281,6 @@ export default async function TempHomePage() {
       {/* ── EDITORIAL SECTIONS ─────────────────────────────────── */}
       <section className="px-6 sm:px-10 lg:px-16 pb-16 sm:pb-24 bg-white">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
           {/* Cost Index card — dark editorial */}
           <div className="relative overflow-hidden rounded-2xl bg-neutral-900 p-8 sm:p-10 flex flex-col justify-between min-h-[320px]">
             <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 to-neutral-950" />
@@ -265,7 +289,9 @@ export default async function TempHomePage() {
                 Cost Transparency
               </p>
               <h3 className="text-2xl sm:text-3xl font-bold text-white leading-tight">
-                Explore the<br />Cost Index
+                Explore the
+                <br />
+                Cost Index
               </h3>
               <p className="mt-4 text-sm text-neutral-400 leading-relaxed max-w-sm">
                 Compare hundreds of races by real price per kilometre. Filter by
@@ -275,18 +301,27 @@ export default async function TempHomePage() {
             </div>
             <div className="relative z-10 mt-8">
               <div className="flex gap-1 mb-6">
-                {["Very affordable", "Affordable", "Mid-range", "Premium"].map((label, i) => (
-                  <div key={i} className="flex-1">
-                    <div
-                      className="rounded h-1.5 mb-1"
-                      style={{
-                        backgroundColor: ["#34d399", "#a3e635", "#fbbf24", "#f87171"][i],
-                        opacity: 0.8,
-                      }}
-                    />
-                    <span className="text-[9px] text-neutral-500 whitespace-nowrap">{label}</span>
-                  </div>
-                ))}
+                {["Very affordable", "Affordable", "Mid-range", "Premium"].map(
+                  (label, i) => (
+                    <div key={i} className="flex-1">
+                      <div
+                        className="rounded h-1.5 mb-1"
+                        style={{
+                          backgroundColor: [
+                            "#34d399",
+                            "#a3e635",
+                            "#fbbf24",
+                            "#f87171",
+                          ][i],
+                          opacity: 0.8,
+                        }}
+                      />
+                      <span className="text-[9px] text-neutral-500 whitespace-nowrap">
+                        {label}
+                      </span>
+                    </div>
+                  ),
+                )}
               </div>
               <Link
                 href="/cost"
@@ -313,7 +348,8 @@ export default async function TempHomePage() {
               <div>
                 <p className="text-sm font-bold text-neutral-900">Clara M.</p>
                 <p className="text-xs text-neutral-500 mt-0.5">
-                  Ran UTMB 2024&nbsp;&middot;&nbsp;ITRA 690&nbsp;&middot;&nbsp;23h 12m
+                  Ran UTMB 2024&nbsp;&middot;&nbsp;ITRA
+                  690&nbsp;&middot;&nbsp;23h 12m
                 </p>
               </div>
               <span className="text-xs font-semibold text-neutral-400 italic">
@@ -330,7 +366,9 @@ export default async function TempHomePage() {
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-neutral-400 mb-1">
                 Editorial
               </p>
-              <h3 className="text-2xl font-bold text-neutral-900">Latest Articles</h3>
+              <h3 className="text-2xl font-bold text-neutral-900">
+                Latest Articles
+              </h3>
             </div>
             <span className="hidden sm:inline text-xs text-neutral-400 italic">
               Placeholder — articles coming soon
@@ -376,7 +414,10 @@ export default async function TempHomePage() {
           </Link>
           <p className="text-xs text-neutral-400">
             © {new Date().getFullYear()} DiscoverTrailRaces &middot;{" "}
-            <Link href="/how-this-works" className="hover:text-neutral-700 underline underline-offset-2">
+            <Link
+              href="/how-this-works"
+              className="hover:text-neutral-700 underline underline-offset-2"
+            >
               How This Works
             </Link>
           </p>
