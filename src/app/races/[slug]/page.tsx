@@ -38,9 +38,11 @@ type EntryFeeFields = {
   voices_tip?: string;
   voices_full_transcript_url?: string;
   voices_year_ran?: string | number;
+  voices_itra_index?: string | number;
   voices_finish_time?: string;
   voices_aid_stations?: string;
   voices_views_and_vibes?: string;
+  
 
   // images + blurbs
   LKP_featured_image?: AirtableAttachment[];
@@ -69,18 +71,6 @@ type EntryFeeFields = {
   LKP_airportcode?: string | string[];
   LKP_lessthan30?: boolean;
   LKP_cartransfertime?: string | number;
-
-  // Runner Voice
-  voices_name?: string;
-  voices_main_description?: string;
-  voices_surprise?: string;
-  voices_technicality?: string;
-  voices_shoes_poles_pack?: string;
-  voices_logistics?: string;
-  voices_tip?: string;
-  voices_full_transcript_url?: string;
-  voices_year_ran?: string | number;
-  voices_finish_time?: string;
 };
 
 function asText(v: unknown): string {
@@ -447,6 +437,24 @@ export default async function RacePage({
                       </div>
                     )}
 
+                    {f.voices_aid_stations && (
+                      <div>
+                        <span className="font-semibold text-neutral-900">
+                          Aid Stations:
+                        </span>{" "}
+                        {asText(f.voices_aid_stations)}
+                      </div>
+                    )}
+
+                    {f.voices_views_and_vibes && (
+                      <div>
+                        <span className="font-semibold text-neutral-900">
+                          Views and Vibes:
+                        </span>{" "}
+                        {asText(f.voices_views_and_vibes)}
+                      </div>
+                    )}
+
                     {f.voices_logistics && (
                       <div>
                         <span className="font-semibold text-neutral-900">
@@ -475,19 +483,29 @@ export default async function RacePage({
                     )}
                   </div>
 
-                  {/* Full interview link */}
-                  {f.voices_full_transcript_url && (
-                    <div className="mt-5">
+                  {/* Footer: runner info + interview link */}
+                  <div className="mt-5 flex items-center justify-between gap-4 border-t border-neutral-100 pt-4">
+                    <p className="text-xs text-neutral-500">
+                      {[
+                        asText(f.voices_name),
+                        f.voices_year_ran ? `Ran in ${f.voices_year_ran}` : "",
+                        asText(f.voices_finish_time),
+                        f.voices_itra_index ? `ITRA ${f.voices_itra_index}` : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                    {f.voices_full_transcript_url && (
                       <a
                         href={asText(f.voices_full_transcript_url)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm font-semibold text-neutral-900 underline hover:text-neutral-600"
+                        className="shrink-0 text-sm font-semibold text-neutral-900 underline hover:text-neutral-600"
                       >
                         Read full interview →
                       </a>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             )}
