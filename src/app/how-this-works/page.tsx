@@ -12,7 +12,10 @@ export default function HowThisWorksPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-neutral-50 to-white">
       {/* Hero */}
-      <section className="relative overflow-hidden bg-neutral-900" style={{ minHeight: "38vh" }}>
+      <section
+        className="relative overflow-hidden bg-neutral-900"
+        style={{ minHeight: "38vh" }}
+      >
         <Image
           src="/images/hero.jpg"
           alt="Trail running hero"
@@ -47,19 +50,21 @@ export default function HowThisWorksPage() {
       {/* Body */}
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <p className="text-base sm:text-lg leading-relaxed text-neutral-700">
-          Examining hundreds of ultra trail races in Europe greater than the
-          marathon distance, we index them taking into account total price for
-          each entry and total km in each race, to create a{" "}
+          We examine hundreds of trail races in Europe, looking at races
+          marathon distance or greater. Amongst the metrics we track is total
+          price and total km per race. If you divide them, you get a{" "}
           <span className="font-semibold text-neutral-900">"cost-per-km"</span>{" "}
-          metric, current for each year. This can help runners choose races in
-          different months, regions, and for different price points, helping
-          them create their best trail season yet.
+          metric. A 200 euro, 100 km race in Austria? Easy, 2.00 euros per km.
+          An 80 euro, 161 km race in Ireland? Also easy, 0.50 euros per km. This
+          metric is a cost metric, it doesn´t tell the full story of the most
+          epic races you can choose in trail, but it helps runners choose races
+          in different months, regions, and for different price points. Discover
+          trail races, and plan your best trail season yet.
         </p>
 
         <p className="mt-6 text-base sm:text-lg leading-relaxed text-neutral-700">
-          As time goes on, our metrics will get better, helping to include
-          early bird prices, different price tiers, and other valuable
-          insights.
+          As time goes on, our metrics will get better, helping to include early
+          bird prices, different price tiers, and other valuable insights.
         </p>
 
         {/* Back link */}
