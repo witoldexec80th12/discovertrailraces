@@ -395,18 +395,6 @@ export default async function RacePage({
                 </h2>
 
                 <div className="mt-4 rounded-2xl border border-neutral-200 bg-white p-5">
-                  {/* Header */}
-                  <div className="text-xs text-neutral-500 mb-3">
-                    {[
-                      asText(f.voices_name),
-                      f.voices_year_ran ? `Ran in ${f.voices_year_ran}` : "",
-                      asText(f.voices_finish_time),
-                      f.voices_itra_index ? `ITRA ${f.voices_itra_index}` : "",
-                    ]
-                      .filter(Boolean)
-                      .join(" · ")}
-                  </div>
-
                   {/* Main quote */}
                   <div className="mb-1">
                     <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
