@@ -133,7 +133,8 @@ export default async function TempHomePage() {
     },
     {
       tag: "Inspiration & Planning",
-      title: "Run with Kilian: Kilian Jornet's runnable 2026 race schedule",
+      title:
+        "Run like Kilian: A guide to fastpacking Kilian´s 2026 race schedule",
     },
     {
       tag: "Travel & Racing",
@@ -221,14 +222,13 @@ export default async function TempHomePage() {
 
       {/* ── FEATURED RACES ─────────────────────────────────────── */}
       <section className="px-6 sm:px-10 lg:px-16 py-14 sm:py-20 bg-white">
-        <div className="flex items-start justify-between gap-8 mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight shrink-0">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-8 mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight sm:shrink-0">
             Featured Races
           </h2>
           <div className="flex items-start gap-6">
-            <p className="text-base text-neutral-500 leading-snug text-right max-w-xs sm:max-w-sm">
-              Selected trail races in Europe with an emphasis on good value,
-              culture, and shorter drives from airports.
+            <p className="text-base text-neutral-500 leading-snug sm:text-right max-w-xl sm:max-w-sm">
+              Selected trail races in Europe with an emphasis on good cost value, shorter drives from airports, and strong race culture.
             </p>
             <Link
               href="/cost"
@@ -256,11 +256,11 @@ export default async function TempHomePage() {
         {/* Remote featured — 3 cards below (homepage_remote_featured) */}
         {remoteRaces.length > 0 && (
           <div className="mt-12 pt-10 border-t border-neutral-200">
-            <div className="flex items-start justify-between gap-8 mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight shrink-0">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-8 mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight sm:shrink-0">
                 Remote Destinations
               </h2>
-              <p className="text-base text-neutral-500 leading-snug text-right max-w-xs sm:max-w-sm">
+              <p className="text-base text-neutral-500 leading-snug sm:text-right max-w-xl sm:max-w-sm">
                 Epic trail races, 3 hours or more from major airports.
               </p>
             </div>
