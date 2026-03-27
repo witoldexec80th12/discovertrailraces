@@ -28,7 +28,7 @@ type EntryFeeFields = {
   "AUTO Fee used"?: number;
   "AUTO €/km"?: number;
   "AUTO Price Bands"?: string;
-  "Last Checked"?: string;
+  "Last Checked "?: string;
   voices_name?: string;
   voices_main_description?: string;
   voices_surprise?: string;
@@ -338,14 +338,21 @@ export default async function RacePage({
                 <p className="text-[10px] uppercase tracking-wider text-neutral-500">
                   Elevation Data
                 </p>
-                <p className="mt-1 text-sm font-semibold text-neutral-900">
-                  {[
-                    elevation ? `${elevation} m` : "",
-                    pctIncrease ? `${pctIncrease}` : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" · ") || "—"}
-                </p>
+                <div className="mt-1 space-y-1">
+                  {elevation ? (
+                    <p className="text-sm font-semibold text-neutral-900">
+                      {elevation} Meters Total
+                    </p>
+                  ) : null}
+                  {pctIncrease ? (
+                    <p className="text-sm font-semibold text-neutral-900">
+                      {pctIncrease} Predicted Elevation per KM
+                    </p>
+                  ) : null}
+                  {!elevation && !pctIncrease && (
+                    <p className="text-sm font-semibold text-neutral-900">—</p>
+                  )}
+                </div>
                 {pctIncrease && (
                   <p className="mt-3 text-xs leading-relaxed text-neutral-500">
                     In a circular course, on your average climb, you'll be going
@@ -390,11 +397,31 @@ export default async function RacePage({
             {/* Runner Voice */}
             {f.voices_main_description && (
               <div className="mt-10">
-                <h2 className="text-sm font-bold tracking-tight text-neutral-900">
-                  Runner Voice
-                </h2>
+                {/* Section header row */}
+                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                  <div>
+                    <span className="text-sm font-bold tracking-tight text-neutral-900">
+                      Runner Voice
+                    </span>
+                    <span className="ml-2 text-xs text-neutral-500">
+                      Real conversations with race participants
+                    </span>
+                  </div>
+                  <p className="text-xs text-neutral-500">
+                    {[
+                      asText(f.voices_name),
+                      f.voices_year_ran ? `Ran in ${f.voices_year_ran}` : "",
+                      asText(f.voices_finish_time),
+                      f.voices_itra_index
+                        ? `ITRA ${f.voices_itra_index}`
+                        : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
+                </div>
 
-                <div className="mt-4 rounded-2xl border border-neutral-200 bg-white p-5">
+                <div className="mt-4 rounded-2xl border-2 border-neutral-800 bg-neutral-50 p-5 shadow-md">
                   {/* Main quote */}
                   <div className="mb-1">
                     <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
@@ -471,36 +498,27 @@ export default async function RacePage({
                     )}
                   </div>
 
-                  {/* Footer: runner info + interview link */}
-                  <div className="mt-5 flex items-center justify-between gap-4 border-t border-neutral-100 pt-4">
-                    <p className="text-xs text-neutral-500">
-                      {[
-                        asText(f.voices_name),
-                        f.voices_year_ran ? `Ran in ${f.voices_year_ran}` : "",
-                        asText(f.voices_finish_time),
-                        f.voices_itra_index ? `ITRA ${f.voices_itra_index}` : "",
-                      ]
-                        .filter(Boolean)
-                        .join(" · ")}
-                    </p>
-                    {f.voices_full_transcript_url && (
+                  {/* Footer: interview link */}
+                  {f.voices_full_transcript_url && (
+                    <div className="mt-5 border-t border-neutral-200 pt-4 flex justify-end">
                       <a
                         href={asText(f.voices_full_transcript_url)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="shrink-0 text-sm font-semibold text-neutral-900 underline hover:text-neutral-600"
+                        className="text-sm font-semibold text-neutral-900 underline hover:text-neutral-600"
                       >
                         Read full interview →
                       </a>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
 
             {/* Debug / provenance */}
             <div className="mt-8 text-xs text-neutral-400">
-              Last checked: {asText(f["Last Checked"]) || "—"}
+              Last checked:{" "}
+              {formatDateShort(f["Last Checked "]) || "—"}
             </div>
           </div>
         </div>
