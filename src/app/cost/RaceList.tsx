@@ -237,11 +237,6 @@ export default function RaceList({
     setVisibleCount(nextVisible);
   }
 
-  async function handleShowAll() {
-    await fetchAll();
-    setVisibleCount(totalCount);
-  }
-
   return (
     <>
       <div className="space-y-3">
@@ -264,12 +259,6 @@ export default function RaceList({
               className="inline-flex items-center gap-2 rounded-full border border-neutral-300 bg-white px-6 py-2.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 hover:border-neutral-400 transition-colors"
             >
               Load 10 more
-            </button>
-            <button
-              onClick={handleShowAll}
-              className="inline-flex items-center gap-2 rounded-full bg-neutral-900 text-white px-6 py-2.5 text-sm font-semibold hover:bg-neutral-700 transition-colors"
-            >
-              Show all {totalCount} races
             </button>
           </div>
           <p className="text-xs text-neutral-400">
