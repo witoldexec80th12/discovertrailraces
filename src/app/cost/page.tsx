@@ -7,6 +7,9 @@ import { Suspense } from "react";
 import FilterBar from "./FilterBar";
 import RaceList from "./RaceList";
 
+// Cache the page for 1 hour. Increase to e.g. 86400 (24h) when data updates are very infrequent.
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Cost Per KM | Discover Trail Races",
   description:
@@ -131,7 +134,7 @@ export default async function CostPage({
       filterByFormula: "NOT({series_stage}=TRUE())",
       "sort[0][field]": "AUTO €/km",
       "sort[0][direction]": "asc",
-    });
+    }, revalidate as number);
   } catch (e) {
     error = e instanceof Error ? e.message : "Failed to load data";
   }

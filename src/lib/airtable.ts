@@ -10,9 +10,15 @@ if (!AIRTABLE_TOKEN || !AIRTABLE_BASE_ID) {
   throw new Error("Missing AIRTABLE_TOKEN or AIRTABLE_BASE_ID in env");
 }
 
+function fetchOptions(revalidate: number | false): RequestInit {
+  if (revalidate === false) return { cache: "no-store" };
+  return { next: { revalidate } } as RequestInit;
+}
+
 export async function airtableFetch<TFields>(
   tableName: string,
   params: Record<string, string | number | boolean | undefined> = {},
+  revalidate: number | false = false,
 ): Promise<AirtableRecord<TFields>[]> {
   const url = new URL(
     `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(tableName)}`,
@@ -25,7 +31,7 @@ export async function airtableFetch<TFields>(
 
   const res = await fetch(url.toString(), {
     headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` },
-    cache: "no-store",
+    ...fetchOptions(revalidate),
   });
 
   const data = await res.json().catch(() => ({}) as any);
@@ -54,6 +60,7 @@ export async function airtableFetch<TFields>(
 export async function airtableFetchAll<TFields>(
   tableName: string,
   params: Record<string, string | number | boolean | undefined> = {},
+  revalidate: number | false = false,
 ): Promise<AirtableRecord<TFields>[]> {
   const all: AirtableRecord<TFields>[] = [];
   const baseParams = { ...params, pageSize: 100 };
@@ -72,7 +79,7 @@ export async function airtableFetchAll<TFields>(
 
     const res = await fetch(url.toString(), {
       headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` },
-      cache: "no-store",
+      ...fetchOptions(revalidate),
     });
 
     const data = await res.json().catch(() => ({}) as any);
