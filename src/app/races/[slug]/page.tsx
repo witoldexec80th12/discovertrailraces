@@ -325,8 +325,8 @@ export default async function RacePage({
             )}
 
             {/* Planning facts */}
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="rounded-xl border border-neutral-200 p-4 bg-neutral-50">
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="sm:col-span-1 rounded-xl border border-neutral-200 p-4 bg-neutral-50">
                 <p className="text-[10px] uppercase tracking-wider text-neutral-500">
                   Terrain
                 </p>
@@ -334,7 +334,7 @@ export default async function RacePage({
                   {terrain || "—"}
                 </p>
               </div>
-              <div className="rounded-xl border border-neutral-200 p-4 bg-neutral-50">
+              <div className="sm:col-span-2 rounded-xl border border-neutral-200 p-4 bg-neutral-50">
                 <p className="text-[10px] uppercase tracking-wider text-neutral-500">
                   Elevation Data
                 </p>
