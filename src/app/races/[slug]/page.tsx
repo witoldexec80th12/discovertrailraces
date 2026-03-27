@@ -269,7 +269,7 @@ export default async function RacePage({
                 <p className="text-[10px] uppercase tracking-wider text-neutral-400">
                   Date
                 </p>
-                <p className="mt-1 text-sm font-semibold text-neutral-900">
+                <p className="mt-1 text-sm sm:text-2xl font-semibold text-neutral-900">
                   {dateLabel || "—"}
                 </p>
               </div>
@@ -277,7 +277,7 @@ export default async function RacePage({
                 <p className="text-[10px] uppercase tracking-wider text-neutral-400">
                   Entry fee
                 </p>
-                <p className="mt-1 text-sm font-semibold text-neutral-900">
+                <p className="mt-1 text-sm sm:text-2xl font-semibold text-neutral-900">
                   {formatMoney(fee, f.Currency)}
                 </p>
               </div>
@@ -285,7 +285,7 @@ export default async function RacePage({
                 <p className="text-[10px] uppercase tracking-wider text-neutral-400">
                   € / km
                 </p>
-                <p className="mt-1 text-sm font-semibold text-neutral-900">
+                <p className="mt-1 text-sm sm:text-2xl font-semibold text-neutral-900">
                   {formatEurPerKm(epk)}
                 </p>
               </div>
@@ -295,22 +295,22 @@ export default async function RacePage({
                 </p>
                 <div className="mt-1 flex flex-col gap-0.5">
                   {isUtmb && (
-                    <p className="text-sm font-semibold text-neutral-900">
+                    <p className="text-sm sm:text-2xl font-semibold text-neutral-900">
                       {utmbSeries}
                     </p>
                   )}
                   {wserSeries && (
-                    <p className="text-sm font-semibold text-neutral-900">
+                    <p className="text-sm sm:text-2xl font-semibold text-neutral-900">
                       {wserSeries}
                     </p>
                   )}
                   {torSeries && (
-                    <p className="text-sm font-semibold text-neutral-900">
+                    <p className="text-sm sm:text-2xl font-semibold text-neutral-900">
                       {torSeries}
                     </p>
                   )}
                   {!isUtmb && !wserSeries && !torSeries && (
-                    <p className="text-sm font-semibold text-neutral-900">—</p>
+                    <p className="text-sm sm:text-2xl font-semibold text-neutral-900">—</p>
                   )}
                 </div>
               </div>
@@ -318,7 +318,7 @@ export default async function RacePage({
 
             {blurb && (
               <div className="mt-6">
-                <p className="text-sm leading-relaxed text-neutral-700">
+                <p className="text-sm sm:text-lg leading-relaxed text-neutral-700">
                   {blurb}
                 </p>
               </div>

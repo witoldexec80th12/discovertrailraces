@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ImageIcon, ArrowUpRight } from "lucide-react";
 import type React from "react";
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 10;
 
 type AirtableAttachment = {
   id: string;
@@ -26,7 +26,7 @@ type EntryFeeFields = {
   "AUTO Fee used"?: number;
   "AUTO €/km"?: number;
   "AUTO Price Bands"?: string;
-  "Last Checked"?: string;
+  "Last Checked "?: string;
   LKP_featured_image?: AirtableAttachment[];
   temporary_image?: AirtableAttachment[];
   "Featured Blurb"?: string | string[];
@@ -200,7 +200,7 @@ function RaceCard({ r }: { r: RaceRecord }) {
 }
 
 export default function RaceList({
-  records,
+  records: initialRecords,
   totalCount,
   isFiltered,
 }: {
@@ -208,10 +208,39 @@ export default function RaceList({
   totalCount: number;
   isFiltered: boolean;
 }) {
+  const [allRecords, setAllRecords] = useState<RaceRecord[] | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
-  const displayed = isFiltered ? records : records.slice(0, visibleCount);
-  const hasMore = !isFiltered && visibleCount < records.length;
+  const source = allRecords ?? initialRecords;
+  const displayed = isFiltered ? source : source.slice(0, visibleCount);
+  const hasMore = !isFiltered && visibleCount < totalCount;
+
+  async function fetchAll(): Promise<RaceRecord[]> {
+    if (allRecords) return allRecords;
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/races");
+      const data = await res.json();
+      setAllRecords(data.records);
+      return data.records as RaceRecord[];
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  async function handleLoadMore() {
+    const nextVisible = visibleCount + PAGE_SIZE;
+    if (nextVisible > initialRecords.length && !allRecords) {
+      await fetchAll();
+    }
+    setVisibleCount(nextVisible);
+  }
+
+  async function handleShowAll() {
+    await fetchAll();
+    setVisibleCount(totalCount);
+  }
 
   return (
     <>
@@ -221,29 +250,43 @@ export default function RaceList({
         ))}
       </div>
 
-      {hasMore && (
-        <div className="mt-6 flex flex-col items-center gap-2">
-          <button
-            onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-            className="inline-flex items-center gap-2 rounded-full border border-neutral-300 bg-white px-6 py-2.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 hover:border-neutral-400 transition-colors"
-          >
-            Load more races
-          </button>
+      {isLoading && (
+        <div className="mt-6 flex justify-center">
+          <p className="text-sm text-neutral-400">Loading races…</p>
+        </div>
+      )}
+
+      {hasMore && !isLoading && (
+        <div className="mt-6 flex flex-col items-center gap-3">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleLoadMore}
+              className="inline-flex items-center gap-2 rounded-full border border-neutral-300 bg-white px-6 py-2.5 text-sm font-semibold text-neutral-700 hover:bg-neutral-50 hover:border-neutral-400 transition-colors"
+            >
+              Load 10 more
+            </button>
+            <button
+              onClick={handleShowAll}
+              className="inline-flex items-center gap-2 rounded-full bg-neutral-900 text-white px-6 py-2.5 text-sm font-semibold hover:bg-neutral-700 transition-colors"
+            >
+              Show all {totalCount} races
+            </button>
+          </div>
           <p className="text-xs text-neutral-400">
-            Showing {displayed.length} of {records.length}
+            Showing {displayed.length} of {totalCount}
           </p>
         </div>
       )}
 
       {isFiltered && (
         <p className="mt-8 text-xs text-neutral-400 text-center">
-          {records.length} result{records.length !== 1 ? "s" : ""} · sorted by &euro;/km
+          {source.length} result{source.length !== 1 ? "s" : ""} · sorted by &euro;/km
         </p>
       )}
 
-      {!isFiltered && !hasMore && records.length > 0 && (
+      {!isFiltered && !hasMore && !isLoading && source.length > 0 && (
         <p className="mt-8 text-xs text-neutral-400 text-center">
-          All {records.length} races shown · sorted by &euro;/km
+          All {source.length} races shown · sorted by &euro;/km
         </p>
       )}
     </>

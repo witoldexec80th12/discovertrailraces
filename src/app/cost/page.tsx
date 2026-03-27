@@ -283,7 +283,11 @@ export default async function CostPage({
           </div>
         ) : (
           <RaceList
-            records={filteredRecords}
+            records={
+              selectedCountry || selectedMonth
+                ? filteredRecords
+                : filteredRecords.slice(0, 10)
+            }
             totalCount={records.length}
             isFiltered={!!(selectedCountry || selectedMonth)}
           />
