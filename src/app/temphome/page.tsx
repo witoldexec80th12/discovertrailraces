@@ -222,17 +222,17 @@ export default async function TempHomePage() {
 
       {/* ── FEATURED RACES ─────────────────────────────────────── */}
       <section className="px-6 sm:px-10 lg:px-16 py-14 sm:py-20 bg-white">
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-8 mb-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight sm:shrink-0">
-            Featured Races
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 sm:gap-12 mb-8">
+          <h2 className="text-sm font-bold uppercase tracking-[0.18em] text-neutral-900 sm:shrink-0 sm:pt-2">
+            FEATURED
           </h2>
-          <div className="flex items-start gap-6">
-            <p className="text-base text-neutral-500 leading-snug sm:text-right max-w-xl sm:max-w-sm">
-              Selected trail races in Europe with an emphasis on good cost value, shorter drives from airports, and strong race culture.
+          <div className="flex items-start gap-6 flex-1">
+            <p className="text-2xl sm:text-3xl font-bold text-neutral-900 leading-snug flex-1">
+              Selected trail races in Europe with an emphasis on good value, culture, and shorter drives from airports.
             </p>
             <Link
               href="/cost"
-              className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold text-neutral-500 hover:text-neutral-900 transition-colors shrink-0"
+              className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold text-neutral-500 hover:text-neutral-900 transition-colors shrink-0 mt-2"
             >
               View all races <ArrowRight className="w-4 h-4" />
             </Link>
@@ -256,12 +256,12 @@ export default async function TempHomePage() {
         {/* Remote featured — 3 cards below (homepage_remote_featured) */}
         {remoteRaces.length > 0 && (
           <div className="mt-12 pt-10 border-t border-neutral-200">
-            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-8 mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-neutral-900 tracking-tight sm:shrink-0">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 sm:gap-12 mb-8">
+              <h2 className="text-sm font-bold uppercase tracking-[0.18em] text-neutral-900 sm:shrink-0 sm:pt-2">
                 Remote Destinations
               </h2>
-              <p className="text-base text-neutral-500 leading-snug sm:text-right max-w-xl sm:max-w-sm">
-                Epic trail races, 3 hours or more from major airports.
+              <p className="text-2xl sm:text-3xl font-bold text-neutral-900 leading-snug flex-1">
+                Trail races off the beaten path, 3 hours or more from major airports.
               </p>
             </div>
             <RaceGrid races={remoteRaces} />
