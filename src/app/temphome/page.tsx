@@ -249,7 +249,7 @@ export default async function TempHomePage() {
         {remoteRaces.length > 0 && (
           <div className="mt-12 pt-10 border-t border-neutral-200">
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-10 mb-8">
-              <h2 className="text-5xl sm:text-7xl font-extrabold uppercase tracking-tight text-neutral-900 shrink-0">
+              <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-neutral-900 shrink-0">
                 Remote Destinations
               </h2>
               <p className="text-base sm:text-lg font-semibold text-neutral-700 leading-snug max-w-xs sm:max-w-[260px]">
