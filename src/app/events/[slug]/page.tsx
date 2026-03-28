@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { notFound } from "next/navigation";
+import { Star } from "lucide-react";
 
 export const revalidate = 3600;
 
@@ -192,14 +193,14 @@ export default async function EventPage({
             )}
 
             {/* Distance cards */}
-            <h2 className="text-[10px] uppercase tracking-wider text-neutral-400 mb-4">
+            <h2 className="text-[10px] uppercase tracking-wider text-neutral-400 mb-5">
               Race Distances
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {sorted.map((row) => {
                 const f = row.fields;
-                const primary = isPrimary(row);
+                const isP = isPrimary(row);
                 const { distance } = extractEventName(asText(f.ID));
                 const distKm = Array.isArray(f["Distance (km)"])
                   ? f["Distance (km)"][0]
@@ -212,66 +213,80 @@ export default async function EventPage({
                   ? f["AUTO €/km"]
                   : null;
                 const rowSlug = f["Race Slug"]?.[0];
-                const href = rowSlug ? `/races/${rowSlug}` : null;
+                const href = isP && rowSlug ? `/races/${rowSlug}` : null;
 
-                const card = (
+                const cardInner = (
                   <div
-                    className={`rounded-xl p-5 flex flex-col gap-4 transition-all duration-200 ${
-                      primary
-                        ? "border-2 border-neutral-900 bg-white shadow-md hover:shadow-lg"
-                        : "border border-neutral-200 bg-neutral-50 hover:border-neutral-300 hover:shadow-sm"
-                    } ${href ? "cursor-pointer" : ""}`}
+                    className={`h-full rounded-2xl flex flex-col gap-6 transition-all duration-200 ${
+                      isP
+                        ? "border-2 border-neutral-900 bg-white p-7 sm:p-9 shadow-lg hover:shadow-xl"
+                        : "border border-neutral-200 bg-neutral-50 p-7 sm:p-9"
+                    }`}
                   >
-                    {/* Distance label + badge */}
-                    <div className="flex items-start justify-between gap-2">
+                    {/* Top: badge + distance */}
+                    <div>
+                      {isP ? (
+                        <div className="flex items-center gap-2 mb-3">
+                          <Star className="w-4 h-4 fill-neutral-900 text-neutral-900" />
+                          <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-900">
+                            Main Event
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="mb-3 h-5" />
+                      )}
                       <span
-                        className={`text-2xl tracking-tight ${
-                          primary ? "font-extrabold text-neutral-900" : "font-bold text-neutral-700"
+                        className={`block tracking-tight leading-none ${
+                          isP
+                            ? "text-5xl sm:text-6xl font-extrabold text-neutral-900"
+                            : "text-4xl sm:text-5xl font-bold text-neutral-500"
                         }`}
                       >
                         {distLabel}
                       </span>
-                      {primary && (
-                        <span className="shrink-0 rounded-full bg-neutral-900 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
-                          Primary
-                        </span>
-                      )}
                     </div>
 
                     {/* Stats */}
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-6">
                       <div>
-                        <p className="text-[10px] uppercase tracking-wider text-neutral-400">
+                        <p className="text-[10px] uppercase tracking-wider text-neutral-400 mb-1">
                           Entry Fee
                         </p>
-                        <p className={`mt-0.5 text-lg tabular-nums ${primary ? "font-bold text-neutral-900" : "font-semibold text-neutral-700"}`}>
+                        <p className={`text-2xl sm:text-3xl tabular-nums ${isP ? "font-extrabold text-neutral-900" : "font-bold text-neutral-500"}`}>
                           {formatMoney(fee, f.Currency)}
                         </p>
                       </div>
                       <div>
-                        <p className="text-[10px] uppercase tracking-wider text-neutral-400">
+                        <p className="text-[10px] uppercase tracking-wider text-neutral-400 mb-1">
                           Price per KM
                         </p>
-                        <p className={`mt-0.5 text-lg tabular-nums ${primary ? "font-bold text-neutral-900" : "font-semibold text-neutral-700"}`}>
+                        <p className={`text-2xl sm:text-3xl tabular-nums ${isP ? "font-extrabold text-neutral-900" : "font-bold text-neutral-500"}`}>
                           {formatEurPerKm(epk)}
                         </p>
                       </div>
                     </div>
 
-                    {href && (
-                      <p className="text-xs font-semibold text-neutral-400 group-hover:text-neutral-700 transition-colors">
-                        View full details →
-                      </p>
-                    )}
+                    {/* Footer message */}
+                    <div className="mt-auto pt-4 border-t border-neutral-100">
+                      {isP ? (
+                        <p className="text-sm font-semibold text-neutral-900 group-hover:underline">
+                          View full race details →
+                        </p>
+                      ) : (
+                        <p className="text-xs text-neutral-400 leading-relaxed">
+                          Click on the Main Event for more information regarding the race.
+                        </p>
+                      )}
+                    </div>
                   </div>
                 );
 
                 return href ? (
                   <Link key={row.id} href={href} className="group block">
-                    {card}
+                    {cardInner}
                   </Link>
                 ) : (
-                  <div key={row.id}>{card}</div>
+                  <div key={row.id}>{cardInner}</div>
                 );
               })}
             </div>
