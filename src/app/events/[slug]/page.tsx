@@ -68,8 +68,8 @@ function extractEventName(idField: string): { eventName: string; distance: strin
   return { eventName: idField, distance: "" };
 }
 
-function isPrimary(f: EntryFeeFields): boolean {
-  const val = f["Is Primary Distance (from Distance)"];
+function isPrimary(row: { fields: EntryFeeFields }): boolean {
+  const val = row.fields["Is Primary Distance (from Distance)"];
   if (Array.isArray(val)) return val.some(Boolean);
   return !!val;
 }
