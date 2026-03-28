@@ -223,10 +223,10 @@ export default async function TempHomePage() {
       {/* ── FEATURED RACES ─────────────────────────────────────── */}
       <section className="px-6 sm:px-10 lg:px-16 py-14 sm:py-20 bg-white">
         <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-10 mb-8">
-          <h2 className="text-5xl sm:text-7xl font-extrabold uppercase tracking-tight text-neutral-900 shrink-0">
+          <h2 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-tight text-neutral-900 shrink-0">
             FEATURED
           </h2>
-          <p className="text-base sm:text-lg font-semibold text-neutral-700 leading-snug max-w-xs sm:max-w-[260px]">
+          <p className="text-xl sm:text-2xl font-semibold text-neutral-700 leading-snug max-w-[560px]">
             Selected trail races in Europe with an emphasis on good value, culture, and shorter drives from airports.
           </p>
         </div>
