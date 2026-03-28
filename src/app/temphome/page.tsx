@@ -331,22 +331,16 @@ export default async function TempHomePage() {
                 Runner Voice
               </p>
               <blockquote className="text-xl sm:text-2xl font-semibold text-neutral-900 leading-snug">
-                &ldquo;Long climbs but incredibly runnable — bring poles for the
-                descents. The scenery is flawless and the organisation is on
-                another level.&rdquo;
+                &ldquo;Make sure to bring a wind-protection layer and if you are not planning to push hard in the first half — possibly some additional thermal layer, as it can get really cold at kilometer 30 near the Studena Dam.&rdquo;
               </blockquote>
             </div>
             <div className="mt-8 flex items-center justify-between">
               <div>
-                <p className="text-sm font-bold text-neutral-900">Clara M.</p>
+                <p className="text-sm font-bold text-neutral-900">Lambrin</p>
                 <p className="text-xs text-neutral-500 mt-0.5">
-                  Ran UTMB 2024&nbsp;&middot;&nbsp;ITRA
-                  690&nbsp;&middot;&nbsp;23h 12m
+                  Vitosha Super Mountain Trail 100K, 2025&nbsp;&middot;&nbsp;ITRA 491
                 </p>
               </div>
-              <span className="text-xs font-semibold text-neutral-400 italic">
-                Placeholder — real voices coming soon
-              </span>
             </div>
           </div>
         </div>
