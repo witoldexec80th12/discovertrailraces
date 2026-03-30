@@ -18,7 +18,7 @@ Next.js 16 application (App Router) for comparing European trail race costs. Fea
 
 ## Directory Structure
 - `src/app/` — App Router pages and layouts
-- `src/app/page.tsx` — Home page (default Next.js starter)
+- `src/app/page.tsx` — Home page (hero + featured races + runner voice + articles)
 - `src/app/cost/page.tsx` — **Cost Per KM page**: curated card feed with cost/km analysis (~429 lines)
 - `src/app/races/[slug]/page.tsx` — **Race detail page**: individual race view with stats, blurb, terrain, logistics (~347 lines)
 - `src/app/layout.tsx` — Root layout with Geist fonts and metadata
