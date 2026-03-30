@@ -167,7 +167,7 @@ export default async function HomePage() {
               alt="DiscoverTrailRaces"
               width={168}
               height={72}
-              className="h-10 sm:h-12 w-auto"
+              className="h-20 sm:h-24 w-auto"
               priority
             />
           </Link>
