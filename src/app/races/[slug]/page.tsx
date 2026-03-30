@@ -1,5 +1,5 @@
 // src/app/races/[slug]/page.tsx
-import { airtableFetch } from "@/lib/airtable";
+import { airtableFetch, type AirtableRecord } from "@/lib/airtable";
 import { AIRTABLE } from "@/lib/airtableConfig";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -124,7 +124,9 @@ function extractNameAndDistance(idField: string): {
   return { name: idField, distance: "" };
 }
 
-async function fetchEntryFeeRowsForSlug(slug: string) {
+async function fetchEntryFeeRowsForSlug(
+  slug: string
+): Promise<{ rows: AirtableRecord<EntryFeeFields>[]; fromView: boolean }> {
   const filterByFormula = `FIND("${slug}", ARRAYJOIN({Race Slug}))`;
 
   // First: try with the public view (respects curated ordering, avoids multi-distance collisions)
@@ -133,13 +135,14 @@ async function fetchEntryFeeRowsForSlug(slug: string) {
     filterByFormula,
     pageSize: 50,
   });
-  if (viewRows.length > 0) return viewRows;
+  if (viewRows.length > 0) return { rows: viewRows, fromView: true };
 
   // Fallback: search without view filter (handles slugs not in the public view)
-  return airtableFetch<EntryFeeFields>(AIRTABLE.TABLES.ENTRY_FEES, {
+  const fallbackRows = await airtableFetch<EntryFeeFields>(AIRTABLE.TABLES.ENTRY_FEES, {
     filterByFormula,
     pageSize: 50,
   });
+  return { rows: fallbackRows, fromView: false };
 }
 
 export async function generateMetadata({
@@ -148,10 +151,10 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const rows = await fetchEntryFeeRowsForSlug(slug);
+  const { rows, fromView } = await fetchEntryFeeRowsForSlug(slug);
 
-  // Multi-distance → page will redirect; return generic meta
-  if (rows.length > 1) return { title: "Race | Discover Trail Races" };
+  // Multi-distance fallback → page will redirect; return generic meta
+  if (!fromView && rows.length > 1) return { title: "Race | Discover Trail Races" };
 
   const primary =
     rows.find((r) => r.fields["Is Primary Distance (from Distance)"]) ??
@@ -175,11 +178,12 @@ export default async function RacePage({
 }) {
   const { slug } = await params;
 
-  const rows = await fetchEntryFeeRowsForSlug(slug);
+  const { rows, fromView } = await fetchEntryFeeRowsForSlug(slug);
   if (!rows.length) notFound();
 
-  // Multiple distances for this slug → hand off to the events page
-  if (rows.length > 1) {
+  // Only redirect to events if we're in the unfiltered fallback AND multiple rows found.
+  // If rows came from the curated public view, always render the race detail page.
+  if (!fromView && rows.length > 1) {
     redirect(`/events/${slug}`);
   }
 
