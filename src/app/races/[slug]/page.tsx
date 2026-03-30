@@ -72,6 +72,7 @@ type EntryFeeFields = {
   LKP_lessthan30?: boolean;
   LKP_cartransfertime?: string | number;
   LKP_officialwebsite?: string | string[];
+  LKP_Far?: boolean | boolean[];
 };
 
 function asText(v: unknown): string {
@@ -220,6 +221,7 @@ export default async function RacePage({
   const logistics = asText(f.LKP_logistics);
   const airport = asText(f.LKP_primaryairport);
   const airportCode = asText(f.LKP_airportcode);
+  const isFar = Array.isArray(f.LKP_Far) ? f.LKP_Far.some(Boolean) : !!f.LKP_Far;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-neutral-50 to-white">
@@ -395,6 +397,29 @@ export default async function RacePage({
                       {logistics || "—"}
                     </p>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* FAR warning */}
+            {isFar && (
+              <div className="mt-6 flex items-start gap-4 rounded-xl border-2 border-blue-600 bg-blue-50 px-5 py-4">
+                <div className="shrink-0 mt-0.5">
+                  <Image
+                    src="/images/icon_far.png"
+                    alt="Far location icon"
+                    width={44}
+                    height={44}
+                    className="opacity-75"
+                  />
+                </div>
+                <div>
+                  <span className="text-sm font-extrabold tracking-widest text-blue-700 uppercase">
+                    FAR
+                  </span>
+                  <p className="mt-0.5 text-sm text-blue-900 leading-relaxed">
+                    Traveling to this race isn&apos;t easy. It&apos;ll possibly take 3+ hours from the closest large airport. Plan your adventure accordingly.
+                  </p>
                 </div>
               </div>
             )}
