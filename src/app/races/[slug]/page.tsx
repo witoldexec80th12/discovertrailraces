@@ -127,12 +127,19 @@ function extractNameAndDistance(idField: string): {
 async function fetchEntryFeeRowsForSlug(slug: string) {
   const filterByFormula = `FIND("${slug}", ARRAYJOIN({Race Slug}))`;
 
-  const rows = await airtableFetch<EntryFeeFields>(AIRTABLE.TABLES.ENTRY_FEES, {
+  // First: try with the public view (respects curated ordering, avoids multi-distance collisions)
+  const viewRows = await airtableFetch<EntryFeeFields>(AIRTABLE.TABLES.ENTRY_FEES, {
+    view: AIRTABLE.VIEWS.ENTRY_FEES_PUBLIC,
     filterByFormula,
     pageSize: 50,
   });
+  if (viewRows.length > 0) return viewRows;
 
-  return rows;
+  // Fallback: search without view filter (handles slugs not in the public view)
+  return airtableFetch<EntryFeeFields>(AIRTABLE.TABLES.ENTRY_FEES, {
+    filterByFormula,
+    pageSize: 50,
+  });
 }
 
 export async function generateMetadata({
