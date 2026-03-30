@@ -4,7 +4,7 @@ import { AIRTABLE } from "@/lib/airtableConfig";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 export const revalidate = 3600; // 1 hour ISR (safe MVP default)
 
@@ -123,13 +123,9 @@ function extractNameAndDistance(idField: string): {
 }
 
 async function fetchEntryFeeRowsForSlug(slug: string) {
-  // We fetch from Entry Fees and filter by formula (works even without a dedicated view)
-  // "Race Slug" is an array field in your schema; Airtable stores it as text in formula context.
-  // We use FIND() to be tolerant.
   const filterByFormula = `FIND("${slug}", ARRAYJOIN({Race Slug}))`;
 
   const rows = await airtableFetch<EntryFeeFields>(AIRTABLE.TABLES.ENTRY_FEES, {
-    view: AIRTABLE.VIEWS.ENTRY_FEES_PUBLIC, // ok to keep public view
     filterByFormula,
     pageSize: 50,
   });
@@ -144,6 +140,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const rows = await fetchEntryFeeRowsForSlug(slug);
+
+  // Multi-distance → page will redirect; return generic meta
+  if (rows.length > 1) return { title: "Race | Discover Trail Races" };
 
   const primary =
     rows.find((r) => r.fields["Is Primary Distance (from Distance)"]) ??
@@ -169,6 +168,11 @@ export default async function RacePage({
 
   const rows = await fetchEntryFeeRowsForSlug(slug);
   if (!rows.length) notFound();
+
+  // Multiple distances for this slug → hand off to the events page
+  if (rows.length > 1) {
+    redirect(`/events/${slug}`);
+  }
 
   // Prefer primary distance row; otherwise first
   const row =
