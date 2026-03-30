@@ -71,6 +71,7 @@ type EntryFeeFields = {
   LKP_airportcode?: string | string[];
   LKP_lessthan30?: boolean;
   LKP_cartransfertime?: string | number;
+  LKP_officialwebsite?: string | string[];
 };
 
 function asText(v: unknown): string {
@@ -519,10 +520,22 @@ export default async function RacePage({
               </div>
             )}
 
-            {/* Debug / provenance */}
-            <div className="mt-8 text-xs text-neutral-400">
-              Last checked:{" "}
-              {formatDateShort(f["Last Checked "]) || "—"}
+            {/* Provenance */}
+            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-1 text-xs text-neutral-400">
+              <span>
+                Last checked:{" "}
+                {formatDateShort(f["Last Checked "]) || "—"}
+              </span>
+              {asText(f.LKP_officialwebsite) && (
+                <a
+                  href={asText(f.LKP_officialwebsite)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-neutral-500 underline hover:text-neutral-700 transition-colors"
+                >
+                  Official website ↗
+                </a>
+              )}
             </div>
           </div>
         </div>
