@@ -7,8 +7,8 @@ import { Suspense } from "react";
 import FilterBar from "./FilterBar";
 import RaceList from "./RaceList";
 
-// Cache the page for 1 hour. Increase to e.g. 86400 (24h) when data updates are very infrequent.
-export const revalidate = 3600;
+// Cache the page for 5 minutes. Airtable changes will be visible within 5 minutes.
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Cost Per KM | Discover Trail Races",
