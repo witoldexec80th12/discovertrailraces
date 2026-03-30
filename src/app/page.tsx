@@ -149,12 +149,13 @@ export default async function HomePage() {
         className="relative overflow-hidden"
         style={{ minHeight: "62vh" }}
       >
-        <Image
-          src="/images/hero.jpg"
-          alt="Trail runner in the mountains"
-          fill
-          className="object-cover"
-          priority
+        <video
+          src="/videos/dollyvideo.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-black/10" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
