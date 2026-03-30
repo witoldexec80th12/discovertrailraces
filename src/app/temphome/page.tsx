@@ -226,7 +226,7 @@ export default async function TempHomePage() {
           <h2 className="text-3xl sm:text-4xl font-extrabold uppercase tracking-tight text-neutral-900 shrink-0">
             FEATURED
           </h2>
-          <p className="text-xl sm:text-2xl font-semibold text-neutral-700 leading-snug max-w-[560px]">
+          <p className="text-base sm:text-lg font-semibold text-neutral-700 leading-snug max-w-[480px]">
             Selected trail races in Europe with an emphasis on good value, culture, and shorter drives from airports.
           </p>
         </div>
@@ -252,7 +252,7 @@ export default async function TempHomePage() {
               <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-neutral-900 shrink-0">
                 Remote Destinations
               </h2>
-              <p className="text-base sm:text-lg font-semibold text-neutral-700 leading-snug max-w-xs sm:max-w-[260px]">
+              <p className="text-base sm:text-lg font-semibold text-neutral-700 leading-snug max-w-[320px]">
                 Trail races off the beaten path, 3 hours or more from major airports.
               </p>
             </div>
