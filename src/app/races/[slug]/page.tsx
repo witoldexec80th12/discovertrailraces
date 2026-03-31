@@ -1,10 +1,10 @@
 // src/app/races/[slug]/page.tsx
-import { airtableFetch, type AirtableRecord } from "@/lib/airtable";
+import { airtableFetch } from "@/lib/airtable";
 import { AIRTABLE } from "@/lib/airtableConfig";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
 export const revalidate = 3600; // 1 hour ISR (safe MVP default)
 
@@ -71,8 +71,6 @@ type EntryFeeFields = {
   LKP_airportcode?: string | string[];
   LKP_lessthan30?: boolean;
   LKP_cartransfertime?: string | number;
-  LKP_officialwebsite?: string | string[];
-  LKP_Far?: boolean | boolean[];
 };
 
 function asText(v: unknown): string {
@@ -124,25 +122,19 @@ function extractNameAndDistance(idField: string): {
   return { name: idField, distance: "" };
 }
 
-async function fetchEntryFeeRowsForSlug(
-  slug: string
-): Promise<{ rows: AirtableRecord<EntryFeeFields>[]; fromView: boolean }> {
+async function fetchEntryFeeRowsForSlug(slug: string) {
+  // We fetch from Entry Fees and filter by formula (works even without a dedicated view)
+  // "Race Slug" is an array field in your schema; Airtable stores it as text in formula context.
+  // We use FIND() to be tolerant.
   const filterByFormula = `FIND("${slug}", ARRAYJOIN({Race Slug}))`;
 
-  // First: try with the public view (respects curated ordering, avoids multi-distance collisions)
-  const viewRows = await airtableFetch<EntryFeeFields>(AIRTABLE.TABLES.ENTRY_FEES, {
-    view: AIRTABLE.VIEWS.ENTRY_FEES_PUBLIC,
+  const rows = await airtableFetch<EntryFeeFields>(AIRTABLE.TABLES.ENTRY_FEES, {
+    view: AIRTABLE.VIEWS.ENTRY_FEES_PUBLIC, // ok to keep public view
     filterByFormula,
     pageSize: 50,
   });
-  if (viewRows.length > 0) return { rows: viewRows, fromView: true };
 
-  // Fallback: search without view filter (handles slugs not in the public view)
-  const fallbackRows = await airtableFetch<EntryFeeFields>(AIRTABLE.TABLES.ENTRY_FEES, {
-    filterByFormula,
-    pageSize: 50,
-  });
-  return { rows: fallbackRows, fromView: false };
+  return rows;
 }
 
 export async function generateMetadata({
@@ -151,10 +143,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const { rows, fromView } = await fetchEntryFeeRowsForSlug(slug);
-
-  // Multi-distance fallback → page will redirect; return generic meta
-  if (!fromView && rows.length > 1) return { title: "Race | Discover Trail Races" };
+  const rows = await fetchEntryFeeRowsForSlug(slug);
 
   const primary =
     rows.find((r) => r.fields["Is Primary Distance (from Distance)"]) ??
@@ -178,14 +167,8 @@ export default async function RacePage({
 }) {
   const { slug } = await params;
 
-  const { rows, fromView } = await fetchEntryFeeRowsForSlug(slug);
+  const rows = await fetchEntryFeeRowsForSlug(slug);
   if (!rows.length) notFound();
-
-  // Only redirect to events if we're in the unfiltered fallback AND multiple rows found.
-  // If rows came from the curated public view, always render the race detail page.
-  if (!fromView && rows.length > 1) {
-    redirect(`/events/${slug}`);
-  }
 
   // Prefer primary distance row; otherwise first
   const row =
@@ -232,7 +215,6 @@ export default async function RacePage({
   const logistics = asText(f.LKP_logistics);
   const airport = asText(f.LKP_primaryairport);
   const airportCode = asText(f.LKP_airportcode);
-  const isFar = Array.isArray(f.LKP_Far) ? f.LKP_Far.some(Boolean) : !!f.LKP_Far;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-neutral-50 to-white">
@@ -412,29 +394,6 @@ export default async function RacePage({
               </div>
             )}
 
-            {/* FAR warning */}
-            {isFar && (
-              <div className="mt-6 flex items-start gap-4 rounded-xl border-2 border-blue-600 bg-blue-50 px-5 py-4">
-                <div className="shrink-0 mt-0.5">
-                  <Image
-                    src="/images/icon_far.png"
-                    alt="Far location icon"
-                    width={44}
-                    height={44}
-                    className="opacity-75"
-                  />
-                </div>
-                <div>
-                  <span className="text-sm font-extrabold tracking-widest text-blue-700 uppercase">
-                    FAR
-                  </span>
-                  <p className="mt-0.5 text-sm text-blue-900 leading-relaxed">
-                    Traveling to this race isn&apos;t easy. It&apos;ll possibly take 3+ hours from the closest large airport. Plan your adventure accordingly.
-                  </p>
-                </div>
-              </div>
-            )}
-
             {/* Runner Voice */}
             {f.voices_main_description && (
               <div className="mt-10">
@@ -556,22 +515,10 @@ export default async function RacePage({
               </div>
             )}
 
-            {/* Provenance */}
-            <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-1 text-xs text-neutral-400">
-              <span>
-                Last checked:{" "}
-                {formatDateShort(f["Last Checked "]) || "—"}
-              </span>
-              {asText(f.LKP_officialwebsite) && (
-                <a
-                  href={asText(f.LKP_officialwebsite)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-neutral-500 underline hover:text-neutral-700 transition-colors"
-                >
-                  Official website ↗
-                </a>
-              )}
+            {/* Debug / provenance */}
+            <div className="mt-8 text-xs text-neutral-400">
+              Last checked:{" "}
+              {formatDateShort(f["Last Checked "]) || "—"}
             </div>
           </div>
         </div>

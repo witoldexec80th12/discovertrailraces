@@ -8,7 +8,7 @@ import { ArrowRight, Mountain, MapPin } from "lucide-react";
 export const metadata: Metadata = {
   title: "Discover Trail Races — Home",
   description:
-    "Find better trail races, understand what they're really like, and compare real cost per kilometer.",
+    "Plan your strongest trail season yet. Transparent cost per kilometre, verified logistics, real runner insight.",
 };
 
 type AirtableAttachment = {
@@ -155,8 +155,6 @@ export default async function HomePage() {
           muted
           loop
           playsInline
-          preload="auto"
-          poster="/images/hero.jpg"
           className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-black/10" />
@@ -198,7 +196,12 @@ export default async function HomePage() {
               <br className="hidden sm:block" /> trail season yet.
             </h1>
             <p className="mt-4 text-base sm:text-lg text-white/75 font-medium">
-              Find better trail races, understand what they&apos;re really like, and compare real cost per kilometer.
+              Transparent cost per kilometre&nbsp;&middot;&nbsp;Verified
+              logistics&nbsp;&middot;&nbsp;Real runner insight
+            </p>
+            <p className="mt-1.5 text-sm sm:text-base text-white/60">
+              Everything you need to choose the right race and prepare with
+              confidence.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
