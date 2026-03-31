@@ -121,9 +121,10 @@ async function fetchView(
 }
 
 export default async function HomePage() {
-  const [featuredRaces, remoteRaces] = await Promise.all([
+  const [featuredRaces, remoteRaces, brutalRaces] = await Promise.all([
     fetchView(AIRTABLE.VIEWS.HOMEPAGE_FEATURED, 9),
     fetchView(AIRTABLE.VIEWS.HOMEPAGE_REMOTE_FEATURED, 3),
+    fetchView(AIRTABLE.VIEWS.HOMEPAGE_BRUTAL_FEATURED, 3),
   ]);
 
   const articles = [
@@ -253,6 +254,21 @@ export default async function HomePage() {
               </p>
             </div>
             <RaceGrid races={remoteRaces} />
+          </div>
+        )}
+
+        {/* Brutal featured */}
+        {brutalRaces.length > 0 && (
+          <div className="mt-12 pt-10 border-t border-neutral-200">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-10 mb-8">
+              <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-neutral-900 shrink-0">
+                Brutal
+              </h2>
+              <p className="text-base sm:text-lg font-semibold text-neutral-700 leading-snug max-w-[320px]">
+                The hardest climbs and toughest ultras you can find.
+              </p>
+            </div>
+            <RaceGrid races={brutalRaces} />
           </div>
         )}
 

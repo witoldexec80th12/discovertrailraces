@@ -8,6 +8,7 @@ export const AIRTABLE = {
     RACE_EVENTS_PUBLIC: "race_events_public",
     HOMEPAGE_FEATURED: "homepage_featured",
     HOMEPAGE_REMOTE_FEATURED: "homepage_remote_featured",
+    HOMEPAGE_BRUTAL_FEATURED: "homepage_featured_brutal",
     RACE_PAGES_PRIMARY: "race_pages_primary",
 
     // optional explore paths

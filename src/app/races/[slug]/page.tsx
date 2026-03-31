@@ -414,7 +414,7 @@ export default async function RacePage({
               >
                 <div className="shrink-0 mt-0.5">
                   <Image
-                    src="/images/icon_far.png"
+                    src="/images/icon_far2.png"
                     alt="Remote location icon"
                     width={40}
                     height={40}
@@ -434,7 +434,7 @@ export default async function RacePage({
                   >
                     It&rsquo;ll possibly take 3+ hours from the closest large
                     airport to arrive. Plan your adventure accordingly, and
-                    maybe taken an extra day or two for those after-part beers
+                    maybe taken an extra day or two for those after-race beers
                     or Curranz.
                   </p>
                 </div>
@@ -562,7 +562,9 @@ export default async function RacePage({
 
             {/* Provenance */}
             <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-neutral-400">
-              <span>Last checked: {formatDateShort(f["Last Checked "]) || "—"}</span>
+              <span>
+                Last checked: {formatDateShort(f["Last Checked "]) || "—"}
+              </span>
               {websiteUrl && (
                 <a
                   href={websiteUrl}
