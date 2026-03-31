@@ -33,6 +33,7 @@ type EntryFeeFields = {
   FINAL_blurb?: string | string[];
   "Race Slug"?: string[];
   "Distance Start Date"?: string;
+  LKP_officialwebsite?: string;
 };
 
 type RaceRecord = {
@@ -181,6 +182,21 @@ function RaceCard({ r }: { r: RaceRecord }) {
           </span>
         </div>
       </div>
+
+      {f.LKP_officialwebsite && (
+        <div className="mt-3 pt-3 border-t border-neutral-100">
+          <a
+            href={f.LKP_officialwebsite}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+          >
+            <ArrowUpRight className="w-3.5 h-3.5" />
+            Official Website
+          </a>
+        </div>
+      )}
     </div>
   );
 
