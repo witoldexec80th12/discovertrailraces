@@ -216,7 +216,7 @@ export default async function RacePage({
   const logistics = asText(f.LKP_logistics);
   const airport = asText(f.LKP_primaryairport);
   const airportCode = asText(f.LKP_airportcode);
-  const isFar = Array.isArray(f.LKP_Far) ? f.LKP_Far[0] === true : f.LKP_Far === true;
+  const isFar = Array.isArray(f.LKP_Far) ? f.LKP_Far.some(Boolean) : f.LKP_Far === true;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-neutral-50 to-white">
