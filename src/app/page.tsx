@@ -177,10 +177,7 @@ export default async function HomePage() {
             <Link href="/cost" className="hover:text-white transition-colors">
               Cost Index
             </Link>
-            <Link
-              href="/about"
-              className="hover:text-white transition-colors"
-            >
+            <Link href="/about" className="hover:text-white transition-colors">
               About
             </Link>
           </nav>
@@ -197,8 +194,8 @@ export default async function HomePage() {
               <br className="hidden sm:block" /> trail season yet.
             </h1>
             <p className="mt-4 text-base sm:text-lg text-white/75 font-medium max-w-md">
-              Find better trail races, understand what they&rsquo;re really
-              like, and compare real cost per kilometer.
+              Find better ultra trail races, understand what they&rsquo;re
+              really like, and compare real cost per kilometer.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -225,8 +222,8 @@ export default async function HomePage() {
             FEATURED
           </h2>
           <p className="text-base sm:text-lg font-semibold text-neutral-700 leading-snug max-w-[480px]">
-            Selected trail races in Europe with an emphasis on good value,
-            culture, and shorter drives from airports.
+            Selected ultras in Europe with an emphasis on good value, culture,
+            and shorter drives from airports.
           </p>
         </div>
 
@@ -275,7 +272,7 @@ export default async function HomePage() {
         style={{ backgroundColor: "rgb(56, 67, 82)" }}
       >
         <p className="text-white text-base sm:text-lg font-medium leading-snug">
-          Compare 240+ trail races across Europe by price, terrain, and real
+          Compare 240+ ultra races across Europe by price, terrain, and real
           runner insight. Click on the{" "}
           <Link
             href="/cost"
