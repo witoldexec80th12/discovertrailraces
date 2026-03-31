@@ -42,7 +42,6 @@ type EntryFeeFields = {
   voices_finish_time?: string;
   voices_aid_stations?: string;
   voices_views_and_vibes?: string;
-  
 
   // images + blurbs
   LKP_featured_image?: AirtableAttachment[];
@@ -72,6 +71,7 @@ type EntryFeeFields = {
   LKP_lessthan30?: boolean;
   LKP_cartransfertime?: string | number;
   "LKP_Far?"?: boolean | Array<boolean | null>;
+  LKP_officialwebsite?: string | string[];
 };
 
 function asText(v: unknown): string {
@@ -216,7 +216,12 @@ export default async function RacePage({
   const logistics = asText(f.LKP_logistics);
   const airport = asText(f.LKP_primaryairport);
   const airportCode = asText(f.LKP_airportcode);
-  const isFar = Array.isArray(f["LKP_Far?"]) ? f["LKP_Far?"].some(Boolean) : f["LKP_Far?"] === true;
+  const isFar = Array.isArray(f["LKP_Far?"])
+    ? f["LKP_Far?"].some(Boolean)
+    : f["LKP_Far?"] === true;
+  const websiteUrl = Array.isArray(f.LKP_officialwebsite)
+    ? (f.LKP_officialwebsite.find(Boolean) ?? null)
+    : f.LKP_officialwebsite || null;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-neutral-50 to-white">
@@ -312,7 +317,9 @@ export default async function RacePage({
                     </p>
                   )}
                   {!isUtmb && !wserSeries && !torSeries && (
-                    <p className="text-sm sm:text-2xl font-semibold text-neutral-900">—</p>
+                    <p className="text-sm sm:text-2xl font-semibold text-neutral-900">
+                      —
+                    </p>
                   )}
                 </div>
               </div>
@@ -421,10 +428,14 @@ export default async function RacePage({
                   >
                     FAR
                   </p>
-                  <p className="text-sm leading-relaxed" style={{ color: "rgb(56, 67, 82)" }}>
-                    Traveling to this race isn&rsquo;t easy. It&rsquo;ll
-                    possibly take 3+ hours from the closest large airport. Plan
-                    your adventure accordingly.
+                  <p
+                    className="text-sm leading-relaxed"
+                    style={{ color: "rgb(56, 67, 82)" }}
+                  >
+                    It&rsquo;ll possibly take 3+ hours from the closest large
+                    airport to arrive. Plan your adventure accordingly, and
+                    maybe taken an extra day or two for those after-part beers
+                    or Curranz.
                   </p>
                 </div>
               </div>
@@ -448,9 +459,7 @@ export default async function RacePage({
                       asText(f.voices_name),
                       f.voices_year_ran ? `Ran in ${f.voices_year_ran}` : "",
                       asText(f.voices_finish_time),
-                      f.voices_itra_index
-                        ? `ITRA ${f.voices_itra_index}`
-                        : "",
+                      f.voices_itra_index ? `ITRA ${f.voices_itra_index}` : "",
                     ]
                       .filter(Boolean)
                       .join(" · ")}
@@ -551,10 +560,19 @@ export default async function RacePage({
               </div>
             )}
 
-            {/* Debug / provenance */}
-            <div className="mt-8 text-xs text-neutral-400">
-              Last checked:{" "}
-              {formatDateShort(f["Last Checked "]) || "—"}
+            {/* Provenance */}
+            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-neutral-400">
+              <span>Last checked: {formatDateShort(f["Last Checked "]) || "—"}</span>
+              {websiteUrl && (
+                <a
+                  href={websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-medium text-neutral-900 hover:underline"
+                >
+                  Official Website →
+                </a>
+              )}
             </div>
           </div>
         </div>
