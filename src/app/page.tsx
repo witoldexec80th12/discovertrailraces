@@ -257,21 +257,6 @@ export default async function HomePage() {
           </div>
         )}
 
-        {/* Brutal featured */}
-        {brutalRaces.length > 0 && (
-          <div className="mt-12 pt-10 border-t border-neutral-200">
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-10 mb-8">
-              <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-neutral-900 shrink-0">
-                Brutal
-              </h2>
-              <p className="text-base sm:text-lg font-semibold text-neutral-700 leading-snug max-w-[320px]">
-                The hardest climbs and toughest ultras you can find.
-              </p>
-            </div>
-            <RaceGrid races={brutalRaces} />
-          </div>
-        )}
-
         <div className="mt-6 sm:hidden">
           <Link
             href="/cost"
@@ -281,6 +266,21 @@ export default async function HomePage() {
           </Link>
         </div>
       </section>
+
+      {/* ── BRUTAL SECTION ──────────────────────────────────────── */}
+      {brutalRaces.length > 0 && (
+        <section className="px-6 sm:px-10 lg:px-16 py-12 sm:py-16 border-t border-neutral-200 bg-white">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-10 mb-8">
+            <h2 className="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-neutral-900 shrink-0">
+              Brutal
+            </h2>
+            <p className="text-base sm:text-lg font-semibold text-neutral-700 leading-snug max-w-[320px]">
+              The hardest climbs and toughest ultras you can find.
+            </p>
+          </div>
+          <RaceGrid races={brutalRaces} />
+        </section>
+      )}
 
       {/* ── EDITORIAL SECTIONS ─────────────────────────────────── */}
       <section className="px-6 sm:px-10 lg:px-16 pb-16 sm:pb-24 bg-white">
