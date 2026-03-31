@@ -43,7 +43,7 @@ type EntryFeeFields = {
   FINAL_blurb?: string | string[];
   "Race Slug"?: string[];
   "Distance Start Date"?: string;
-  LKP_officialwebsite?: string;
+  LKP_officialwebsite?: string | string[];
 };
 
 function asText(v: unknown): string {

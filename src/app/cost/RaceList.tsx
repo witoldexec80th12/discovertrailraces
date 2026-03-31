@@ -33,7 +33,7 @@ type EntryFeeFields = {
   FINAL_blurb?: string | string[];
   "Race Slug"?: string[];
   "Distance Start Date"?: string;
-  LKP_officialwebsite?: string;
+  LKP_officialwebsite?: string | string[];
 };
 
 type RaceRecord = {
@@ -79,6 +79,9 @@ function RaceCard({ r }: { r: RaceRecord }) {
         ? `${asText(f["Distance (km)"])} km`
         : "";
   const rowHref = slug ? `/races/${slug}` : null;
+  const websiteUrl = Array.isArray(f.LKP_officialwebsite)
+    ? (f.LKP_officialwebsite.find(Boolean) ?? null)
+    : f.LKP_officialwebsite || null;
 
   const inner = (
     <div className="sm:flex sm:gap-5">
@@ -183,10 +186,10 @@ function RaceCard({ r }: { r: RaceRecord }) {
         </div>
       </div>
 
-      {f.LKP_officialwebsite && (
+      {websiteUrl && (
         <div className="mt-3 pt-3 border-t border-neutral-100">
           <a
-            href={f.LKP_officialwebsite}
+            href={websiteUrl}
             target="_blank"
             rel="noopener noreferrer"
             onClick={(e) => e.stopPropagation()}
