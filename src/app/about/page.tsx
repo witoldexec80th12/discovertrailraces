@@ -44,7 +44,6 @@ export default function AboutPage() {
       </div>
 
       <div className="mx-auto max-w-2xl px-6 sm:px-10 pb-24 pt-4">
-
         {/* Heading */}
         <h1 className="text-4xl sm:text-5xl font-extrabold uppercase tracking-tight text-neutral-900 mb-10">
           About
@@ -52,7 +51,6 @@ export default function AboutPage() {
 
         {/* Body */}
         <div className="space-y-6 text-neutral-700 text-base sm:text-lg leading-relaxed">
-
           <p>
             This website is by trail runners, and for trail runners. I built it
             with the help of some friends, because I love exploring new races
@@ -99,24 +97,27 @@ export default function AboutPage() {
             I&apos;d also like to see if this project can grow to help better
             accommodate some of the greater number of runners in the sport, and
             what they want to see more of. I don&apos;t think that people want
-            to go to just the cheapest ultras, even though that&apos;s cool
-            too. They want to go to races with culture, with views, with a good
+            to go to just the cheapest ultras, even though that&apos;s cool too.
+            They want to go to races with culture, with views, with a good
             refund policy, with clear terms, good communication, things like
             that.
           </p>
 
           <p>
-            In the future, I&apos;ll add an email newsletter for those that
-            want to know when sign-ups open, how to get early bird tickets, and
-            how to (hopefully) get some free stuff like gels or other
-            nutrition, or even free race tickets, for contributing and being a
-            reader. The goal from the start was seeing some friends have race
-            goals that went astray because of lack of good information, and
-            have difficulty creating a good race calendar. So, it isn&apos;t
-            to make a big business from this, but look to have some ways to
-            cover our costs — sponsors welcome{" "}
-            <span className="italic text-neutral-500">(cough: HOKA: cough)</span>.
-            Feel free to write to me about any suggestions you have, for now at{" "}
+            In the future, I&apos;ll add an email newsletter for those that want
+            to know when sign-ups open, how to get early bird tickets, and how
+            to (hopefully) get some free stuff like gels or other nutrition, or
+            even free race tickets, for contributing and being a reader. The
+            goal from the start was seeing some friends have race goals that
+            went astray because of lack of good information, and have difficulty
+            creating a good race calendar. So, it isn&apos;t to make a big
+            business from this, but look to have some ways to cover our costs —
+            sponsors welcome{" "}
+            <span className="italic text-neutral-500">
+              (cough: HOKA: cough)
+            </span>
+            . Feel free to write to me about any suggestions you have, for now
+            at{" "}
             <a
               href="mailto:dmichlewicz@gmail.com"
               className="underline underline-offset-2 hover:text-neutral-900 transition-colors"
@@ -165,15 +166,14 @@ export default function AboutPage() {
               >
                 Sierras Del Bandolero
               </Link>
-              , an Andalusian classic that unfortunately got cancelled for
-              2026.
+              , an Andalusian classic that unfortunately got cancelled for 2026.
             </p>
 
             <p>
               <span className="font-semibold">P.P.S.</span> If there is one
-              thing you could do for me to help — if you&apos;ve run a race
-              and wouldn&apos;t mind a short conversation, drop your details in
-              the form below. I&apos;ll be looking to reward folks with free
+              thing you could do for me to help — if you&apos;ve run a race and
+              wouldn&apos;t mind a short conversation, drop your details in the
+              form below. I&apos;ll be looking to reward folks with free
               nutrition or contests for free nutrition as soon as possible, and
               if you&apos;re in Europe, will send stuff your way.
             </p>
@@ -183,11 +183,10 @@ export default function AboutPage() {
         {/* Contact form */}
         <div id="contact" className="mt-12 scroll-mt-8">
           <h2 className="text-xl font-extrabold uppercase tracking-tight text-neutral-900 mb-6">
-            Get in touch
+            Share race recap
           </h2>
           <CrispContactForm />
         </div>
-
       </div>
     </main>
   );
