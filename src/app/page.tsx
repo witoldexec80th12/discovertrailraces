@@ -267,6 +267,24 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ── COST INDEX BANNER ───────────────────────────────────── */}
+      <section
+        className="px-6 sm:px-10 lg:px-16 py-8 sm:py-10"
+        style={{ backgroundColor: "rgb(56, 67, 82)" }}
+      >
+        <p className="text-white text-base sm:text-lg font-medium leading-snug">
+          Compare 240+ trail races across Europe by price, terrain, and real
+          runner insight. Click on the{" "}
+          <Link
+            href="/cost"
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-sm font-bold text-white"
+            style={{ backgroundColor: "#e63946" }}
+          >
+            Cost Index
+          </Link>
+        </p>
+      </section>
+
       {/* ── BRUTAL SECTION ──────────────────────────────────────── */}
       {brutalRaces.length > 0 && (
         <section className="px-6 sm:px-10 lg:px-16 py-12 sm:py-16 border-t border-neutral-200 bg-white">
