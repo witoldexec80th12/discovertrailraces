@@ -1,0 +1,49 @@
+ABOUT
+
+This website is by trail runners, and for trail runners. I built it with the help of some friends, because I love exploring new races and saw that it was a pain in the butt for people to find good, vetted races that also fit with their big race goals. Crappy websites, poor checkout processes, and also rising race prices kind of got me upset. I also have found some of those more ¨unknown¨ trail races that have just been an absolute delight. Cool local vibes, free giveaways, amazing after-parties steeped in giving back to the community, and reasonable price. Some of those races felt like stumbling into a neighbors bbq after a big day out on a new route.
+
+DiscoverTrailRaces.com is something I hope to grow by having short interviews (quick calls or long async voice convos) with trail runners about the recent ultras they ran so it’s a trusted resource for ultra runners. Knowing the key details from racers of previous race editions can make or break it race day. These ¨Runners Voices¨ will take more than a few convos.  You can check one out here (INSERT LINK to https://discovertrailraces.com/races/bulgaria_vitosha_100_100k). 
+
+(If you can share your own Runner Voice, just click here and I’ll reach out within a day.
+
+ I´d also like to see if this project can grow to help better accommodate some of the greater number of runners in the sport, and what they want to see more of. I don’t think that people want to go to just the cheapest ultras, even though thats cool too. They want to go to races with culture, with views, with a good refund policy, with clear terms, good communication, things like that. 
+
+In the future, I’ll add an email newsletter for those that want to know when sign-ups open, how to get early bird tickets, and how to (hopefully) get some free stuff like gels or other nutrition, or even free race tickets, for contributing and being a reader. The goal from the start was seeing some friends have race goals that went astray because of lack of good information, and have difficulty creating a good race calendar. So, it isn´t to make a big business from this, but  look to have some ways to cover our costs thru sponsors cough:HOKA:cough. Feel free to write to me about any suggestions you have, for now at dmichlewicz@gmail, although I’ll get an official email address up promptly.
+
+Thanks, 
+Danny
+
+P.S. Here are some races that I find interesting right now -late season races like the the Kleiner Kobolt 140 (INSERT LINK to SLUG germany_kleiner_kobolt_140k),  or Pomeranian Ultra (INSERT LINK TO SLUG poland_pomerania_ultra_trail_100k) look interesting. There are also some lesser known, absolutely brutal races, like the Ultra Trail Lago di Como (INSERT LINK TO SLUG italy_utlac_ultra_trail_lago_di_como_250k), or the more affordable Sierras Del Bandolero (INSERT LINK TO SLUGspain_ultra_trail_sierras_del_bandolero_163k), an Andalusian classic, that unfortunately got cancelled for the 2026 year.  
+
+P.P.S. If there is one thing you could do for me to help, if you’ve run a race and wouldn’t mind a short conversation drop your link in the form below. I’ll be looking to reward folks with free nutrition or contests for free nutrition as soon as possible, and if you’re in Europe, will send stuff your way.
+ 
+<div id="feedback-form">
+  <input type="text" id="fb-name" placeholder="Name" required><br>
+  <input type="text" id="fb-contact" placeholder="Email or Whatsapp" required><br>
+  <input type="text" id="fb-race" placeholder="Race Name"><br>
+  <textarea id="fb-message" placeholder="Your feedback..."></textarea><br>
+  <button onclick="sendToCrisp()">Submit Feedback</button>
+</div>
+
+<script>
+function sendToCrisp() {
+  // 1. Grab the data from the fields
+  const name = document.getElementById('fb-name').value;
+  const contact = document.getElementById('fb-contact').value;
+  const race = document.getElementById('fb-race').value;
+  const message = document.getElementById('fb-message').value;
+
+  // 2. Format the message for your inbox
+  const fullMessage = `FORM SUBMISSION:\nName: ${name}\nContact: ${contact}\nRace: ${race}\nFeedback: ${message}`;
+
+  // 3. Use the SDK to "set" the user info and send the message hiddenly
+  $crisp.push(["set", "user:nickname", [name]]);
+  // If contact looks like an email, set it as email
+  if(contact.includes('@')) { $crisp.push(["set", "user:email", [contact]]); }
+  
+  // Send the actual data to your Crisp inbox
+  $crisp.push(["do", "message:send", ["text", fullMessage]]);
+
+  alert("Thanks, Danny received your feedback!");
+}
+</script>

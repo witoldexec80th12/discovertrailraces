@@ -165,7 +165,7 @@ export default async function HomePage() {
         <div className="relative z-10 flex items-center justify-between px-6 sm:px-10 lg:px-16 pt-6">
           <Link href="/">
             <Image
-              src="/images/logo_white.png"
+              src="/images/logo_white_2.png"
               alt="DiscoverTrailRaces"
               width={168}
               height={72}
@@ -178,10 +178,10 @@ export default async function HomePage() {
               Cost Index
             </Link>
             <Link
-              href="/how-this-works"
+              href="/about"
               className="hover:text-white transition-colors"
             >
-              How This Works
+              About
             </Link>
           </nav>
         </div>
@@ -208,10 +208,10 @@ export default async function HomePage() {
                 Explore Cost Index <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
-                href="/how-this-works"
+                href="/about"
                 className="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-5 py-2.5 text-sm font-semibold text-white hover:bg-white/20 transition-colors backdrop-blur-sm"
               >
-                How this works
+                About
               </Link>
             </div>
           </div>
@@ -225,7 +225,8 @@ export default async function HomePage() {
             FEATURED
           </h2>
           <p className="text-base sm:text-lg font-semibold text-neutral-700 leading-snug max-w-[480px]">
-            Selected trail races in Europe with an emphasis on good value, culture, and shorter drives from airports.
+            Selected trail races in Europe with an emphasis on good value,
+            culture, and shorter drives from airports.
           </p>
         </div>
 
@@ -250,7 +251,8 @@ export default async function HomePage() {
                 Remote Destinations
               </h2>
               <p className="text-base sm:text-lg font-semibold text-neutral-700 leading-snug max-w-[320px]">
-                Trail races off the beaten path, 3 hours or more from major airports.
+                Trail races off the beaten path, 3 hours or more from major
+                airports.
               </p>
             </div>
             <RaceGrid races={remoteRaces} />
@@ -361,14 +363,18 @@ export default async function HomePage() {
                 Runner Voice
               </p>
               <blockquote className="text-xl sm:text-2xl font-semibold text-neutral-900 leading-snug">
-                &ldquo;Make sure to bring a wind-protection layer and if you are not planning to push hard in the first half — possibly some additional thermal layer, as it can get really cold at kilometer 30 near the Studena Dam.&rdquo;
+                &ldquo;Make sure to bring a wind-protection layer and if you are
+                not planning to push hard in the first half — possibly some
+                additional thermal layer, as it can get really cold at kilometer
+                30 near the Studena Dam.&rdquo;
               </blockquote>
             </div>
             <div className="mt-8 flex items-center justify-between">
               <div>
                 <p className="text-sm font-bold text-neutral-900">Lambrin</p>
                 <p className="text-xs text-neutral-500 mt-0.5">
-                  Vitosha Super Mountain Trail 100K, 2025&nbsp;&middot;&nbsp;ITRA 491
+                  Vitosha Super Mountain Trail 100K,
+                  2025&nbsp;&middot;&nbsp;ITRA 491
                 </p>
               </div>
             </div>
@@ -421,7 +427,7 @@ export default async function HomePage() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Link href="/">
             <Image
-              src="/images/logo_white.png"
+              src="/images/logo_white_2.png"
               alt="DiscoverTrailRaces"
               width={120}
               height={52}
@@ -431,10 +437,10 @@ export default async function HomePage() {
           <p className="text-xs text-neutral-400">
             © {new Date().getFullYear()} DiscoverTrailRaces &middot;{" "}
             <Link
-              href="/how-this-works"
+              href="/about"
               className="hover:text-neutral-700 underline underline-offset-2"
             >
-              How This Works
+              About
             </Link>
           </p>
         </div>
