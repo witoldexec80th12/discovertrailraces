@@ -4,6 +4,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { Suspense } from "react";
+import Script from "next/script";
 import FilterBar from "./FilterBar";
 import RaceList from "./RaceList";
 
@@ -176,6 +177,29 @@ export default async function CostPage({
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-neutral-50 to-white">
+      <Script
+        id="crisp-chat"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.$crisp = [];
+            window.CRISP_WEBSITE_ID = "7cf61847-4944-4b7a-9143-e9816411733e";
+            (function() {
+              var d = document;
+              var s = d.createElement("script");
+              s.src = "https://client.crisp.chat/l.js";
+              s.async = 1;
+              d.getElementsByTagName("head")[0].appendChild(s);
+            })();
+            $crisp.push(["on", "session:loaded", function() {
+              setTimeout(function() {
+                $crisp.push(["do", "message:show", ["text", "The site is in beta! Any feedback? Features or races you'd like to see?"]]);
+                $crisp.push(["do", "message:show", ["text", "Things that we can fix or add that are broken? I'd love to hear it! Thanks, Danny"]]);
+              }, 1000);
+            }]);
+          `,
+        }}
+      />
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 sm:py-12">
         {/* HERO */}
         <section className="relative isolate overflow-hidden h-[69vh] sm:h-[75vh]">
