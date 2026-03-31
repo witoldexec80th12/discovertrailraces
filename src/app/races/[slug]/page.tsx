@@ -398,7 +398,13 @@ export default async function RacePage({
 
             {/* FAR Banner */}
             {isFar && (
-              <div className="mt-6 flex items-start gap-4 rounded-xl border-2 border-blue-400 bg-blue-50 px-5 py-4 shadow-sm">
+              <div
+                className="mt-6 flex items-start gap-4 rounded-xl border-2 px-5 py-4 shadow-sm"
+                style={{
+                  borderColor: "rgb(56, 67, 82)",
+                  backgroundColor: "rgba(56, 67, 82, 0.06)",
+                }}
+              >
                 <div className="shrink-0 mt-0.5">
                   <Image
                     src="/images/icon_far.png"
@@ -409,10 +415,13 @@ export default async function RacePage({
                   />
                 </div>
                 <div>
-                  <p className="text-base font-extrabold tracking-widest text-blue-600 uppercase mb-1">
+                  <p
+                    className="text-base font-extrabold tracking-widest uppercase mb-1"
+                    style={{ color: "rgb(56, 67, 82)" }}
+                  >
                     FAR
                   </p>
-                  <p className="text-sm text-blue-900 leading-relaxed">
+                  <p className="text-sm leading-relaxed" style={{ color: "rgb(56, 67, 82)" }}>
                     Traveling to this race isn&rsquo;t easy. It&rsquo;ll
                     possibly take 3+ hours from the closest large airport. Plan
                     your adventure accordingly.
