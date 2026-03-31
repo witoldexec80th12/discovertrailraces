@@ -433,9 +433,8 @@ export default async function RacePage({
                     style={{ color: "rgb(56, 67, 82)" }}
                   >
                     It&rsquo;ll possibly take 3+ hours from the closest large
-                    airport to arrive. Plan your adventure accordingly, and
-                    maybe taken an extra day or two for those after-race beers
-                    or Curranz.
+                    airport to arrive. Plan your adventure accordingly, take an
+                    extra day for those after-race beers or Curranz.
                   </p>
                 </div>
               </div>

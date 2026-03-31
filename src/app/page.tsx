@@ -269,7 +269,7 @@ export default async function HomePage() {
 
       {/* ── COST INDEX BANNER ───────────────────────────────────── */}
       <section
-        className="px-6 sm:px-10 lg:px-16 py-8 sm:py-10"
+        className="px-6 sm:px-10 lg:px-16 py-8 sm:py-10 text-center"
         style={{ backgroundColor: "rgb(56, 67, 82)" }}
       >
         <p className="text-white text-base sm:text-lg font-medium leading-snug">
@@ -277,8 +277,8 @@ export default async function HomePage() {
           runner insight. Click on the{" "}
           <Link
             href="/cost"
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-sm font-bold text-white"
-            style={{ backgroundColor: "#e63946" }}
+            className="inline-flex items-center rounded-full px-3 py-0.5 font-bold text-white"
+            style={{ backgroundColor: "#e63946", fontSize: "inherit" }}
           >
             Cost Index
           </Link>
