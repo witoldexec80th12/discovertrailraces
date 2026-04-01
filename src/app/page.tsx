@@ -137,22 +137,6 @@ export default async function HomePage() {
     fetchView(AIRTABLE.VIEWS.HOMEPAGE_BRUTAL_FEATURED, 3),
   ]);
 
-  const articles = [
-    {
-      tag: "Training & Planning",
-      title: "3 ways to collect 10 Running Stones in 2026",
-    },
-    {
-      tag: "Inspiration & Planning",
-      title:
-        "Run like Kilian: A guide to fastpacking Kilian´s 2026 race schedule",
-    },
-    {
-      tag: "Travel & Racing",
-      title: "7 races you can visit by train in Europe",
-    },
-  ];
-
   return (
     <main className="min-h-screen bg-white">
       {/* ── HERO ───────────────────────────────────────────────── */}
@@ -342,7 +326,12 @@ export default async function HomePage() {
           </div>
 
           {/* Runner Voice card */}
-          <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-8 sm:p-10 flex flex-col justify-between min-h-[320px]">
+          <a
+            href="https://discovertrailraces.com/races/bulgaria_vitosha_100_100k"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-2xl border border-neutral-200 bg-neutral-50 p-8 sm:p-10 flex flex-col justify-between min-h-[320px] hover:shadow-md transition-shadow"
+          >
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">
                 Runner Voice
@@ -362,48 +351,9 @@ export default async function HomePage() {
                   2025&nbsp;&middot;&nbsp;ITRA 491
                 </p>
               </div>
+              <ArrowRight className="w-4 h-4 text-neutral-400" />
             </div>
-          </div>
-        </div>
-
-        {/* Articles placeholder */}
-        <div className="mt-6">
-          <div className="flex items-end justify-between mb-6">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-neutral-400 mb-1">
-                Editorial
-              </p>
-              <h3 className="text-2xl font-bold text-neutral-900">
-                Latest Articles
-              </h3>
-            </div>
-            <span className="hidden sm:inline text-xs text-neutral-400 italic">
-              Placeholder — articles coming soon
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {articles.map((a, i) => (
-              <div
-                key={i}
-                className="group rounded-2xl border border-neutral-200 bg-white overflow-hidden hover:shadow-md transition-shadow cursor-pointer"
-              >
-                <div className="aspect-[16/9] bg-gradient-to-br from-neutral-100 to-neutral-200 relative overflow-hidden">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Mountain className="w-8 h-8 text-neutral-300" />
-                  </div>
-                </div>
-                <div className="p-5">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-neutral-400">
-                    {a.tag}
-                  </span>
-                  <h4 className="mt-2 text-sm font-bold text-neutral-900 leading-snug group-hover:text-neutral-600 transition-colors">
-                    {a.title}
-                  </h4>
-                </div>
-              </div>
-            ))}
-          </div>
+          </a>
         </div>
       </section>
 
