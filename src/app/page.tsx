@@ -171,28 +171,6 @@ export default async function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-black/10" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
-        {/* Nav */}
-        <div className="relative z-10 flex items-center justify-between px-6 sm:px-10 lg:px-16 pt-6">
-          <Link href="/">
-            <Image
-              src="/images/logo_white.svg"
-              alt="DiscoverTrailRaces"
-              width={168}
-              height={72}
-              className="h-20 sm:h-24 w-auto"
-              priority
-            />
-          </Link>
-          <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-white/80">
-            <Link href="/cost" className="hover:text-white transition-colors">
-              Cost Index
-            </Link>
-            <Link href="/about" className="hover:text-white transition-colors">
-              About
-            </Link>
-          </nav>
-        </div>
-
         {/* Hero text */}
         <div
           className="relative z-10 flex flex-col justify-end h-full px-6 sm:px-10 lg:px-16 pb-14 sm:pb-20"
