@@ -74,13 +74,14 @@ function RaceCard({ r, index }: { r: RaceRecord; index: number }) {
           </span>
         </div>
       )}
+      {priceKm != null && (
+        <div className="absolute top-3 right-3">
+          <span className="inline-flex items-center rounded-full bg-white px-2.5 py-0.5 text-[11px] font-semibold text-neutral-900">
+            {String(priceKm)}
+          </span>
+        </div>
+      )}
       <div className="absolute bottom-0 left-0 right-0 p-4">
-        {priceKm != null && (
-          <p className="text-xl font-extrabold text-white leading-none mb-1.5 tracking-tight">
-            €{typeof priceKm === "number" ? priceKm.toFixed(2) : priceKm}
-            <span className="text-sm font-semibold text-white/70 ml-1">/ km</span>
-          </p>
-        )}
         <h3 className="text-base font-bold text-white leading-tight line-clamp-2">
           {name}
         </h3>
