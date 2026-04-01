@@ -26,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <header className="sticky top-0 z-50 bg-white border-b border-neutral-100 shadow-sm">
+        <header className="sticky top-0 z-50 bg-white/15 border-b border-neutral-100/30 shadow-sm backdrop-blur-sm">
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
             <Link href="/" className="flex items-center">
               <img
