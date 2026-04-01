@@ -31,6 +31,7 @@ type FeaturedRaceEventFields = {
   "Featured Order"?: number;
   "Hero Tag"?: string[];
   "Featured Blurb"?: string;
+  "Featured Price/KM"?: number | string;
 };
 
 function asText(v: unknown): string {
@@ -49,6 +50,7 @@ function RaceCard({ r, index }: { r: RaceRecord; index: number }) {
   const region = asText(f.Region);
   const terrain = asText(f["Type Terrain"]);
   const imgUrl = f["Featured Image"]?.[0]?.url ?? null;
+  const priceKm = f["Featured Price/KM"] != null ? f["Featured Price/KM"] : null;
 
   const card = (
     <div className="group relative overflow-hidden rounded-2xl bg-neutral-900 aspect-[4/3] cursor-pointer">
@@ -73,6 +75,12 @@ function RaceCard({ r, index }: { r: RaceRecord; index: number }) {
         </div>
       )}
       <div className="absolute bottom-0 left-0 right-0 p-4">
+        {priceKm != null && (
+          <p className="text-xl font-extrabold text-white leading-none mb-1.5 tracking-tight">
+            €{typeof priceKm === "number" ? priceKm.toFixed(2) : priceKm}
+            <span className="text-sm font-semibold text-white/70 ml-1">/ km</span>
+          </p>
+        )}
         <h3 className="text-base font-bold text-white leading-tight line-clamp-2">
           {name}
         </h3>
