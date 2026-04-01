@@ -50,7 +50,8 @@ function RaceCard({ r, index }: { r: RaceRecord; index: number }) {
   const region = asText(f.Region);
   const terrain = asText(f["Type Terrain"]);
   const imgUrl = f["Featured Image"]?.[0]?.url ?? null;
-  const priceKm = f["Featured Price/KM"] != null ? f["Featured Price/KM"] : null;
+  const priceKm =
+    f["Featured Price/KM"] != null ? f["Featured Price/KM"] : null;
 
   const card = (
     <div className="group relative overflow-hidden rounded-2xl bg-neutral-900 aspect-[4/3] cursor-pointer">
@@ -174,7 +175,7 @@ export default async function HomePage() {
         <div className="relative z-10 flex items-center justify-between px-6 sm:px-10 lg:px-16 pt-6">
           <Link href="/">
             <Image
-              src="/images/logo_white_2.png"
+              src="/images/logo_white.svg"
               alt="DiscoverTrailRaces"
               width={168}
               height={72}
@@ -433,7 +434,7 @@ export default async function HomePage() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Link href="/">
             <Image
-              src="/images/logo_white_2.png"
+              src="/images/logo_white.svg"
               alt="DiscoverTrailRaces"
               width={120}
               height={52}
