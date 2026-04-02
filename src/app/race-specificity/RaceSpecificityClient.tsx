@@ -2,7 +2,7 @@
 
 import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
-import type { RaceEventRecord, DistanceRecord } from "./page";
+import type { RaceEventRecord, DistanceRecord } from "./types";
 
 const MAX_VERT = 170;
 const BRAND_RED = "#e63946";
