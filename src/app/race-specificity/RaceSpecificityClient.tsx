@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { RaceEventRecord, DistanceRecord } from "./types";
 
 const MAX_VERT = 170;
-const BRAND_RED = "#e63946";
+const BRAND_NAVY = "#1a2e4a";
 const RESULTS_PER_PAGE = 6;
 
 const ALL_TERRAIN_TYPES = [
@@ -208,7 +208,7 @@ export default function RaceSpecificityClient({
             <div className="inline-flex items-center gap-2 mb-4">
               <span
                 className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white"
-                style={{ backgroundColor: BRAND_RED }}
+                style={{ backgroundColor: BRAND_NAVY }}
               >1</span>
               <span className="text-xs font-bold uppercase tracking-widest text-neutral-500">
                 Vert Meter
@@ -236,7 +236,7 @@ export default function RaceSpecificityClient({
           <button
             onClick={applyStep1}
             className="w-full py-4 text-lg font-black text-white rounded-xl transition-all hover:opacity-90 active:scale-95 shadow-md"
-            style={{ backgroundColor: BRAND_RED }}
+            style={{ backgroundColor: BRAND_NAVY }}
           >
             APPLY
           </button>
@@ -324,7 +324,10 @@ export default function RaceSpecificityClient({
                 className="absolute left-1/2 pointer-events-none"
                 style={{ top: -48, transform: "translateX(-50%)", textAlign: "center", whiteSpace: "nowrap" }}
               >
-                <span className="text-sm font-black text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                <span
+                  className="text-sm font-black px-3 py-1 rounded-full shadow-sm border"
+                  style={{ backgroundColor: "rgba(255,255,255,0.92)", color: "#111", borderColor: "#d1d5db" }}
+                >
                   ↑ 170m/km (brutal)
                 </span>
               </div>
@@ -362,7 +365,10 @@ export default function RaceSpecificityClient({
                 className="absolute left-1/2 pointer-events-none"
                 style={{ bottom: -48, transform: "translateX(-50%)", textAlign: "center", whiteSpace: "nowrap" }}
               >
-                <span className="text-sm font-black text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                <span
+                  className="text-sm font-black px-3 py-1 rounded-full shadow-sm border"
+                  style={{ backgroundColor: "rgba(255,255,255,0.92)", color: "#111", borderColor: "#d1d5db" }}
+                >
                   ↓ 0m/km (flat)
                 </span>
               </div>
@@ -382,7 +388,7 @@ export default function RaceSpecificityClient({
                 <div className="shrink-0">
                   <div className="inline-flex items-center gap-2 mb-3">
                     <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white"
-                      style={{ backgroundColor: BRAND_RED }}>2</span>
+                      style={{ backgroundColor: BRAND_NAVY }}>2</span>
                     <span className="text-xs font-bold uppercase tracking-widest text-neutral-500">
                       Explore TERRAIN
                     </span>
@@ -416,9 +422,9 @@ export default function RaceSpecificityClient({
                           onClick={() => hasRaces && handleTerrainClick(tag)}
                           className="px-4 py-2 rounded-full text-sm font-bold border-2 transition-all"
                           style={{
-                            backgroundColor: isSelected ? BRAND_RED : "white",
-                            color: isSelected ? "#fff" : hasRaces ? BRAND_RED : "#d1d5db",
-                            borderColor: isSelected ? BRAND_RED : hasRaces ? BRAND_RED : "#e5e7eb",
+                            backgroundColor: isSelected ? BRAND_NAVY : "white",
+                            color: isSelected ? "#fff" : hasRaces ? BRAND_NAVY : "#d1d5db",
+                            borderColor: isSelected ? BRAND_NAVY : hasRaces ? BRAND_NAVY : "#e5e7eb",
                             cursor: hasRaces ? "pointer" : "default",
                             opacity: hasRaces ? 1 : 0.5,
                           }}
@@ -487,9 +493,9 @@ export default function RaceSpecificityClient({
                           onClick={() => setCurrentPage(page)}
                           className="w-9 h-9 text-sm font-bold rounded-lg border-2 transition-all"
                           style={{
-                            backgroundColor: currentPage === page ? BRAND_RED : "white",
+                            backgroundColor: currentPage === page ? BRAND_NAVY : "white",
                             color: currentPage === page ? "#fff" : "#404040",
-                            borderColor: currentPage === page ? BRAND_RED : "#e5e7eb",
+                            borderColor: currentPage === page ? BRAND_NAVY : "#e5e7eb",
                           }}
                         >
                           {page}
