@@ -156,6 +156,14 @@ Views: entry_fees_public, race_events_public, homepage_featured,
 
 ---
 
+## Race Specificity Page (`/race-specificity`)
+- Two-step interactive visual filter overlaid on `mountain.png` background
+- **Step 1**: Vertical drag-bar range slider for `AUTO% Increase` (m/km) from Distances table (0–170, default 80–120)
+- **Step 2**: Terrain tag selector from `Terrain_multi` field on Race Events table; grayed out until Step 1 applied
+- Results grid of race cards (with image, name, distance, terrain tags) linked to `/races/[slug]`
+- Data: fetches all Distances + all Race Events, joins client-side by Race record ID
+- Desktop-first layout (3-column: instructions | mountain | terrain)
+
 ## Recent Changes
 - Feb 26, 2026: Documented full reference snapshot including race detail page
 - Feb 26, 2026: User added race detail page at `/races/[slug]` with terrain, logistics, stats
