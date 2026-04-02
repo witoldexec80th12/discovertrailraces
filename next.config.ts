@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
       config.watchOptions = {
         ...config.watchOptions,
         poll: false,
-        ignored: ["**"],
+        ignored: ["**/node_modules/**", "**/.next/**"],
       };
     }
     return config;

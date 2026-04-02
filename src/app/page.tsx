@@ -150,10 +150,16 @@ export default async function HomePage() {
             />
           </Link>
           <nav className="flex items-center gap-6 text-sm font-semibold text-neutral-600">
-            <Link href="/cost" className="hover:text-neutral-900 transition-colors">
+            <Link
+              href="/cost"
+              className="hover:text-neutral-900 transition-colors"
+            >
               Cost Index
             </Link>
-            <Link href="/about" className="hover:text-neutral-900 transition-colors">
+            <Link
+              href="/about"
+              className="hover:text-neutral-900 transition-colors"
+            >
               About
             </Link>
           </nav>
@@ -387,7 +393,7 @@ export default async function HomePage() {
               alt="DiscoverTrailRaces"
               width={120}
               height={52}
-              className="h-7 w-auto invert"
+              className="h-7 w-auto"
             />
           </Link>
           <p className="text-xs text-neutral-400">
