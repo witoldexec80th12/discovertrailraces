@@ -57,6 +57,7 @@ export default function RaceSpecificityClient({
   const [selectedTerrain, setSelectedTerrain] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // mountainRef is the narrow drag column (not the full area)
   const mountainRef = useRef<HTMLDivElement>(null);
   const step2Ref = useRef<HTMLDivElement>(null);
   const dragging = useRef<"min" | "max" | null>(null);
@@ -111,7 +112,6 @@ export default function RaceSpecificityClient({
     return enrichedData.filter((r) => r.pctIncrease >= appliedMin && r.pctIncrease <= appliedMax);
   }, [enrichedData, step1Applied, appliedMin, appliedMax]);
 
-  // Which terrain tags actually have races in current vert range
   const terrainCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     ALL_TERRAIN_TYPES.forEach((t) => { counts[t] = 0; });
@@ -157,13 +157,17 @@ export default function RaceSpecificityClient({
     setMaxVal(120);
   };
 
+  // Positions of bars within the drag column (0% = top = 170m/km, 100% = bottom = 0m/km)
   const minPct = ((MAX_VERT - minVal) / MAX_VERT) * 100;
   const maxPct = ((MAX_VERT - maxVal) / MAX_VERT) * 100;
+
+  // Bar height in px — used for offsetting bar center to pointer position
+  const BAR_H = 44;
 
   return (
     <div className="min-h-screen bg-white">
 
-      {/* ── HEADER ─────────────────────────────────────────────── */}
+      {/* ── HEADER ─────────────────────────────────────────── */}
       <div className="px-6 sm:px-10 lg:px-16 pt-14 pb-10 bg-white">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">
           Race Specificity
@@ -176,122 +180,176 @@ export default function RaceSpecificityClient({
         </p>
       </div>
 
-      {/* ── STEP 1 — MOUNTAIN SECTION ──────────────────────────── */}
-      <div className="relative w-full overflow-hidden border-t border-neutral-200" style={{ minHeight: 580 }}>
+      {/* ── STEP 1 — MOUNTAIN SECTION ──────────────────────── */}
+      {/*
+        Layout: absolute-positioned left panel (instructions + APPLY) +
+        mountain image filling the rest, with a narrow centered drag column
+        anchored from peak (top ~9%) to treeline (top ~67%).
+      */}
+      <div
+        className="relative w-full border-t border-neutral-200 overflow-hidden"
+        style={{ height: 760 }}
+      >
+        {/* Mountain image — fills the full section, zoomed to frame peak→treeline */}
         <img
           src="/images/mountain.png"
           alt="Mountain"
-          className="absolute inset-0 w-full h-full object-cover object-top"
           draggable={false}
+          className="absolute inset-0 w-full h-full object-cover select-none"
+          style={{ objectPosition: "center 22%" }}
         />
-        <div className="absolute inset-0 bg-white/20" />
+        {/* Subtle vignette to make labels readable */}
+        <div className="absolute inset-0 bg-white/10" />
 
-        <div className="relative z-10 flex" style={{ minHeight: 580 }}>
-
-          {/* LEFT — Instructions */}
-          <div className="w-80 shrink-0 flex flex-col justify-between p-8 sm:p-10">
-            <div>
-              <div className="inline-flex items-center gap-2 mb-4">
-                <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white"
-                  style={{ backgroundColor: BRAND_RED }}>1</span>
-                <span className="text-xs font-bold uppercase tracking-widest text-neutral-600">
-                  Explore the VERT METER
+        {/* LEFT PANEL — white sidebar */}
+        <div className="absolute left-0 top-0 bottom-0 z-20 flex flex-col justify-between p-8 sm:p-10 bg-white/95 backdrop-blur-sm border-r border-neutral-200"
+          style={{ width: 300 }}>
+          <div>
+            <div className="inline-flex items-center gap-2 mb-4">
+              <span
+                className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white"
+                style={{ backgroundColor: BRAND_RED }}
+              >1</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-neutral-500">
+                Vert Meter
+              </span>
+            </div>
+            <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm">
+              <p className="text-sm text-neutral-700 leading-relaxed mb-3">
+                <span className="font-semibold">Drag the bars</span> up or down to set your
+                elevation gain range — from flat (0 m/km) at the treeline to
+                hiking-steep (170 m/km) at the peak.
+              </p>
+              <p className="text-sm text-neutral-700 leading-relaxed">
+                <span className="font-semibold">Hit Apply</span> to find matching races
+                and unlock terrain filtering below.
+              </p>
+              <div className="mt-4 pt-3 border-t border-neutral-100 flex items-center justify-between">
+                <span className="text-xs text-neutral-500">Range</span>
+                <span className="text-sm font-bold text-neutral-900">
+                  {minVal}–{maxVal}
+                  <span className="text-xs font-normal text-neutral-500 ml-1">m/km</span>
                 </span>
               </div>
-              <div className="bg-white/90 backdrop-blur-sm border border-neutral-200 rounded-xl p-5 shadow-sm">
-                <p className="text-sm text-neutral-700 leading-relaxed mb-3">
-                  <span className="font-semibold">Slide the bars</span> up or down to set your
-                  elevation gain range. The scale runs from flat (0 m/km) at the
-                  bottom to hiking-steep (170 m/km) at the top.
-                </p>
-                <p className="text-sm text-neutral-700 leading-relaxed">
-                  <span className="font-semibold">Hit Apply</span> to find matching races
-                  and unlock terrain filtering below.
-                </p>
-                <div className="mt-4 pt-3 border-t border-neutral-100 flex items-center justify-between">
-                  <span className="text-xs text-neutral-500">Default: 80–120 m/km</span>
-                  <span className="text-sm font-bold text-neutral-900">
-                    {minVal}–{maxVal}
-                    <span className="text-xs font-normal text-neutral-500 ml-1">m/km</span>
-                  </span>
+            </div>
+          </div>
+          <button
+            onClick={applyStep1}
+            className="w-full py-4 text-lg font-black text-white rounded-xl transition-all hover:opacity-90 active:scale-95 shadow-md"
+            style={{ backgroundColor: BRAND_RED }}
+          >
+            APPLY
+          </button>
+        </div>
+
+        {/* DRAG COLUMN — narrow, centered in the mountain area, anchored peak→treeline */}
+        {/*
+          The column sits at:
+            left: 300px (after left panel) + (remaining / 2) - (col width / 2)
+          Top 9% = visual peak | Bottom 33% from bottom = visual treeline
+          mountainRef is on this column so pointer Y maps correctly.
+        */}
+        <div
+          className="absolute z-10"
+          style={{
+            left: 300,
+            right: 0,
+            top: "9%",
+            bottom: "33%",
+          }}
+        >
+          {/* Inner centering wrapper */}
+          <div className="relative h-full flex justify-center">
+
+            {/* The actual drag column — mountainRef, 260px wide */}
+            <div
+              ref={mountainRef}
+              className="relative"
+              style={{
+                width: 260,
+                height: "100%",
+                touchAction: "none",
+                userSelect: "none",
+                cursor: "ns-resize",
+              }}
+            >
+              {/* Dashed center line */}
+              <div
+                className="absolute top-0 bottom-0 border-l-2 border-dashed pointer-events-none"
+                style={{ left: "50%", borderColor: "rgba(0,0,0,0.55)" }}
+              />
+
+              {/* Range fill between bars */}
+              <div
+                className="absolute left-0 right-0 pointer-events-none"
+                style={{
+                  backgroundColor: "rgba(230,57,70,0.14)",
+                  top: `calc(${maxPct}% + ${BAR_H / 2}px)`,
+                  bottom: `calc(${100 - minPct}% + ${BAR_H / 2}px)`,
+                }}
+              />
+
+              {/* ── MAX BAR (upper) ─────────────────────────── */}
+              <div
+                className="absolute left-0 right-0 flex items-center cursor-ns-resize group"
+                style={{ top: `calc(${maxPct}% - ${BAR_H / 2}px)`, height: BAR_H }}
+                onPointerDown={() => { dragging.current = "max"; }}
+              >
+                <div
+                  className="flex-1 h-full flex items-center justify-between px-4 rounded-md shadow-lg select-none"
+                  style={{ backgroundColor: "#111" }}
+                >
+                  <span className="text-xs font-black tracking-[0.2em] uppercase text-white">DRAG</span>
+                  <span className="text-xs font-bold text-white/70">{maxVal} m/km</span>
                 </div>
               </div>
-            </div>
-            <button
-              onClick={applyStep1}
-              className="mt-6 w-full py-4 text-lg font-black text-white rounded-xl transition-all hover:opacity-90 active:scale-95 shadow-md"
-              style={{ backgroundColor: BRAND_RED }}
-            >
-              APPLY
-            </button>
-          </div>
 
-          {/* CENTER — Mountain drag area */}
-          <div
-            ref={mountainRef}
-            className="flex-1 relative"
-            style={{ touchAction: "none", userSelect: "none", cursor: "ns-resize" }}
-          >
-            <div
-              className="absolute top-10 bottom-10 border-l-2 border-dashed border-neutral-600/40"
-              style={{ left: "50%" }}
-            />
-            <div className="absolute top-6 flex flex-col items-center" style={{ left: "50%", transform: "translateX(-50%)" }}>
-              <span className="text-[11px] font-bold text-neutral-700 bg-white/90 rounded-full px-3 py-0.5 whitespace-nowrap shadow-sm border border-neutral-200">
-                170 m/km — hiking
-              </span>
-              <div className="w-px h-3 bg-neutral-400/50 mt-1" />
-            </div>
-            <div className="absolute bottom-6 flex flex-col items-center" style={{ left: "50%", transform: "translateX(-50%)" }}>
-              <div className="w-px h-3 bg-neutral-400/50 mb-1" />
-              <span className="text-[11px] font-bold text-neutral-700 bg-white/90 rounded-full px-3 py-0.5 whitespace-nowrap shadow-sm border border-neutral-200">
-                0 m/km — flat
-              </span>
-            </div>
-            <div className="absolute top-6 right-5">
-              <span className="text-xs font-extrabold uppercase tracking-wide" style={{ color: BRAND_RED }}>
-                AUTO% Increase
-              </span>
-            </div>
+              {/* ── MIN BAR (lower) ─────────────────────────── */}
+              <div
+                className="absolute left-0 right-0 flex items-center cursor-ns-resize group"
+                style={{ top: `calc(${minPct}% - ${BAR_H / 2}px)`, height: BAR_H }}
+                onPointerDown={() => { dragging.current = "min"; }}
+              >
+                <div
+                  className="flex-1 h-full flex items-center justify-between px-4 rounded-md shadow-lg select-none"
+                  style={{ backgroundColor: "#111" }}
+                >
+                  <span className="text-xs font-black tracking-[0.2em] uppercase text-white">DRAG</span>
+                  <span className="text-xs font-bold text-white/70">{minVal} m/km</span>
+                </div>
+              </div>
 
-            {/* Range fill */}
-            <div
-              className="absolute left-8 right-8 pointer-events-none rounded"
-              style={{
-                backgroundColor: `${BRAND_RED}18`,
-                top: `${maxPct}%`,
-                height: `${minPct - maxPct}%`,
-              }}
-            />
+              {/* 170 m/km label — sits ABOVE the column (arrow pointing up to peak) */}
+              <div
+                className="absolute left-1/2 pointer-events-none"
+                style={{ top: -44, transform: "translateX(-50%)", textAlign: "center", whiteSpace: "nowrap" }}
+              >
+                <span
+                  className="text-xs font-bold px-3 py-1 rounded-full shadow-sm border"
+                  style={{ backgroundColor: "rgba(255,255,255,0.92)", color: "#111", borderColor: "#d1d5db" }}
+                >
+                  ↑ 170 m/km — peak
+                </span>
+              </div>
 
-            {/* MAX bar */}
-            <div
-              className="absolute left-8 right-8 h-6 flex items-center cursor-ns-resize group"
-              style={{ top: `calc(${maxPct}% - 12px)` }}
-              onPointerDown={() => { dragging.current = "max"; }}
-            >
-              <div className="w-full h-1.5 bg-neutral-900 rounded-full shadow-lg group-hover:bg-neutral-600 transition-colors" />
-              <span className="absolute -left-20 bg-white/95 text-xs font-bold text-neutral-800 px-2.5 py-1 rounded-lg shadow border border-neutral-200 whitespace-nowrap">
-                {maxVal} m/km
-              </span>
-            </div>
-
-            {/* MIN bar */}
-            <div
-              className="absolute left-8 right-8 h-6 flex items-center cursor-ns-resize group"
-              style={{ top: `calc(${minPct}% - 12px)` }}
-              onPointerDown={() => { dragging.current = "min"; }}
-            >
-              <div className="w-full h-1.5 bg-neutral-900 rounded-full shadow-lg group-hover:bg-neutral-600 transition-colors" />
-              <span className="absolute -left-20 bg-white/95 text-xs font-bold text-neutral-800 px-2.5 py-1 rounded-lg shadow border border-neutral-200 whitespace-nowrap">
-                {minVal} m/km
-              </span>
+              {/* 0 m/km label — sits BELOW the column (arrow pointing down to trees) */}
+              <div
+                className="absolute left-1/2 pointer-events-none"
+                style={{ bottom: -44, transform: "translateX(-50%)", textAlign: "center", whiteSpace: "nowrap" }}
+              >
+                <span
+                  className="text-xs font-bold px-3 py-1 rounded-full shadow-sm border"
+                  style={{ backgroundColor: "rgba(255,255,255,0.92)", color: "#111", borderColor: "#d1d5db" }}
+                >
+                  ↓ 0 m/km — treeline
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ── STEP 2 + RESULTS ───────────────────────────────────── */}
+      {/* ── STEP 2 + RESULTS ─────────────────────────────────── */}
       <div ref={step2Ref}>
         {step1Applied ? (
           <div className="bg-white border-t border-neutral-200">
@@ -392,7 +450,6 @@ export default function RaceSpecificityClient({
                     ))}
                   </div>
 
-                  {/* Pagination */}
                   {totalPages > 1 && (
                     <div className="mt-10 flex items-center justify-center gap-2">
                       <button
@@ -402,7 +459,6 @@ export default function RaceSpecificityClient({
                       >
                         ← Prev
                       </button>
-
                       {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                         <button
                           key={page}
@@ -417,7 +473,6 @@ export default function RaceSpecificityClient({
                           {page}
                         </button>
                       ))}
-
                       <button
                         onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                         disabled={currentPage === totalPages}
