@@ -319,29 +319,51 @@ export default function RaceSpecificityClient({
                 </div>
               </div>
 
-              {/* 170 m/km label — sits ABOVE the column (arrow pointing up to peak) */}
+              {/* 170 m/km (brutal) — sits ABOVE the column */}
               <div
                 className="absolute left-1/2 pointer-events-none"
-                style={{ top: -44, transform: "translateX(-50%)", textAlign: "center", whiteSpace: "nowrap" }}
+                style={{ top: -48, transform: "translateX(-50%)", textAlign: "center", whiteSpace: "nowrap" }}
               >
-                <span
-                  className="text-xs font-bold px-3 py-1 rounded-full shadow-sm border"
-                  style={{ backgroundColor: "rgba(255,255,255,0.92)", color: "#111", borderColor: "#d1d5db" }}
-                >
-                  ↑ 170 m/km — peak
+                <span className="text-sm font-black text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                  ↑ 170m/km (brutal)
                 </span>
               </div>
 
-              {/* 0 m/km label — sits BELOW the column (arrow pointing down to trees) */}
+              {/* Reference race labels along the dotted line */}
+              {([
+                { value: 145, label: "145m - Tor De Geants 330" },
+                { value: 65,  label: "65m Salomon Cappadocia Ultra" },
+                { value: 38,  label: "38m - Trail Menorca Camí de Cavalls 185km" },
+              ] as { value: number; label: string }[]).map(({ value, label }) => {
+                const pct = ((MAX_VERT - value) / MAX_VERT) * 100;
+                return (
+                  <div
+                    key={value}
+                    className="absolute pointer-events-none flex items-center"
+                    style={{ top: `${pct}%`, left: "50%", paddingLeft: 10 }}
+                  >
+                    <div className="w-3 h-px bg-white/70 mr-2 shrink-0" />
+                    <span
+                      className="text-xs font-bold leading-tight"
+                      style={{
+                        color: "#fff",
+                        textShadow: "0 1px 3px rgba(0,0,0,0.7), 0 0 6px rgba(0,0,0,0.5)",
+                        maxWidth: 160,
+                      }}
+                    >
+                      {label}
+                    </span>
+                  </div>
+                );
+              })}
+
+              {/* 0 m/km (flat) — sits BELOW the column */}
               <div
                 className="absolute left-1/2 pointer-events-none"
-                style={{ bottom: -44, transform: "translateX(-50%)", textAlign: "center", whiteSpace: "nowrap" }}
+                style={{ bottom: -48, transform: "translateX(-50%)", textAlign: "center", whiteSpace: "nowrap" }}
               >
-                <span
-                  className="text-xs font-bold px-3 py-1 rounded-full shadow-sm border"
-                  style={{ backgroundColor: "rgba(255,255,255,0.92)", color: "#111", borderColor: "#d1d5db" }}
-                >
-                  ↓ 0 m/km — treeline
+                <span className="text-sm font-black text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">
+                  ↓ 0m/km (flat)
                 </span>
               </div>
             </div>
