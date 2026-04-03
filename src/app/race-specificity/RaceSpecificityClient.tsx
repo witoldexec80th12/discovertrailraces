@@ -228,12 +228,20 @@ export default function RaceSpecificityClient({
         {/* MOUNTAIN — centered drag column, below panel on mobile / fills right on desktop */}
         <div className="flex-1 relative overflow-hidden" style={{ minHeight: 400 }}>
 
-          {/* Mountain image */}
+          {/* Mobile mountain image */}
+          <img
+            src="/images/dkm_mobile.png"
+            alt="Mountain"
+            draggable={false}
+            className="absolute inset-0 w-full h-full object-cover select-none sm:hidden"
+            style={{ objectPosition: "center center" }}
+          />
+          {/* Desktop mountain image */}
           <img
             src="/images/mountain.png"
             alt="Mountain"
             draggable={false}
-            className="absolute inset-0 w-full h-full object-cover select-none"
+            className="absolute inset-0 w-full h-full object-cover select-none hidden sm:block"
             style={{ objectPosition: "center 22%" }}
           />
           <div className="absolute inset-0 bg-white/10" />
