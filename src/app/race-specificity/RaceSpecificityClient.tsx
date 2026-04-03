@@ -188,40 +188,38 @@ export default function RaceSpecificityClient({
       <div className="border-t border-neutral-200 flex flex-col sm:flex-row overflow-hidden sm:h-[760px]">
 
         {/* PANEL — full width on mobile (top), 300px sidebar on desktop */}
-        <div className="shrink-0 flex flex-col gap-5 sm:gap-0 sm:justify-between p-6 sm:p-10 bg-white/95 backdrop-blur-sm border-b sm:border-b-0 sm:border-r border-neutral-200 z-20 sm:w-[300px]">
-          <div>
-            <div className="inline-flex items-center gap-2 mb-4">
-              <span
-                className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white"
-                style={{ backgroundColor: BRAND_NAVY }}
-              >1</span>
-              <span className="text-xs font-bold uppercase tracking-widest text-neutral-500">
-                Vert Meter
+        <div className="shrink-0 flex flex-col p-6 sm:p-10 bg-white/95 backdrop-blur-sm border-b sm:border-b-0 sm:border-r border-neutral-200 z-20 sm:w-[300px]">
+          <div className="inline-flex items-center gap-2 mb-4">
+            <span
+              className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white"
+              style={{ backgroundColor: BRAND_NAVY }}
+            >1</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-neutral-500">
+              Vert Meter
+            </span>
+          </div>
+          <div className="rounded-xl p-5 shadow-sm mb-4" style={{ backgroundColor: BRAND_NAVY }}>
+            <p className="text-sm text-white/90 leading-relaxed mb-3">
+              <span className="font-semibold text-white">Drag the bars</span> up or down to set your
+              elevation gain range — from flat (0 D+/km) at the treeline to
+              hiking-steep (170 D+/km) at the peak.
+            </p>
+            <p className="text-sm text-white/90 leading-relaxed">
+              <span className="font-semibold text-white">Hit Apply</span> to find matching races
+              and unlock terrain filtering below.
+            </p>
+            <div className="mt-4 pt-3 border-t border-white/20 flex items-center justify-between">
+              <span className="text-xs text-white/60">Range</span>
+              <span className="text-sm font-bold text-white">
+                {minVal}–{maxVal}
+                <span className="text-xs font-normal text-white/60 ml-1">D+/km</span>
               </span>
-            </div>
-            <div className="bg-white border border-neutral-200 rounded-xl p-5 shadow-sm">
-              <p className="text-sm text-neutral-700 leading-relaxed mb-3">
-                <span className="font-semibold">Drag the bars</span> up or down to set your
-                elevation gain range — from flat (0 m/km) at the treeline to
-                hiking-steep (170 m/km) at the peak.
-              </p>
-              <p className="text-sm text-neutral-700 leading-relaxed">
-                <span className="font-semibold">Hit Apply</span> to find matching races
-                and unlock terrain filtering below.
-              </p>
-              <div className="mt-4 pt-3 border-t border-neutral-100 flex items-center justify-between">
-                <span className="text-xs text-neutral-500">Range</span>
-                <span className="text-sm font-bold text-neutral-900">
-                  {minVal}–{maxVal}
-                  <span className="text-xs font-normal text-neutral-500 ml-1">m/km</span>
-                </span>
-              </div>
             </div>
           </div>
           <button
             onClick={applyStep1}
-            className="w-full py-4 text-lg font-black text-white rounded-xl transition-all hover:opacity-90 active:scale-95 shadow-md"
-            style={{ backgroundColor: BRAND_NAVY }}
+            className="w-full py-3 text-base font-black rounded-xl border-2 transition-all hover:opacity-80 active:scale-95"
+            style={{ borderColor: BRAND_NAVY, color: BRAND_NAVY, backgroundColor: "white" }}
           >
             APPLY
           </button>
@@ -292,7 +290,7 @@ export default function RaceSpecificityClient({
                   style={{ backgroundColor: "#111" }}
                 >
                   <span className="text-xs font-black tracking-[0.2em] uppercase text-white">DRAG</span>
-                  <span className="text-xs font-bold text-white/70">{maxVal} m/km</span>
+                  <span className="text-xs font-bold text-white/70">{maxVal} D+/km</span>
                 </div>
               </div>
 
@@ -307,11 +305,11 @@ export default function RaceSpecificityClient({
                   style={{ backgroundColor: "#111" }}
                 >
                   <span className="text-xs font-black tracking-[0.2em] uppercase text-white">DRAG</span>
-                  <span className="text-xs font-bold text-white/70">{minVal} m/km</span>
+                  <span className="text-xs font-bold text-white/70">{minVal} D+/km</span>
                 </div>
               </div>
 
-              {/* 170 m/km (brutal) — sits ABOVE the column */}
+              {/* 170 D+/km (brutal) — sits ABOVE the column */}
               <div
                 className="absolute left-1/2 pointer-events-none"
                 style={{ top: -48, transform: "translateX(-50%)", textAlign: "center", whiteSpace: "nowrap" }}
@@ -320,7 +318,7 @@ export default function RaceSpecificityClient({
                   className="text-sm font-black px-3 py-1 rounded-full shadow-sm border"
                   style={{ backgroundColor: "rgba(255,255,255,0.92)", color: "#111", borderColor: "#d1d5db" }}
                 >
-                  ↑ 170m/km (brutal)
+                  ↑ 170 D+/km (brutal)
                 </span>
               </div>
 
@@ -352,7 +350,7 @@ export default function RaceSpecificityClient({
                 );
               })}
 
-              {/* 0 m/km (flat) — sits BELOW the column */}
+              {/* 0 D+/km (flat) — sits BELOW the column */}
               <div
                 className="absolute left-1/2 pointer-events-none"
                 style={{ bottom: -48, transform: "translateX(-50%)", textAlign: "center", whiteSpace: "nowrap" }}
@@ -361,7 +359,7 @@ export default function RaceSpecificityClient({
                   className="text-sm font-black px-3 py-1 rounded-full shadow-sm border"
                   style={{ backgroundColor: "rgba(255,255,255,0.92)", color: "#111", borderColor: "#d1d5db" }}
                 >
-                  ↓ 0m/km (flat)
+                  ↓ 0 D+/km (flat)
                 </span>
               </div>
             </div>
@@ -390,7 +388,7 @@ export default function RaceSpecificityClient({
                     Filter by Terrain
                   </h2>
                   <p className="text-sm text-neutral-500 max-w-[200px]">
-                    {vertFiltered.length} races match {appliedMin}–{appliedMax} m/km.
+                    {vertFiltered.length} races match {appliedMin}–{appliedMax} D+/km.
                     Click a terrain to filter instantly.
                   </p>
                   {selectedTerrain && (
@@ -444,7 +442,7 @@ export default function RaceSpecificityClient({
                     {allResults.length} {allResults.length === 1 ? "Race" : "Races"} Found
                   </h3>
                   <p className="text-sm text-neutral-500 mt-1">
-                    {appliedMin}–{appliedMax} m/km
+                    {appliedMin}–{appliedMax} D+/km
                     {selectedTerrain ? ` · ${selectedTerrain}` : ""}
                     {totalPages > 1 ? ` · Page ${currentPage} of ${totalPages}` : ""}
                   </p>
@@ -585,7 +583,7 @@ function ResultCard({ race }: { race: EnrichedDistance }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
         <div className="absolute top-2.5 right-2.5">
           <span className="bg-white/95 rounded-full px-2.5 py-0.5 text-xs font-bold text-neutral-900 shadow-sm">
-            {Math.round(race.pctIncrease)} m/km
+            {Math.round(race.pctIncrease)} D+/km
           </span>
         </div>
         <div className="absolute bottom-3 left-3 right-3">
