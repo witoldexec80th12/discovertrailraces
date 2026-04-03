@@ -134,8 +134,8 @@ export default function RaceSpecificityClient({
   const pagedResults = allResults.slice((currentPage - 1) * RESULTS_PER_PAGE, currentPage * RESULTS_PER_PAGE);
 
   const applyStep1 = () => {
-    setAppliedMin(minVal);
-    setAppliedMax(maxVal);
+    setAppliedMin(minValRef.current);
+    setAppliedMax(maxValRef.current);
     setStep1Applied(true);
     setSelectedTerrain(null);
     setCurrentPage(1);
