@@ -157,6 +157,12 @@ export default async function HomePage() {
               Cost Index
             </Link>
             <Link
+              href="/race-specificity"
+              className="hover:text-neutral-900 transition-colors"
+            >
+              Race Finder
+            </Link>
+            <Link
               href="/about"
               className="hover:text-neutral-900 transition-colors"
             >

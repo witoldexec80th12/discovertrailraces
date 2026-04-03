@@ -40,9 +40,11 @@ type EnrichedDistance = {
 export default function RaceSpecificityClient({
   raceEvents,
   distances,
+  slugImgMap = {},
 }: {
   raceEvents: RaceEventRecord[];
   distances: DistanceRecord[];
+  slugImgMap?: Record<string, string>;
 }) {
   const minValRef = useRef(80);
   const maxValRef = useRef(120);
@@ -80,11 +82,17 @@ export default function RaceSpecificityClient({
         const race = raceMap.get(raceId);
         if (!race) return null;
         const img = race.fields["Featured Image"]?.[0];
-        const imgUrl = img?.thumbnails?.large?.url ?? img?.thumbnails?.full?.url ?? img?.url ?? null;
+        const slug = race.fields["Slug"] ?? "";
+        const imgUrl =
+          img?.thumbnails?.large?.url ??
+          img?.thumbnails?.full?.url ??
+          img?.url ??
+          (slug ? slugImgMap[slug] : null) ??
+          null;
         return {
           raceId,
           raceName: race.fields["Race Name"] ?? "Unknown Race",
-          slug: race.fields["Slug"] ?? "",
+          slug,
           terrain: race.fields["Terrain_multi"] ?? [],
           imgUrl,
           distanceName: d.fields["Distance Name"] ?? "",
@@ -308,6 +316,18 @@ export default function RaceSpecificityClient({
             style={{ objectPosition: "center 22%" }}
           />
           <div className="absolute inset-0 bg-black/10" />
+
+          {/* Vertical scale line — 170 D+/km (top) → 0 D+/km (bottom) */}
+          <div
+            className="absolute pointer-events-none z-10"
+            style={{
+              left: "calc(50% - 1px)",
+              top: "9%",
+              bottom: "33%",
+              width: 2,
+              background: "linear-gradient(to bottom, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.55) 100%)",
+            }}
+          />
 
           {/* Visual range band — shows selected D+/km range on the mountain */}
           <div
