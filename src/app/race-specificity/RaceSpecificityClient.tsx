@@ -182,28 +182,13 @@ export default function RaceSpecificityClient({
 
       {/* ── STEP 1 — MOUNTAIN SECTION ──────────────────────── */}
       {/*
-        Layout: absolute-positioned left panel (instructions + APPLY) +
-        mountain image filling the rest, with a narrow centered drag column
-        anchored from peak (top ~9%) to treeline (top ~67%).
+        Mobile:  panel stacked above mountain (flex-col)
+        Desktop: panel as left sidebar, mountain fills rest (flex-row, fixed height)
       */}
-      <div
-        className="relative w-full border-t border-neutral-200 overflow-hidden"
-        style={{ height: 760 }}
-      >
-        {/* Mountain image — fills the full section, zoomed to frame peak→treeline */}
-        <img
-          src="/images/mountain.png"
-          alt="Mountain"
-          draggable={false}
-          className="absolute inset-0 w-full h-full object-cover select-none"
-          style={{ objectPosition: "center 22%" }}
-        />
-        {/* Subtle vignette to make labels readable */}
-        <div className="absolute inset-0 bg-white/10" />
+      <div className="border-t border-neutral-200 flex flex-col sm:flex-row overflow-hidden sm:h-[760px]">
 
-        {/* LEFT PANEL — white sidebar */}
-        <div className="absolute left-0 top-0 bottom-0 z-20 flex flex-col justify-between p-8 sm:p-10 bg-white/95 backdrop-blur-sm border-r border-neutral-200"
-          style={{ width: 300 }}>
+        {/* PANEL — full width on mobile (top), 300px sidebar on desktop */}
+        <div className="shrink-0 flex flex-col gap-5 sm:gap-0 sm:justify-between p-6 sm:p-10 bg-white/95 backdrop-blur-sm border-b sm:border-b-0 sm:border-r border-neutral-200 z-20 sm:w-[300px]">
           <div>
             <div className="inline-flex items-center gap-2 mb-4">
               <span
@@ -242,22 +227,29 @@ export default function RaceSpecificityClient({
           </button>
         </div>
 
-        {/* DRAG COLUMN — narrow, centered in the mountain area, anchored peak→treeline */}
-        {/*
-          The column sits at:
-            left: 300px (after left panel) + (remaining / 2) - (col width / 2)
-          Top 9% = visual peak | Bottom 33% from bottom = visual treeline
-          mountainRef is on this column so pointer Y maps correctly.
-        */}
-        <div
-          className="absolute z-10"
-          style={{
-            left: 300,
-            right: 0,
-            top: "9%",
-            bottom: "33%",
-          }}
-        >
+        {/* MOUNTAIN — centered drag column, below panel on mobile / fills right on desktop */}
+        <div className="flex-1 relative overflow-hidden" style={{ minHeight: 400 }}>
+
+          {/* Mountain image */}
+          <img
+            src="/images/mountain.png"
+            alt="Mountain"
+            draggable={false}
+            className="absolute inset-0 w-full h-full object-cover select-none"
+            style={{ objectPosition: "center 22%" }}
+          />
+          <div className="absolute inset-0 bg-white/10" />
+
+          {/* DRAG COLUMN — centered within the mountain area, anchored peak→treeline */}
+          <div
+            className="absolute z-10"
+            style={{
+              left: 0,
+              right: 0,
+              top: "9%",
+              bottom: "33%",
+            }}
+          >
           {/* Inner centering wrapper */}
           <div className="relative h-full flex justify-center">
 
@@ -375,7 +367,8 @@ export default function RaceSpecificityClient({
             </div>
           </div>
         </div>
-      </div>
+        </div>{/* end mountain area */}
+      </div>{/* end step 1 flex row */}
 
       {/* ── STEP 2 + RESULTS ─────────────────────────────────── */}
       <div ref={step2Ref}>
