@@ -478,38 +478,86 @@ export default function RaceSpecificityClient({
                     ))}
                   </div>
 
-                  {totalPages > 1 && (
-                    <div className="mt-10 flex items-center justify-center gap-2">
-                      <button
-                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                        disabled={currentPage === 1}
-                        className="px-4 py-2 text-sm font-semibold rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                      >
-                        ← Prev
-                      </button>
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  {totalPages > 1 && (() => {
+                    const WIN = 7;
+                    let winStart = Math.max(1, currentPage - Math.floor(WIN / 2));
+                    let winEnd = Math.min(totalPages, winStart + WIN - 1);
+                    if (winEnd - winStart + 1 < WIN) winStart = Math.max(1, winEnd - WIN + 1);
+                    const pageWindow = Array.from({ length: winEnd - winStart + 1 }, (_, i) => winStart + i);
+                    return (
+                      <div className="mt-10 flex items-center justify-center gap-1.5">
+                        {/* Prev */}
                         <button
-                          key={page}
-                          onClick={() => setCurrentPage(page)}
-                          className="w-9 h-9 text-sm font-bold rounded-lg border-2 transition-all"
-                          style={{
-                            backgroundColor: currentPage === page ? BRAND_NAVY : "white",
-                            color: currentPage === page ? "#fff" : "#404040",
-                            borderColor: currentPage === page ? BRAND_NAVY : "#e5e7eb",
-                          }}
+                          onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                          disabled={currentPage === 1}
+                          className="px-3 py-2 text-sm font-semibold rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                         >
-                          {page}
+                          ←
                         </button>
-                      ))}
-                      <button
-                        onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                        disabled={currentPage === totalPages}
-                        className="px-4 py-2 text-sm font-semibold rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                      >
-                        Next →
-                      </button>
-                    </div>
-                  )}
+
+                        {/* First page + ellipsis if window doesn't start at 1 */}
+                        {winStart > 1 && (
+                          <>
+                            <button
+                              onClick={() => setCurrentPage(1)}
+                              className="w-9 h-9 text-sm font-bold rounded-lg border-2 transition-all"
+                              style={{
+                                backgroundColor: "white",
+                                color: "#404040",
+                                borderColor: "#e5e7eb",
+                              }}
+                            >1</button>
+                            {winStart > 2 && (
+                              <span className="w-9 h-9 flex items-center justify-center text-sm text-neutral-400">…</span>
+                            )}
+                          </>
+                        )}
+
+                        {/* Window */}
+                        {pageWindow.map((page) => (
+                          <button
+                            key={page}
+                            onClick={() => setCurrentPage(page)}
+                            className="w-9 h-9 text-sm font-bold rounded-lg border-2 transition-all"
+                            style={{
+                              backgroundColor: currentPage === page ? BRAND_NAVY : "white",
+                              color: currentPage === page ? "#fff" : "#404040",
+                              borderColor: currentPage === page ? BRAND_NAVY : "#e5e7eb",
+                            }}
+                          >
+                            {page}
+                          </button>
+                        ))}
+
+                        {/* Ellipsis + last page if window doesn't reach end */}
+                        {winEnd < totalPages && (
+                          <>
+                            {winEnd < totalPages - 1 && (
+                              <span className="w-9 h-9 flex items-center justify-center text-sm text-neutral-400">…</span>
+                            )}
+                            <button
+                              onClick={() => setCurrentPage(totalPages)}
+                              className="w-9 h-9 text-sm font-bold rounded-lg border-2 transition-all"
+                              style={{
+                                backgroundColor: "white",
+                                color: "#404040",
+                                borderColor: "#e5e7eb",
+                              }}
+                            >{totalPages}</button>
+                          </>
+                        )}
+
+                        {/* Next */}
+                        <button
+                          onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                          disabled={currentPage === totalPages}
+                          className="px-3 py-2 text-sm font-semibold rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                        >
+                          →
+                        </button>
+                      </div>
+                    );
+                  })()}
                 </>
               )}
             </div>
