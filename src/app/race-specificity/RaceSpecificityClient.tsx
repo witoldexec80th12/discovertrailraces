@@ -161,6 +161,8 @@ export default function RaceSpecificityClient({
         </h1>
         <p className="mt-4 text-base sm:text-lg text-neutral-600 font-medium max-w-xl">
           Filter races by how much climbing they demand, then narrow by terrain type.
+          D+/km is an estimate of average meters gain per KM of climb in the race.
+          A low number means fast and runnable; a high number means more hiking, more vertical, and more demand on your legs.
         </p>
       </div>
 
@@ -288,13 +290,14 @@ export default function RaceSpecificityClient({
         {/* MOUNTAIN — decorative, with read-only visual range band */}
         <div className="flex-1 relative overflow-hidden" style={{ minHeight: 500 }}>
 
-          {/* Mobile mountain image */}
+          {/* Mobile mountain image — contain to show more of the scene */}
+          <div className="absolute inset-0 sm:hidden" style={{ backgroundColor: "#0d1b2a" }} />
           <img
             src="/images/dkm_mobile.png"
             alt="Mountain"
             draggable={false}
-            className="absolute inset-0 w-full h-full object-cover select-none sm:hidden"
-            style={{ objectPosition: "center center" }}
+            className="absolute inset-0 w-full h-full select-none sm:hidden"
+            style={{ objectFit: "contain", objectPosition: "center center" }}
           />
           {/* Desktop mountain image */}
           <img
