@@ -210,15 +210,45 @@ export default function RaceSpecificityClient({
             </p>
           </div>
 
-          {/* Selected Range — standalone display */}
-          <div className="rounded-xl px-5 py-4 mb-4 border-2 flex items-center justify-between" style={{ borderColor: BRAND_NAVY }}>
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: BRAND_NAVY }}>
+          {/* Selected Range — editable inputs */}
+          <div className="rounded-xl px-5 py-4 mb-4 border-2" style={{ borderColor: BRAND_NAVY }}>
+            <span className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: BRAND_NAVY }}>
               Selected Range
             </span>
-            <span className="text-2xl font-black" style={{ color: BRAND_NAVY }}>
-              {minVal}–{maxVal}
-              <span className="text-sm font-semibold ml-1.5" style={{ color: BRAND_NAVY, opacity: 0.6 }}>D+/km</span>
-            </span>
+            <div className="flex items-center gap-1">
+              <input
+                type="number"
+                min={0}
+                max={170}
+                value={minVal}
+                onChange={(e) => {
+                  const v = Math.max(0, Math.min(170, Number(e.target.value) || 0));
+                  setMinVal(v);
+                }}
+                onBlur={() => {
+                  if (minVal > maxVal - 5) setMinVal(Math.max(0, maxVal - 5));
+                }}
+                className="w-16 text-2xl font-black text-center bg-transparent border-b-2 outline-none focus:border-b-2 appearance-none"
+                style={{ color: BRAND_NAVY, borderColor: BRAND_NAVY }}
+              />
+              <span className="text-2xl font-black" style={{ color: BRAND_NAVY }}>–</span>
+              <input
+                type="number"
+                min={0}
+                max={170}
+                value={maxVal}
+                onChange={(e) => {
+                  const v = Math.max(0, Math.min(170, Number(e.target.value) || 0));
+                  setMaxVal(v);
+                }}
+                onBlur={() => {
+                  if (maxVal < minVal + 5) setMaxVal(Math.min(170, minVal + 5));
+                }}
+                className="w-16 text-2xl font-black text-center bg-transparent border-b-2 outline-none focus:border-b-2 appearance-none"
+                style={{ color: BRAND_NAVY, borderColor: BRAND_NAVY }}
+              />
+              <span className="text-sm font-semibold ml-1" style={{ color: BRAND_NAVY, opacity: 0.6 }}>D+/km</span>
+            </div>
           </div>
 
           {/* Desktop-only APPLY button */}
