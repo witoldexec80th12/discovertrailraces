@@ -34,3 +34,44 @@ input[type=number]::-webkit-outer-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+/* Range slider — navy thumb, filled track */
+input[type=range].range-navy {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+input[type=range].range-navy::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #1a2e4a;
+  cursor: pointer;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.28);
+}
+input[type=range].range-navy::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #1a2e4a;
+  cursor: pointer;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.28);
+}
+input[type=range].range-navy::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+}
+input[type=range].range-navy::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: #e5e7eb;
+}
+input[type=range].range-navy:focus {
+  outline: none;
+}

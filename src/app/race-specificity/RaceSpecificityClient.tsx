@@ -51,37 +51,25 @@ export default function RaceSpecificityClient({
   const setMinVal = useCallback((v: number) => { minValRef.current = v; setMinValState(v); }, []);
   const setMaxVal = useCallback((v: number) => { maxValRef.current = v; setMaxValState(v); }, []);
 
-  const [appliedMin, setAppliedMin] = useState<number | null>(null);
-  const [appliedMax, setAppliedMax] = useState<number | null>(null);
-  const [step1Applied, setStep1Applied] = useState(false);
+  // Results always shown — initialised with defaults (80–120 D+/km)
+  const [appliedMin, setAppliedMin] = useState<number>(80);
+  const [appliedMax, setAppliedMax] = useState<number>(120);
   const [selectedTerrain, setSelectedTerrain] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
-  // mountainRef is the narrow drag column (not the full area)
-  const mountainRef = useRef<HTMLDivElement>(null);
   const step2Ref = useRef<HTMLDivElement>(null);
-  const dragging = useRef<"min" | "max" | null>(null);
 
+  // Auto-apply: update results 500ms after any slider/input change (no scroll, no terrain reset)
+  const autoApplyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
-    const handleMove = (e: PointerEvent) => {
-      if (!dragging.current || !mountainRef.current) return;
-      const rect = mountainRef.current.getBoundingClientRect();
-      const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height));
-      const value = Math.round((1 - y / rect.height) * MAX_VERT);
-      if (dragging.current === "max") {
-        setMaxVal(Math.max(value, minValRef.current + 5));
-      } else {
-        setMinVal(Math.min(value, maxValRef.current - 5));
-      }
-    };
-    const handleUp = () => { dragging.current = null; };
-    window.addEventListener("pointermove", handleMove);
-    window.addEventListener("pointerup", handleUp);
-    return () => {
-      window.removeEventListener("pointermove", handleMove);
-      window.removeEventListener("pointerup", handleUp);
-    };
-  }, [setMinVal, setMaxVal]);
+    if (autoApplyTimer.current) clearTimeout(autoApplyTimer.current);
+    autoApplyTimer.current = setTimeout(() => {
+      setAppliedMin(minValRef.current);
+      setAppliedMax(maxValRef.current);
+      setCurrentPage(1);
+    }, 500);
+    return () => { if (autoApplyTimer.current) clearTimeout(autoApplyTimer.current); };
+  }, [minVal, maxVal]);
 
   const enrichedData = useMemo<EnrichedDistance[]>(() => {
     const raceMap = new Map(raceEvents.map((r) => [r.id, r]));
@@ -108,9 +96,8 @@ export default function RaceSpecificityClient({
   }, [raceEvents, distances]);
 
   const vertFiltered = useMemo(() => {
-    if (!step1Applied || appliedMin == null || appliedMax == null) return [];
     return enrichedData.filter((r) => r.pctIncrease >= appliedMin && r.pctIncrease <= appliedMax);
-  }, [enrichedData, step1Applied, appliedMin, appliedMax]);
+  }, [enrichedData, appliedMin, appliedMax]);
 
   const terrainCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -122,21 +109,21 @@ export default function RaceSpecificityClient({
   }, [vertFiltered]);
 
   const allResults = useMemo(() => {
-    if (!step1Applied) return [];
     let results = vertFiltered;
     if (selectedTerrain) {
       results = results.filter((r) => r.terrain.includes(selectedTerrain));
     }
     return [...results].sort((a, b) => b.pctIncrease - a.pctIncrease);
-  }, [vertFiltered, step1Applied, selectedTerrain]);
+  }, [vertFiltered, selectedTerrain]);
 
   const totalPages = Math.max(1, Math.ceil(allResults.length / RESULTS_PER_PAGE));
   const pagedResults = allResults.slice((currentPage - 1) * RESULTS_PER_PAGE, currentPage * RESULTS_PER_PAGE);
 
+  // Manual APPLY: immediate apply + scroll to results + reset terrain
   const applyStep1 = () => {
+    if (autoApplyTimer.current) clearTimeout(autoApplyTimer.current);
     setAppliedMin(minValRef.current);
     setAppliedMax(maxValRef.current);
-    setStep1Applied(true);
     setSelectedTerrain(null);
     setCurrentPage(1);
     setTimeout(() => {
@@ -150,19 +137,16 @@ export default function RaceSpecificityClient({
   };
 
   const reset = () => {
-    setStep1Applied(false);
-    setSelectedTerrain(null);
-    setCurrentPage(1);
     setMinVal(80);
     setMaxVal(120);
+    setSelectedTerrain(null);
+    setCurrentPage(1);
   };
 
-  // Positions of bars within the drag column (0% = top = 170m/km, 100% = bottom = 0m/km)
-  const minPct = ((MAX_VERT - minVal) / MAX_VERT) * 100;
-  const maxPct = ((MAX_VERT - maxVal) / MAX_VERT) * 100;
-
-  // Bar height in px — used for offsetting bar center to pointer position
-  const BAR_H = 44;
+  // Visual band on mountain: 170 D+/km ≈ 9% from top, 0 D+/km ≈ 67% from top
+  const toTopPct = (v: number) => 9 + (1 - v / MAX_VERT) * 58;
+  const bandTopPct = toTopPct(maxVal);
+  const bandBottomPct = toTopPct(minVal);
 
   return (
     <div className="min-h-screen bg-white">
@@ -188,7 +172,7 @@ export default function RaceSpecificityClient({
       <div className="border-t border-neutral-200 flex flex-col sm:flex-row overflow-hidden sm:h-[760px]">
 
         {/* PANEL — full width on mobile (top), 300px sidebar on desktop */}
-        <div className="shrink-0 flex flex-col p-6 sm:p-10 bg-white/95 backdrop-blur-sm border-b sm:border-b-0 sm:border-r border-neutral-200 z-20 sm:w-[300px]">
+        <div className="shrink-0 flex flex-col p-6 sm:p-10 bg-white/95 backdrop-blur-sm border-b sm:border-b-0 sm:border-r border-neutral-200 z-20 sm:w-[320px]">
           <div className="inline-flex items-center gap-2 mb-4">
             <span
               className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white"
@@ -198,20 +182,60 @@ export default function RaceSpecificityClient({
               Vert Meter
             </span>
           </div>
-          <div className="rounded-xl p-5 shadow-sm mb-4" style={{ backgroundColor: BRAND_NAVY }}>
-            <p className="text-sm text-white/90 leading-relaxed mb-3">
-              <span className="font-semibold text-white">Drag the bars</span> up or down to set your
-              elevation gain range — from flat (0 D+/km) at the treeline to
-              hiking-steep (170 D+/km) at the peak.
-            </p>
+          <div className="rounded-xl p-5 shadow-sm mb-5" style={{ backgroundColor: BRAND_NAVY }}>
             <p className="text-sm text-white/90 leading-relaxed">
-              <span className="font-semibold text-white">Hit Apply</span> to find matching races
-              and unlock terrain filtering below.
+              <span className="font-semibold text-white">Slide Min and Max</span> to set your elevation
+              gain range — 0 D+/km (flat) to 170 D+/km (hiking-steep).
+              Results update automatically.
             </p>
           </div>
 
-          {/* Selected Range — editable inputs */}
-          <div className="rounded-xl px-5 py-4 mb-4 border-2" style={{ borderColor: BRAND_NAVY }}>
+          {/* Min slider */}
+          <div className="mb-5">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: BRAND_NAVY }}>Min D+/km</span>
+              <span className="text-lg font-black" style={{ color: BRAND_NAVY }}>{minVal}</span>
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={MAX_VERT}
+              value={minVal}
+              onChange={(e) => {
+                const v = Math.min(Number(e.target.value), maxValRef.current - 5);
+                setMinVal(Math.max(0, v));
+              }}
+              className="range-navy w-full"
+              style={{
+                background: `linear-gradient(to right, ${BRAND_NAVY} 0%, ${BRAND_NAVY} ${(minVal / MAX_VERT) * 100}%, #e5e7eb ${(minVal / MAX_VERT) * 100}%, #e5e7eb 100%)`,
+              }}
+            />
+          </div>
+
+          {/* Max slider */}
+          <div className="mb-5">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: BRAND_NAVY }}>Max D+/km</span>
+              <span className="text-lg font-black" style={{ color: BRAND_NAVY }}>{maxVal}</span>
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={MAX_VERT}
+              value={maxVal}
+              onChange={(e) => {
+                const v = Math.max(Number(e.target.value), minValRef.current + 5);
+                setMaxVal(Math.min(MAX_VERT, v));
+              }}
+              className="range-navy w-full"
+              style={{
+                background: `linear-gradient(to right, ${BRAND_NAVY} 0%, ${BRAND_NAVY} ${(maxVal / MAX_VERT) * 100}%, #e5e7eb ${(maxVal / MAX_VERT) * 100}%, #e5e7eb 100%)`,
+              }}
+            />
+          </div>
+
+          {/* Selected Range — editable number inputs */}
+          <div className="rounded-xl px-5 py-4 mb-5 border-2" style={{ borderColor: BRAND_NAVY }}>
             <span className="text-xs font-bold uppercase tracking-widest block mb-2" style={{ color: BRAND_NAVY }}>
               Selected Range
             </span>
@@ -228,7 +252,7 @@ export default function RaceSpecificityClient({
                 onBlur={() => {
                   if (minVal > maxVal - 5) setMinVal(Math.max(0, maxVal - 5));
                 }}
-                className="w-16 text-2xl font-black text-center bg-transparent border-b-2 outline-none focus:border-b-2 appearance-none"
+                className="w-16 text-2xl font-black text-center bg-transparent border-b-2 outline-none appearance-none"
                 style={{ color: BRAND_NAVY, borderColor: BRAND_NAVY }}
               />
               <span className="text-2xl font-black" style={{ color: BRAND_NAVY }}>–</span>
@@ -244,24 +268,24 @@ export default function RaceSpecificityClient({
                 onBlur={() => {
                   if (maxVal < minVal + 5) setMaxVal(Math.min(170, minVal + 5));
                 }}
-                className="w-16 text-2xl font-black text-center bg-transparent border-b-2 outline-none focus:border-b-2 appearance-none"
+                className="w-16 text-2xl font-black text-center bg-transparent border-b-2 outline-none appearance-none"
                 style={{ color: BRAND_NAVY, borderColor: BRAND_NAVY }}
               />
               <span className="text-sm font-semibold ml-1" style={{ color: BRAND_NAVY, opacity: 0.6 }}>D+/km</span>
             </div>
           </div>
 
-          {/* Desktop-only APPLY button */}
+          {/* APPLY — scrolls to results and resets terrain */}
           <button
             onClick={applyStep1}
-            className="hidden sm:block w-full py-3 text-base font-black rounded-xl border-2 transition-all hover:opacity-80 active:scale-95"
+            className="w-full py-3 text-base font-black rounded-xl border-2 transition-all hover:opacity-80 active:scale-95"
             style={{ borderColor: BRAND_NAVY, color: BRAND_NAVY, backgroundColor: "white" }}
           >
-            APPLY
+            APPLY &amp; SCROLL TO RESULTS
           </button>
         </div>
 
-        {/* MOUNTAIN — centered drag column, below panel on mobile / fills right on desktop */}
+        {/* MOUNTAIN — decorative, with read-only visual range band */}
         <div className="flex-1 relative overflow-hidden" style={{ minHeight: 500 }}>
 
           {/* Mobile mountain image */}
@@ -280,145 +304,58 @@ export default function RaceSpecificityClient({
             className="absolute inset-0 w-full h-full object-cover select-none hidden sm:block"
             style={{ objectPosition: "center 22%" }}
           />
-          <div className="absolute inset-0 bg-white/10" />
+          <div className="absolute inset-0 bg-black/10" />
 
-          {/* DRAG COLUMN — centered within the mountain area, anchored peak→treeline */}
+          {/* Visual range band — shows selected D+/km range on the mountain */}
           <div
-            className="absolute z-10"
+            className="absolute left-0 right-0 pointer-events-none z-10"
             style={{
-              left: 0,
-              right: 0,
-              top: "9%",
-              bottom: "33%",
+              top: `${bandTopPct}%`,
+              bottom: `${100 - bandBottomPct}%`,
+              backgroundColor: "rgba(26,46,74,0.28)",
+              borderTop: "2px solid rgba(26,46,74,0.7)",
+              borderBottom: "2px solid rgba(26,46,74,0.7)",
             }}
-          >
-          {/* Inner centering wrapper */}
-          <div className="relative h-full flex justify-center">
+          />
 
-            {/* The actual drag column — mountainRef, 260px wide */}
-            <div
-              ref={mountainRef}
-              className="relative"
-              style={{
-                width: 260,
-                height: "100%",
-                touchAction: "none",
-                userSelect: "none",
-                cursor: "ns-resize",
-              }}
-            >
-              {/* Dashed center line */}
+          {/* Reference race labels */}
+          {([
+            { value: 145, label: "Tor De Géants 330 · 145 D+/km" },
+            { value: 65,  label: "Salomon Cappadocia Ultra · 65 D+/km" },
+            { value: 38,  label: "Trail Menorca Camí de Cavalls 185 · 38 D+/km" },
+          ] as { value: number; label: string }[]).map(({ value, label }) => {
+            const topPct = toTopPct(value);
+            return (
               <div
-                className="absolute top-0 bottom-0 border-l-2 border-dashed pointer-events-none"
-                style={{ left: "50%", borderColor: "rgba(0,0,0,0.55)" }}
-              />
-
-              {/* Range fill between bars */}
-              <div
-                className="absolute left-0 right-0 pointer-events-none"
-                style={{
-                  backgroundColor: "rgba(230,57,70,0.14)",
-                  top: `calc(${maxPct}% + ${BAR_H / 2}px)`,
-                  bottom: `calc(${100 - minPct}% + ${BAR_H / 2}px)`,
-                }}
-              />
-
-              {/* ── MAX BAR (upper) ─────────────────────────── */}
-              <div
-                className="absolute left-0 right-0 flex items-center cursor-ns-resize group"
-                style={{ top: `calc(${maxPct}% - ${BAR_H / 2}px)`, height: BAR_H }}
-                onPointerDown={() => { dragging.current = "max"; }}
+                key={value}
+                className="absolute pointer-events-none flex items-center z-20"
+                style={{ top: `${topPct}%`, left: "50%", paddingLeft: 10 }}
               >
-                <div
-                  className="flex-1 h-full flex items-center justify-between px-4 rounded-md shadow-lg select-none"
-                  style={{ backgroundColor: "#111" }}
-                >
-                  <span className="text-xs font-black tracking-[0.2em] uppercase text-white">DRAG</span>
-                  <span className="text-xs font-bold text-white/70">{maxVal} D+/km</span>
-                </div>
-              </div>
-
-              {/* ── MIN BAR (lower) ─────────────────────────── */}
-              <div
-                className="absolute left-0 right-0 flex items-center cursor-ns-resize group"
-                style={{ top: `calc(${minPct}% - ${BAR_H / 2}px)`, height: BAR_H }}
-                onPointerDown={() => { dragging.current = "min"; }}
-              >
-                <div
-                  className="flex-1 h-full flex items-center justify-between px-4 rounded-md shadow-lg select-none"
-                  style={{ backgroundColor: "#111" }}
-                >
-                  <span className="text-xs font-black tracking-[0.2em] uppercase text-white">DRAG</span>
-                  <span className="text-xs font-bold text-white/70">{minVal} D+/km</span>
-                </div>
-              </div>
-
-              {/* 170 D+/km (brutal) — sits ABOVE the column */}
-              <div
-                className="absolute left-1/2 pointer-events-none"
-                style={{ top: -48, transform: "translateX(-50%)", textAlign: "center", whiteSpace: "nowrap" }}
-              >
+                <div className="w-3 h-px mr-2 shrink-0" style={{ backgroundColor: "rgba(255,255,255,0.8)" }} />
                 <span
-                  className="text-sm font-black px-3 py-1 rounded-full shadow-sm border"
-                  style={{ backgroundColor: "rgba(255,255,255,0.92)", color: "#111", borderColor: "#d1d5db" }}
+                  className="text-xs font-bold leading-tight px-2 py-0.5 rounded-full"
+                  style={{
+                    color: "#fff",
+                    backgroundColor: "rgba(0,0,0,0.55)",
+                    whiteSpace: "nowrap",
+                  }}
                 >
-                  ↑ 170 D+/km (brutal)
+                  {label}
                 </span>
               </div>
+            );
+          })}
 
-              {/* Reference race labels along the dotted line */}
-              {([
-                { value: 145, label: "145m - Tor De Geants 330" },
-                { value: 65,  label: "65m Salomon Cappadocia Ultra" },
-                { value: 38,  label: "38m - Trail Menorca Camí de Cavalls 185km" },
-              ] as { value: number; label: string }[]).map(({ value, label }) => {
-                const pct = ((MAX_VERT - value) / MAX_VERT) * 100;
-                return (
-                  <div
-                    key={value}
-                    className="absolute pointer-events-none flex items-center"
-                    style={{ top: `${pct}%`, left: "50%", paddingLeft: 10 }}
-                  >
-                    <div className="w-3 h-px bg-white/70 mr-2 shrink-0" />
-                    <span
-                      className="text-xs font-bold leading-tight"
-                      style={{
-                        color: "#fff",
-                        textShadow: "0 1px 3px rgba(0,0,0,0.7), 0 0 6px rgba(0,0,0,0.5)",
-                        maxWidth: 160,
-                      }}
-                    >
-                      {label}
-                    </span>
-                  </div>
-                );
-              })}
-
-              {/* 0 D+/km (flat) — sits BELOW the column */}
-              <div
-                className="absolute left-1/2 pointer-events-none"
-                style={{ bottom: -48, transform: "translateX(-50%)", textAlign: "center", whiteSpace: "nowrap" }}
-              >
-                <span
-                  className="text-sm font-black px-3 py-1 rounded-full shadow-sm border"
-                  style={{ backgroundColor: "rgba(255,255,255,0.92)", color: "#111", borderColor: "#d1d5db" }}
-                >
-                  ↓ 0 D+/km (flat)
-                </span>
-              </div>
-            </div>
+          {/* Anchor labels at top and bottom */}
+          <div className="absolute pointer-events-none z-20" style={{ top: "7%", left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap" }}>
+            <span className="text-xs font-black px-3 py-1 rounded-full" style={{ backgroundColor: "rgba(0,0,0,0.55)", color: "#fff" }}>
+              ↑ 170 D+/km (brutal)
+            </span>
           </div>
-        </div>
-
-          {/* Mobile-only APPLY button — fixed at bottom of mountain image */}
-          <div className="sm:hidden absolute bottom-0 left-0 right-0 z-20 p-4">
-            <button
-              onClick={applyStep1}
-              className="w-full py-4 text-lg font-black text-white rounded-xl shadow-xl transition-all active:scale-95"
-              style={{ backgroundColor: BRAND_NAVY }}
-            >
-              APPLY
-            </button>
+          <div className="absolute pointer-events-none z-20" style={{ bottom: "35%", left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap" }}>
+            <span className="text-xs font-black px-3 py-1 rounded-full" style={{ backgroundColor: "rgba(0,0,0,0.55)", color: "#fff" }}>
+              ↓ 0 D+/km (flat)
+            </span>
           </div>
         </div>{/* end mountain area */}
       </div>{/* end step 1 flex row */}
@@ -430,10 +367,9 @@ export default function RaceSpecificityClient({
         </h2>
       </div>
 
-      {/* ── STEP 2 + RESULTS ─────────────────────────────────── */}
+      {/* ── STEP 2 + RESULTS — always visible ────────────────── */}
       <div ref={step2Ref}>
-        {step1Applied ? (
-          <div className="bg-white border-t border-neutral-200">
+        <div className="bg-white border-t border-neutral-200">
 
             {/* Terrain filter */}
             <div className="px-6 sm:px-10 lg:px-16 py-12 sm:py-16 border-b border-white/10" style={{ backgroundColor: BRAND_NAVY }}>
@@ -463,8 +399,8 @@ export default function RaceSpecificityClient({
                   )}
                 </div>
 
-                <div className="flex-1">
-                  <div className="flex flex-wrap gap-2">
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-nowrap overflow-x-auto sm:flex-wrap gap-2 pb-1 sm:pb-0 -mx-1 px-1">
                     {ALL_TERRAIN_TYPES.map((tag) => {
                       const count = terrainCounts[tag] ?? 0;
                       const isSelected = selectedTerrain === tag;
@@ -473,7 +409,7 @@ export default function RaceSpecificityClient({
                         <button
                           key={tag}
                           onClick={() => hasRaces && handleTerrainClick(tag)}
-                          className="px-4 py-2 rounded-full text-sm font-bold border-2 transition-all"
+                          className="shrink-0 sm:shrink px-4 py-2 rounded-full text-sm font-bold border-2 transition-all"
                           style={{
                             backgroundColor: isSelected ? BRAND_NAVY : "white",
                             color: isSelected ? "#fff" : hasRaces ? BRAND_NAVY : "#d1d5db",
@@ -615,14 +551,6 @@ export default function RaceSpecificityClient({
               )}
             </div>
           </div>
-        ) : (
-          <div className="px-6 sm:px-10 lg:px-16 py-16 text-center border-t border-neutral-100 bg-neutral-50">
-            <p className="text-sm text-neutral-400 font-medium">
-              Set your elevation range above and hit{" "}
-              <span className="font-bold text-neutral-600">APPLY</span> to unlock terrain filtering and see results.
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );
