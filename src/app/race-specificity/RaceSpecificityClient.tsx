@@ -208,14 +208,19 @@ export default function RaceSpecificityClient({
               <span className="font-semibold text-white">Hit Apply</span> to find matching races
               and unlock terrain filtering below.
             </p>
-            <div className="mt-4 pt-3 border-t border-white/20 flex items-center justify-between">
-              <span className="text-xs text-white/60">Range</span>
-              <span className="text-sm font-bold text-white">
-                {minVal}–{maxVal}
-                <span className="text-xs font-normal text-white/60 ml-1">D+/km</span>
-              </span>
-            </div>
           </div>
+
+          {/* Selected Range — standalone display */}
+          <div className="rounded-xl px-5 py-4 mb-4 border-2 flex items-center justify-between" style={{ borderColor: BRAND_NAVY }}>
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: BRAND_NAVY }}>
+              Selected Range
+            </span>
+            <span className="text-2xl font-black" style={{ color: BRAND_NAVY }}>
+              {minVal}–{maxVal}
+              <span className="text-sm font-semibold ml-1.5" style={{ color: BRAND_NAVY, opacity: 0.6 }}>D+/km</span>
+            </span>
+          </div>
+
           <button
             onClick={applyStep1}
             className="w-full py-3 text-base font-black rounded-xl border-2 transition-all hover:opacity-80 active:scale-95"
