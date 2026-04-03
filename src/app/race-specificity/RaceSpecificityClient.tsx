@@ -172,8 +172,8 @@ export default function RaceSpecificityClient({
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-neutral-400 mb-3">
           Race Specificity
         </p>
-        <h1 className="text-4xl sm:text-5xl font-black text-neutral-900 leading-tight tracking-tight max-w-3xl">
-          Specific Training is pivotal<br className="hidden sm:block" /> to Ultra success.
+        <h1 className="hidden sm:block text-5xl font-black text-neutral-900 leading-tight tracking-tight max-w-3xl">
+          Specific Training is pivotal<br /> to Ultra success.
         </h1>
         <p className="mt-4 text-base sm:text-lg text-neutral-600 font-medium max-w-xl">
           Filter races by how much climbing they demand, then narrow by terrain type.
@@ -231,7 +231,7 @@ export default function RaceSpecificityClient({
         </div>
 
         {/* MOUNTAIN — centered drag column, below panel on mobile / fills right on desktop */}
-        <div className="flex-1 relative overflow-hidden" style={{ minHeight: 400 }}>
+        <div className="flex-1 relative overflow-hidden" style={{ minHeight: 500 }}>
 
           {/* Mobile mountain image */}
           <img
@@ -380,6 +380,13 @@ export default function RaceSpecificityClient({
         </div>
         </div>{/* end mountain area */}
       </div>{/* end step 1 flex row */}
+
+      {/* ── MOBILE STATEMENT BANNER — between Step 1 and Step 2 ── */}
+      <div className="sm:hidden px-6 py-10 border-t border-b border-neutral-200 bg-white">
+        <h2 className="text-3xl font-black text-neutral-900 leading-tight tracking-tight">
+          Specific Training is pivotal<br /> to Ultra success.
+        </h2>
+      </div>
 
       {/* ── STEP 2 + RESULTS ─────────────────────────────────── */}
       <div ref={step2Ref}>
