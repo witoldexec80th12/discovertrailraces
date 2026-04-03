@@ -400,7 +400,7 @@ export default function RaceSpecificityClient({
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <div className="flex flex-nowrap overflow-x-auto sm:flex-wrap gap-2 pb-1 sm:pb-0 -mx-1 px-1">
+                  <div className="flex flex-wrap gap-2">
                     {ALL_TERRAIN_TYPES.map((tag) => {
                       const count = terrainCounts[tag] ?? 0;
                       const isSelected = selectedTerrain === tag;
@@ -409,7 +409,7 @@ export default function RaceSpecificityClient({
                         <button
                           key={tag}
                           onClick={() => hasRaces && handleTerrainClick(tag)}
-                          className="shrink-0 sm:shrink px-4 py-2 rounded-full text-sm font-bold border-2 transition-all"
+                          className="px-4 py-2 rounded-full text-sm font-bold border-2 transition-all"
                           style={{
                             backgroundColor: isSelected ? BRAND_NAVY : "white",
                             color: isSelected ? "#fff" : hasRaces ? BRAND_NAVY : "#d1d5db",
