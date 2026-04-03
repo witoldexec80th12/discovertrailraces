@@ -374,27 +374,27 @@ export default function RaceSpecificityClient({
           <div className="bg-white border-t border-neutral-200">
 
             {/* Terrain filter */}
-            <div className="px-6 sm:px-10 lg:px-16 py-12 sm:py-16 border-b border-neutral-100">
+            <div className="px-6 sm:px-10 lg:px-16 py-12 sm:py-16 border-b border-white/10" style={{ backgroundColor: BRAND_NAVY }}>
               <div className="flex flex-col sm:flex-row sm:items-start gap-8 sm:gap-16">
                 <div className="shrink-0">
                   <div className="inline-flex items-center gap-2 mb-3">
-                    <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white"
-                      style={{ backgroundColor: BRAND_NAVY }}>2</span>
-                    <span className="text-xs font-bold uppercase tracking-widest text-neutral-500">
+                    <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black bg-white"
+                      style={{ color: BRAND_NAVY }}>2</span>
+                    <span className="text-xs font-bold uppercase tracking-widest text-white/60">
                       Explore TERRAIN
                     </span>
                   </div>
-                  <h2 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-neutral-900 mb-2">
+                  <h2 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-white mb-2">
                     Filter by Terrain
                   </h2>
-                  <p className="text-sm text-neutral-500 max-w-[200px]">
+                  <p className="text-sm text-white/70 max-w-[200px]">
                     {vertFiltered.length} races match {appliedMin}–{appliedMax} D+/km.
                     Click a terrain to filter instantly.
                   </p>
                   {selectedTerrain && (
                     <button
                       onClick={() => { setSelectedTerrain(null); setCurrentPage(1); }}
-                      className="mt-3 text-xs font-semibold text-neutral-400 hover:text-neutral-700 transition-colors underline"
+                      className="mt-3 text-xs font-semibold text-white/50 hover:text-white transition-colors underline"
                     >
                       Clear terrain
                     </button>
