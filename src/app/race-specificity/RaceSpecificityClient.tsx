@@ -221,9 +221,10 @@ export default function RaceSpecificityClient({
             </span>
           </div>
 
+          {/* Desktop-only APPLY button */}
           <button
             onClick={applyStep1}
-            className="w-full py-3 text-base font-black rounded-xl border-2 transition-all hover:opacity-80 active:scale-95"
+            className="hidden sm:block w-full py-3 text-base font-black rounded-xl border-2 transition-all hover:opacity-80 active:scale-95"
             style={{ borderColor: BRAND_NAVY, color: BRAND_NAVY, backgroundColor: "white" }}
           >
             APPLY
@@ -378,6 +379,17 @@ export default function RaceSpecificityClient({
             </div>
           </div>
         </div>
+
+          {/* Mobile-only APPLY button — fixed at bottom of mountain image */}
+          <div className="sm:hidden absolute bottom-0 left-0 right-0 z-20 p-4">
+            <button
+              onClick={applyStep1}
+              className="w-full py-4 text-lg font-black text-white rounded-xl shadow-xl transition-all active:scale-95"
+              style={{ backgroundColor: BRAND_NAVY }}
+            >
+              APPLY
+            </button>
+          </div>
         </div>{/* end mountain area */}
       </div>{/* end step 1 flex row */}
 
