@@ -46,16 +46,16 @@ export default function RaceSpecificityClient({
   distances: DistanceRecord[];
   slugImgMap?: Record<string, string>;
 }) {
-  const minValRef = useRef(80);
-  const maxValRef = useRef(120);
-  const [minVal, setMinValState] = useState(80);
-  const [maxVal, setMaxValState] = useState(120);
+  const minValRef = useRef(60);
+  const maxValRef = useRef(80);
+  const [minVal, setMinValState] = useState(60);
+  const [maxVal, setMaxValState] = useState(80);
   const setMinVal = useCallback((v: number) => { minValRef.current = v; setMinValState(v); }, []);
   const setMaxVal = useCallback((v: number) => { maxValRef.current = v; setMaxValState(v); }, []);
 
-  // Results always shown — initialised with defaults (80–120 D+/km)
-  const [appliedMin, setAppliedMin] = useState<number>(80);
-  const [appliedMax, setAppliedMax] = useState<number>(120);
+  // Results always shown — initialised with defaults (60–80 D+/km)
+  const [appliedMin, setAppliedMin] = useState<number>(60);
+  const [appliedMax, setAppliedMax] = useState<number>(80);
   const [selectedTerrain, setSelectedTerrain] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -145,8 +145,8 @@ export default function RaceSpecificityClient({
   };
 
   const reset = () => {
-    setMinVal(80);
-    setMaxVal(120);
+    setMinVal(60);
+    setMaxVal(80);
     setSelectedTerrain(null);
     setCurrentPage(1);
   };
@@ -165,7 +165,7 @@ export default function RaceSpecificityClient({
           Race Specificity
         </p>
         <h1 className="hidden sm:block text-5xl font-black text-neutral-900 leading-tight tracking-tight max-w-3xl">
-          Specific Training is pivotal<br /> to Ultra success.
+          Find your next race based on Steepness.
         </h1>
         <p className="mt-4 text-base sm:text-lg text-neutral-600 font-medium max-w-xl">
           Filter races by how much climbing they demand, then narrow by terrain type.
@@ -185,16 +185,16 @@ export default function RaceSpecificityClient({
         <div className="shrink-0 flex flex-col p-6 sm:p-10 bg-white/95 backdrop-blur-sm border-b sm:border-b-0 sm:border-r border-neutral-200 z-20 sm:w-[320px]">
           <div className="inline-flex items-center gap-2 mb-4">
             <span
-              className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black text-white"
+              className="px-2.5 h-6 rounded-full flex items-center justify-center text-xs font-black text-white"
               style={{ backgroundColor: BRAND_NAVY }}
-            >1</span>
+            >Step 1</span>
             <span className="text-xs font-bold uppercase tracking-widest text-neutral-500">
               Vert Meter
             </span>
           </div>
           <div className="rounded-xl p-5 shadow-sm mb-5" style={{ backgroundColor: BRAND_NAVY }}>
-            <p className="text-sm text-white/90 leading-relaxed">
-              <span className="font-semibold text-white">Slide Min and Max</span> to set your elevation
+            <p className="text-base text-white/90 leading-relaxed">
+              <span className="font-black text-white text-lg">Slide Min and Max</span> to set your elevation
               gain range — 0 D+/km (flat) to 170 D+/km (hiking-steep).
               Results update automatically.
             </p>
@@ -210,6 +210,7 @@ export default function RaceSpecificityClient({
               type="range"
               min={0}
               max={MAX_VERT}
+              step={5}
               value={minVal}
               onChange={(e) => {
                 const v = Math.min(Number(e.target.value), maxValRef.current - 5);
@@ -232,6 +233,7 @@ export default function RaceSpecificityClient({
               type="range"
               min={0}
               max={MAX_VERT}
+              step={5}
               value={maxVal}
               onChange={(e) => {
                 const v = Math.max(Number(e.target.value), minValRef.current + 5);
@@ -396,11 +398,15 @@ export default function RaceSpecificityClient({
 
             {/* Terrain filter */}
             <div className="px-6 sm:px-10 lg:px-16 py-12 sm:py-16 border-b border-white/10" style={{ backgroundColor: BRAND_NAVY }}>
+              {/* "Specific Training" statement — desktop only (mobile has its own banner above) */}
+              <p className="hidden sm:block text-xl font-black text-white/80 mb-8 tracking-tight">
+                Specific Training is pivotal to Ultra success.
+              </p>
               <div className="flex flex-col sm:flex-row sm:items-start gap-8 sm:gap-16">
                 <div className="shrink-0">
                   <div className="inline-flex items-center gap-2 mb-3">
-                    <span className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-black bg-white"
-                      style={{ color: BRAND_NAVY }}>2</span>
+                    <span className="px-2.5 h-6 rounded-full flex items-center justify-center text-xs font-black bg-white"
+                      style={{ color: BRAND_NAVY }}>Step 2</span>
                     <span className="text-xs font-bold uppercase tracking-widest text-white/60">
                       Explore TERRAIN
                     </span>
