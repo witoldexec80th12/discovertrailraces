@@ -219,14 +219,16 @@ export default async function CostPage({
           {/* Top bar */}
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
             <div className="flex items-center justify-between">
-              <Image
-                src="/images/logo_white.png"
-                alt="DiscoverTrailRaces.com"
-                width={360}
-                height={72}
-                className="h-20 sm:h-28 md:h-36 lg:h-[168px] w-auto"
-                priority
-              />
+              <Link href="/" aria-label="Go to homepage">
+                <Image
+                  src="/images/logo_white.png"
+                  alt="DiscoverTrailRaces.com"
+                  width={360}
+                  height={72}
+                  className="h-20 sm:h-28 md:h-36 lg:h-[168px] w-auto opacity-100 hover:opacity-80 transition-opacity duration-200"
+                  priority
+                />
+              </Link>
             </div>
           </div>
 
