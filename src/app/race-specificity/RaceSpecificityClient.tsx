@@ -107,6 +107,11 @@ export default function RaceSpecificityClient({
     return enrichedData.filter((r) => r.pctIncrease >= appliedMin && r.pctIncrease <= appliedMax);
   }, [enrichedData, appliedMin, appliedMax]);
 
+  // Live count for the button — reflects current slider pos before debounce applies
+  const pendingCount = useMemo(() => {
+    return enrichedData.filter((r) => r.pctIncrease >= minVal && r.pctIncrease <= maxVal).length;
+  }, [enrichedData, minVal, maxVal]);
+
   const terrainCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     ALL_TERRAIN_TYPES.forEach((t) => { counts[t] = 0; });
@@ -293,7 +298,7 @@ export default function RaceSpecificityClient({
             className="w-full py-3 text-base font-black rounded-xl border-2 transition-all hover:opacity-80 active:scale-95"
             style={{ borderColor: BRAND_NAVY, color: BRAND_NAVY, backgroundColor: "white" }}
           >
-            APPLY &amp; SCROLL TO RESULTS
+            {pendingCount} {pendingCount === 1 ? "Race" : "Races"} Found — Scroll to Results
           </button>
         </div>
 
@@ -399,8 +404,8 @@ export default function RaceSpecificityClient({
             {/* Terrain filter */}
             <div className="px-6 sm:px-10 lg:px-16 py-12 sm:py-16 border-b border-white/10" style={{ backgroundColor: BRAND_NAVY }}>
               {/* "Specific Training" statement — desktop only (mobile has its own banner above) */}
-              <p className="hidden sm:block text-xl font-black text-white/80 mb-8 tracking-tight">
-                Specific Training is pivotal to Ultra success.
+              <p className="hidden sm:block text-3xl font-black text-white/85 mb-12 tracking-tight leading-snug">
+                Specific Training is pivotal<br /> to Ultra success.
               </p>
               <div className="flex flex-col sm:flex-row sm:items-start gap-8 sm:gap-16">
                 <div className="shrink-0">
