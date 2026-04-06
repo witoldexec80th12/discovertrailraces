@@ -200,9 +200,9 @@ export default async function CostPage({
           `,
         }}
       />
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 sm:py-12">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-6 pb-0 sm:py-12">
         {/* HERO */}
-        <section className="relative isolate overflow-hidden h-[69vh] sm:h-[75vh]">
+        <section className="relative isolate overflow-hidden h-[54vh] sm:h-[75vh]">
           {/* Background image */}
           <div className="absolute inset-0 -z-10">
             <Image
@@ -217,7 +217,7 @@ export default async function CostPage({
           </div>
 
           {/* Top bar */}
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-4 sm:py-6 md:py-8">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-2 sm:py-6 md:py-8">
             <div className="flex items-center justify-between">
               <Link href="/" aria-label="Go to homepage">
                 <Image
@@ -225,7 +225,7 @@ export default async function CostPage({
                   alt="DiscoverTrailRaces.com"
                   width={360}
                   height={72}
-                  className="h-20 sm:h-28 md:h-36 lg:h-[168px] w-auto opacity-100 hover:opacity-80 transition-opacity duration-200"
+                  className="h-14 sm:h-28 md:h-36 lg:h-[168px] w-auto opacity-100 hover:opacity-80 transition-opacity duration-200"
                   priority
                 />
               </Link>
@@ -233,40 +233,48 @@ export default async function CostPage({
           </div>
 
           {/* Hero content */}
-          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-2 sm:py-8 md:py-10">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-1 sm:gap-6 md:gap-10 items-center">
+          <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-1 sm:py-8 md:py-10">
+            <div className="grid grid-cols-2 md:grid-cols-2 gap-2 sm:gap-6 md:gap-10 items-center">
               <div>
                 <Image
                   src="/images/cost_per_km_white.png"
                   alt="COST-PER-KM"
                   width={900}
                   height={300}
-                  className="w-full max-w-[280px] sm:max-w-[400px] md:max-w-[560px] h-auto"
+                  className="w-full max-w-[160px] sm:max-w-[400px] md:max-w-[560px] h-auto"
                   priority
                 />
               </div>
 
               <div className="text-white">
-                <p className="text-sm sm:text-base md:text-lg text-white/85 leading-relaxed">
-                  Cost Per KM compares entry fees across trail races per km run.
-                  Applied to Europe&rsquo;s independent trail races, it helps
-                  you plan goal races, discover new places, and compare across
-                  clear price points.
-                </p>
-                <p className="mt-1.5 sm:mt-5 text-lg sm:text-xl md:text-2xl font-semibold tracking-tight">
+                <ul className="space-y-0.5 sm:space-y-2">
+                  {[
+                    "Compare Entry Fees Easily",
+                    "Discover Amazing New Races",
+                    "Create Your Race Calendar",
+                  ].map((item) => (
+                    <li key={item} className="flex items-center gap-1.5 text-[11px] sm:text-base md:text-lg text-white/90 leading-snug">
+                      <svg className="shrink-0 w-3 h-3 sm:w-5 sm:h-5 text-white" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clipRule="evenodd" />
+                      </svg>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-1.5 sm:mt-5 text-[11px] sm:text-xl md:text-2xl font-semibold tracking-tight leading-snug">
                   Plan your best trail season yet.
                 </p>
 
-                <div className="mt-2.5 sm:mt-6 md:mt-8 flex flex-wrap gap-3">
+                <div className="mt-2 sm:mt-6 md:mt-8 flex flex-wrap gap-2 sm:gap-3">
                   <a
                     href="#cost-index"
-                    className="inline-flex items-center rounded-full bg-white px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-neutral-900 hover:bg-white/90"
+                    className="inline-flex items-center rounded-full bg-white px-3 sm:px-5 py-1.5 sm:py-2.5 text-[10px] sm:text-sm font-semibold text-neutral-900 hover:bg-white/90"
                   >
                     Explore the Cost Index
                   </a>
                   <Link
                     href="/how-this-works"
-                    className="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
+                    className="hidden sm:inline-flex items-center rounded-full border border-white/30 bg-white/10 px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold text-white hover:bg-white/15"
                   >
                     How this works
                   </Link>
