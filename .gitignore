@@ -13,3 +13,6 @@ vite.config.ts.*
 node_modules/
 .vercel/
 .env*
+
+# clerk configuration (can include secrets)
+/.clerk/
