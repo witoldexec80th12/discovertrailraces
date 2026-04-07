@@ -164,6 +164,17 @@ Views: entry_fees_public, race_events_public, homepage_featured,
 - Data: fetches all Distances + all Race Events, joins client-side by Race record ID
 - Desktop-first layout (3-column: instructions | mountain | terrain)
 
+## Clerk Auth Integration
+- **Package**: `@clerk/nextjs` installed
+- **Middleware**: `src/middleware.ts` — protects `/profile(.*)`; uses `clerkMiddleware` + `createRouteMatcher`. Next.js 16 shows a deprecation warning ("use proxy instead") but middleware.ts works fine — do NOT create `src/proxy.ts` alongside it (causes fatal conflict).
+- **Provider**: `ClerkProvider` wraps root layout in `src/app/layout.tsx`
+- **Sign-in page**: `src/app/sign-in/[[...sign-in]]/page.tsx` — email OTP, no passwords, branded
+- **Profile page**: `src/app/profile/page.tsx` — server component, shows saved races fetched from Airtable Favorites table
+- **Favorites API**: `src/app/api/favorites/route.ts` — GET/POST/DELETE, uses `auth()` from `@clerk/nextjs/server`
+- **FavoriteButton**: `src/components/FavoriteButton.tsx` — heart toggle on race detail pages
+- **Env vars**: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` (env var), `CLERK_SECRET_KEY` (secret), `NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in`, `NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/profile`
+- **GDPR strategy**: Clerk stores email in EU; Airtable Favorites table stores only `clerk_user_id` (text) + `race_slug` (text) — no PII
+
 ## Recent Changes
 - Feb 26, 2026: Documented full reference snapshot including race detail page
 - Feb 26, 2026: User added race detail page at `/races/[slug]` with terrain, logistics, stats
