@@ -12,6 +12,7 @@ export const config = {
   matcher: [
     "/profile(.*)",
     "/api/favorites(.*)",
+    "/api/save-calendar(.*)",
     "/sign-in(.*)",
     "/sign-up(.*)",
   ],
