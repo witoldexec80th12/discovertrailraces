@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { airtableFetchAll } from "@/lib/airtable";
 
+export const revalidate = 3600;
+
 type AirtableAttachment = {
   url: string;
   thumbnails?: Record<string, { url: string }>;
@@ -9,9 +11,9 @@ type AirtableAttachment = {
 export async function GET() {
   try {
     const [raceEvents, distances, entryFees] = await Promise.all([
-      airtableFetchAll("Race Events", {}).catch(() => []),
-      airtableFetchAll("Distances", {}).catch(() => []),
-      airtableFetchAll("Entry Fees", { view: "entry_fees_public" }).catch(() => []),
+      airtableFetchAll("Race Events", {}, 3600).catch(() => []),
+      airtableFetchAll("Distances", {}, 3600).catch(() => []),
+      airtableFetchAll("Entry Fees", { view: "entry_fees_public" }, 3600).catch(() => []),
     ]);
 
     const slugImgMap: Record<string, string> = {};
@@ -41,6 +43,14 @@ export async function GET() {
     );
   } catch (err) {
     console.error("[race-specificity-data]", err);
-    return NextResponse.json({ error: "Failed to load data" }, { status: 500 });
+    return NextResponse.json(
+      { raceEvents: [], distances: [], slugImgMap: {}, error: "Partial data failure" },
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "no-store",
+        },
+      }
+    );
   }
 }

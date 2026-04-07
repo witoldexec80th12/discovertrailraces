@@ -46,9 +46,11 @@ export default function RaceSpecificityClient() {
 
   useEffect(() => {
     fetch("/api/race-specificity-data")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`Server error ${r.status}`);
+        return r.json();
+      })
       .then((d) => {
-        if (d.error) throw new Error(d.error);
         setRaceEvents(d.raceEvents ?? []);
         setDistances(d.distances ?? []);
         setSlugImgMap(d.slugImgMap ?? {});
