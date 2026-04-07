@@ -166,7 +166,7 @@ Views: entry_fees_public, race_events_public, homepage_featured,
 
 ## Clerk Auth Integration
 - **Package**: `@clerk/nextjs` installed
-- **Middleware**: `src/middleware.ts` — protects `/profile(.*)`; uses `clerkMiddleware` + `createRouteMatcher`. Next.js 16 shows a deprecation warning ("use proxy instead") but middleware.ts works fine — do NOT create `src/proxy.ts` alongside it (causes fatal conflict).
+- **Proxy**: `src/proxy.ts` — protects `/profile(.*)`; uses `clerkMiddleware` + `createRouteMatcher`. Next.js 16 renamed `middleware.ts` → `proxy.ts`; do NOT create both files at the same time (causes fatal conflict).
 - **Provider**: `ClerkProvider` wraps root layout in `src/app/layout.tsx`
 - **Sign-in page**: `src/app/sign-in/[[...sign-in]]/page.tsx` — email OTP, no passwords, branded
 - **Profile page**: `src/app/profile/page.tsx` — server component, shows saved races fetched from Airtable Favorites table
