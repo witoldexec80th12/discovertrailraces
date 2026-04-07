@@ -5,6 +5,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { notFound } from "next/navigation";
 import { Star } from "lucide-react";
+import HeartButton from "@/components/HeartButton";
 
 export const revalidate = 3600;
 
@@ -215,6 +216,21 @@ export default async function EventPage({
                 const rowSlug = f["Race Slug"]?.[0];
                 const href = isP && rowSlug ? `/races/${rowSlug}` : null;
 
+                const distKmNum = Array.isArray(distKm)
+                  ? parseFloat(String(distKm)) || null
+                  : distKm != null ? parseFloat(String(distKm)) || null : null;
+
+                const heartEntry = isP && rowSlug ? {
+                  entryFeeId: row.id,
+                  slug: rowSlug,
+                  name: eventName,
+                  imageUrl: imageUrl ?? null,
+                  eurPerKm: epk,
+                  distanceKm: distKmNum,
+                  startDate: f["Distance Start Date"] ?? null,
+                  country: asText(pf.LKP_country) || null,
+                } : null;
+
                 const cardInner = (
                   <div
                     className={`h-full rounded-2xl flex flex-col gap-6 transition-all duration-200 ${
@@ -226,11 +242,18 @@ export default async function EventPage({
                     {/* Top: badge + distance */}
                     <div>
                       {isP ? (
-                        <div className="flex items-center gap-2 mb-3">
-                          <Star className="w-4 h-4 fill-neutral-900 text-neutral-900" />
-                          <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-900">
-                            Main Event
-                          </span>
+                        <div className="flex items-center justify-between gap-2 mb-3">
+                          <div className="flex items-center gap-2">
+                            <Star className="w-4 h-4 fill-neutral-900 text-neutral-900" />
+                            <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-neutral-900">
+                              Main Event
+                            </span>
+                          </div>
+                          {heartEntry && (
+                            <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+                              <HeartButton entry={heartEntry} size="sm" />
+                            </div>
+                          )}
                         </div>
                       ) : (
                         <div className="mb-3 h-5" />

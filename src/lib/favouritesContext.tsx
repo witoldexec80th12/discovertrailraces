@@ -5,19 +5,13 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
+import { useUser } from "@clerk/nextjs";
+import type { FavouriteEntry } from "./favouritesTypes";
 
-export type FavouriteEntry = {
-  entryFeeId: string;
-  slug: string;
-  name: string;
-  imageUrl: string | null;
-  eurPerKm: number | null;
-  distanceKm: number | null;
-  startDate: string | null;
-  country: string | null;
-};
+export type { FavouriteEntry } from "./favouritesTypes";
 
 type FavouritesContextValue = {
   favourites: FavouriteEntry[];
@@ -38,6 +32,16 @@ function sortByDate(entries: FavouriteEntry[]): FavouriteEntry[] {
   });
 }
 
+function mergeEntries(existing: FavouriteEntry[], incoming: FavouriteEntry[]): FavouriteEntry[] {
+  const map = new Map(existing.map((e) => [e.entryFeeId, e]));
+  for (const entry of incoming) {
+    if (!map.has(entry.entryFeeId)) {
+      map.set(entry.entryFeeId, entry);
+    }
+  }
+  return sortByDate(Array.from(map.values()));
+}
+
 const FavouritesContext = createContext<FavouritesContextValue>({
   favourites: [],
   addFavourite: () => {},
@@ -45,6 +49,32 @@ const FavouritesContext = createContext<FavouritesContextValue>({
   isFavourited: () => false,
   clearAll: () => {},
 });
+
+function FavouritesSyncManager({
+  onMerge,
+}: {
+  onMerge: (entries: FavouriteEntry[]) => void;
+}) {
+  const { isSignedIn, isLoaded, user } = useUser();
+  const syncedForRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn || !user?.id) return;
+    if (syncedForRef.current === user.id) return;
+    syncedForRef.current = user.id;
+
+    fetch("/api/save-calendar")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (d?.entries && Array.isArray(d.entries)) {
+          onMerge(d.entries as FavouriteEntry[]);
+        }
+      })
+      .catch(() => {});
+  }, [isLoaded, isSignedIn, user?.id, onMerge]);
+
+  return null;
+}
 
 export function FavouritesProvider({ children }: { children: React.ReactNode }) {
   const [favourites, setFavourites] = useState<FavouriteEntry[]>([]);
@@ -94,10 +124,15 @@ export function FavouritesProvider({ children }: { children: React.ReactNode }) 
     setFavourites([]);
   }, []);
 
+  const handleMerge = useCallback((incoming: FavouriteEntry[]) => {
+    setFavourites((prev) => mergeEntries(prev, incoming));
+  }, []);
+
   return (
     <FavouritesContext.Provider
       value={{ favourites, addFavourite, removeFavourite, isFavourited, clearAll }}
     >
+      <FavouritesSyncManager onMerge={handleMerge} />
       {children}
     </FavouritesContext.Provider>
   );

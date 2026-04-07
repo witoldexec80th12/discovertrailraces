@@ -188,7 +188,7 @@ Views: entry_fees_public, race_events_public, homepage_featured,
 - **FavouriteEntry shape**: `{ entryFeeId, slug, name, imageUrl, eurPerKm, distanceKm, startDate, country }`
 
 ## Recent Changes
-- Apr 7, 2026: Race Favourites Tray & Comparison Feature — removed FavoriteButton from cost/race-specificity cards; added localStorage FavouritesContext; HeartButton on /races/[slug]; sticky FavouritesTray; /favourites comparison page; /api/save-calendar Clerk sync
+- Apr 7, 2026: Race Favourites Tray & Comparison Feature — removed FavoriteButton from cost/race-specificity cards; added localStorage FavouritesContext; HeartButton on /races/[slug] and /events/[slug] primary cards; sticky FavouritesTray; /favourites comparison page; /api/save-calendar Clerk sync. FavouriteEntry type extracted to favouritesTypes.ts to avoid Fast Refresh full-reload loop.
 - Feb 26, 2026: Documented full reference snapshot including race detail page
 - Feb 26, 2026: User added race detail page at `/races/[slug]` with terrain, logistics, stats
 - Feb 26, 2026: Updated Airtable field names (LKP_country, LKP_region, LKP_featured_image, temporary_image, FINAL_blurb)
