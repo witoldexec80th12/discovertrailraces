@@ -37,15 +37,26 @@ type EnrichedDistance = {
   pctIncrease: number;
 };
 
-export default function RaceSpecificityClient({
-  raceEvents,
-  distances,
-  slugImgMap = {},
-}: {
-  raceEvents: RaceEventRecord[];
-  distances: DistanceRecord[];
-  slugImgMap?: Record<string, string>;
-}) {
+export default function RaceSpecificityClient() {
+  const [raceEvents, setRaceEvents] = useState<RaceEventRecord[]>([]);
+  const [distances, setDistances] = useState<DistanceRecord[]>([]);
+  const [slugImgMap, setSlugImgMap] = useState<Record<string, string>>({});
+  const [dataLoading, setDataLoading] = useState(true);
+  const [dataError, setDataError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/race-specificity-data")
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.error) throw new Error(d.error);
+        setRaceEvents(d.raceEvents ?? []);
+        setDistances(d.distances ?? []);
+        setSlugImgMap(d.slugImgMap ?? {});
+      })
+      .catch((e) => setDataError(e.message ?? "Failed to load"))
+      .finally(() => setDataLoading(false));
+  }, []);
+
   const minValRef = useRef(60);
   const maxValRef = useRef(80);
   const [minVal, setMinValState] = useState(60);
@@ -160,6 +171,14 @@ export default function RaceSpecificityClient({
   const toTopPct = (v: number) => 9 + (1 - v / MAX_VERT) * 58;
   const bandTopPct = toTopPct(maxVal);
   const bandBottomPct = toTopPct(minVal);
+
+  if (dataError) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <p className="text-neutral-500 text-sm">Could not load race data. Please refresh the page.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -295,10 +314,13 @@ export default function RaceSpecificityClient({
           {/* APPLY — scrolls to results and resets terrain */}
           <button
             onClick={applyStep1}
-            className="w-full py-3 text-base font-black rounded-xl border-2 transition-all hover:opacity-80 active:scale-95"
+            disabled={dataLoading}
+            className="w-full py-3 text-base font-black rounded-xl border-2 transition-all hover:opacity-80 active:scale-95 disabled:opacity-50"
             style={{ borderColor: BRAND_NAVY, color: BRAND_NAVY, backgroundColor: "white" }}
           >
-            {pendingCount} {pendingCount === 1 ? "Race" : "Races"} Found — Scroll to Results
+            {dataLoading
+              ? "Loading races…"
+              : `${pendingCount} ${pendingCount === 1 ? "Race" : "Races"} Found — Scroll to Results`}
           </button>
         </div>
 
@@ -487,7 +509,19 @@ export default function RaceSpecificityClient({
                 </button>
               </div>
 
-              {allResults.length === 0 ? (
+              {dataLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="rounded-xl border border-neutral-200 bg-neutral-50 overflow-hidden animate-pulse">
+                      <div className="h-40 bg-neutral-200" />
+                      <div className="p-4 space-y-2">
+                        <div className="h-4 bg-neutral-200 rounded w-3/4" />
+                        <div className="h-3 bg-neutral-100 rounded w-1/2" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : allResults.length === 0 ? (
                 <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-10 text-center">
                   <p className="text-neutral-500 text-sm">
                     No races match these filters. Try widening the elevation range or selecting a different terrain.
