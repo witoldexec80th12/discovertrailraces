@@ -252,9 +252,7 @@ export default async function EventPage({
                             </span>
                           </div>
                           {heartEntry && (
-                            <div onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
-                              <HeartButton entry={heartEntry} size="sm" />
-                            </div>
+                            <HeartButton entry={heartEntry} size="sm" />
                           )}
                         </div>
                       ) : (
