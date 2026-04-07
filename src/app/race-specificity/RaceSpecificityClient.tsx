@@ -3,7 +3,6 @@
 import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
 import type { RaceEventRecord, DistanceRecord } from "./types";
-import FavoriteButton from "@/components/FavoriteButton";
 
 const MAX_VERT = 170;
 const BRAND_NAVY = "#1a2e4a";
@@ -660,11 +659,6 @@ function ResultCard({ race }: { race: EnrichedDistance }) {
             {Math.round(race.pctIncrease)} D+/km
           </span>
         </div>
-        {race.entryFeeId && (
-          <div className="absolute top-2 right-2" onClick={(e) => e.preventDefault()}>
-            <FavoriteButton entryFeeId={race.entryFeeId} size="sm" />
-          </div>
-        )}
         <div className="absolute bottom-3 left-3 right-3">
           <p className="text-white font-bold text-sm leading-tight line-clamp-2">{race.raceName}</p>
         </div>

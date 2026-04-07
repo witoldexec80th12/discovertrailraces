@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import HeartButton from "@/components/HeartButton";
 
 export const revalidate = 3600; // 1 hour ISR (safe MVP default)
 
@@ -223,6 +224,24 @@ export default async function RacePage({
     ? (f.LKP_officialwebsite.find(Boolean) ?? null)
     : f.LKP_officialwebsite || null;
 
+  const distanceKmRaw = f["Distance (km)"];
+  const distanceKmNum = Array.isArray(distanceKmRaw)
+    ? parseFloat(String(distanceKmRaw[0])) || null
+    : distanceKmRaw != null
+    ? parseFloat(String(distanceKmRaw)) || null
+    : null;
+
+  const heartEntry = {
+    entryFeeId: row.id,
+    slug,
+    name,
+    imageUrl: imageUrl ?? null,
+    eurPerKm: epk,
+    distanceKm: distanceKmNum,
+    startDate: f["Distance Start Date"] ?? null,
+    country: country || null,
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-neutral-50 to-white">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10">
@@ -256,6 +275,9 @@ export default async function RacePage({
               <div className="h-full w-full bg-neutral-100" />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/15 to-transparent" />
+            <div className="absolute top-4 right-4">
+              <HeartButton entry={heartEntry} size="lg" />
+            </div>
             <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-7">
               <p className="text-[11px] uppercase tracking-[0.15em] text-white/75">
                 {location || "—"}

@@ -175,11 +175,20 @@ Views: entry_fees_public, race_events_public, homepage_featured,
 - **Env vars**: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` (env var), `CLERK_SECRET_KEY` (secret), `NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in`, `NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/profile`
 - **GDPR strategy**: Clerk stores email in EU; Airtable Favorites table stores only `clerk_user_id` (text) + `race_slug1` (linked record to Entry Fees) — no PII
 - **Favorites identifier**: Uses Airtable Entry Fees record ID (`recXXXXXX`) stored as a linked record in `race_slug1` field. NOT a text slug.
-- **FavoriteButton placement**: Cost page cards (thumbnail overlay) + Race Specificity cards (thumbnail overlay). Removed from Race Detail page.
+- **FavoriteButton placement**: Removed from cost page and race-specificity cards (no longer on list pages). HeartButton (localStorage-based) only on `/races/[slug]` hero.
 - **FavoriteButton prop**: `entryFeeId: string` (Airtable record ID). API body uses `entry_fee_id`.
 - **Profile page**: Fetches Favorites → extracts `race_slug1[0]` (Entry Fees record IDs) → fetches those Entry Fees records via `RECORD_ID()` formula.
 
+## Race Favourites Tray (localStorage)
+- **FavouritesContext** (`src/lib/favouritesContext.tsx`): localStorage-based provider storing `FavouriteEntry[]` (entryFeeId, slug, name, imageUrl, eurPerKm, distanceKm, startDate, country). Sorted chronologically by startDate ascending. Wraps root layout.
+- **HeartButton** (`src/components/HeartButton.tsx`): Client component reading/writing FavouritesContext. Used on `/races/[slug]` hero (top-right, size="lg").
+- **FavouritesTray** (`src/components/FavouritesTray.tsx`): Fixed bottom bar shown when ≥1 race saved. Shows heart icon + count + up to 4 thumbnails + race names (desktop). "Compare" button links to `/favourites`. "Save Calendar" syncs to Airtable if signed in, opens Clerk sign-in otherwise.
+- **Favourites page** (`src/app/favourites/page.tsx`): Full comparison grid page. Cards with image, name, date, €/km, distance. Per-card remove button. "Clear all" action. Links to individual race pages.
+- **Save Calendar API** (`src/app/api/save-calendar/route.ts`): POST endpoint, Clerk-authenticated. Receives `{ entry_fee_ids: string[] }`, deduplicates against existing Airtable Favorites, writes new ones.
+- **FavouriteEntry shape**: `{ entryFeeId, slug, name, imageUrl, eurPerKm, distanceKm, startDate, country }`
+
 ## Recent Changes
+- Apr 7, 2026: Race Favourites Tray & Comparison Feature — removed FavoriteButton from cost/race-specificity cards; added localStorage FavouritesContext; HeartButton on /races/[slug]; sticky FavouritesTray; /favourites comparison page; /api/save-calendar Clerk sync
 - Feb 26, 2026: Documented full reference snapshot including race detail page
 - Feb 26, 2026: User added race detail page at `/races/[slug]` with terrain, logistics, stats
 - Feb 26, 2026: Updated Airtable field names (LKP_country, LKP_region, LKP_featured_image, temporary_image, FINAL_blurb)
