@@ -126,25 +126,28 @@ export default async function CostPage({
   const { country: selectedCountry = "", month: selectedMonth = "" } =
     await searchParams;
 
-  let records: Awaited<ReturnType<typeof airtableFetchAll<EntryFeeFields>>> = [];
+  let records: Awaited<ReturnType<typeof airtableFetchAll<EntryFeeFields>>> =
+    [];
   let error: string | null = null;
 
   try {
-    records = await airtableFetchAll<EntryFeeFields>(AIRTABLE.TABLES.ENTRY_FEES, {
-      view: AIRTABLE.VIEWS.ENTRY_FEES_PUBLIC,
-      filterByFormula: "NOT({series_stage}=TRUE())",
-      "sort[0][field]": "AUTO €/km",
-      "sort[0][direction]": "asc",
-    }, revalidate as number);
+    records = await airtableFetchAll<EntryFeeFields>(
+      AIRTABLE.TABLES.ENTRY_FEES,
+      {
+        view: AIRTABLE.VIEWS.ENTRY_FEES_PUBLIC,
+        filterByFormula: "NOT({series_stage}=TRUE())",
+        "sort[0][field]": "AUTO €/km",
+        "sort[0][direction]": "asc",
+      },
+      revalidate as number,
+    );
   } catch (e) {
     error = e instanceof Error ? e.message : "Failed to load data";
   }
 
   const allCountries = Array.from(
     new Set(
-      records
-        .map((r) => asText(r.fields["LKP_country"]))
-        .filter(Boolean),
+      records.map((r) => asText(r.fields["LKP_country"])).filter(Boolean),
     ),
   ).sort();
 
@@ -156,7 +159,11 @@ export default async function CostPage({
           if (!d) return "";
           const date = new Date(d + "T00:00:00Z");
           if (isNaN(date.getTime())) return "";
-          return date.toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+          return date.toLocaleDateString("en-US", {
+            month: "long",
+            year: "numeric",
+            timeZone: "UTC",
+          });
         })
         .filter(Boolean),
     ),
@@ -164,12 +171,17 @@ export default async function CostPage({
 
   const filteredRecords = records.filter((r) => {
     const f = r.fields;
-    if (selectedCountry && asText(f["LKP_country"]) !== selectedCountry) return false;
+    if (selectedCountry && asText(f["LKP_country"]) !== selectedCountry)
+      return false;
     if (selectedMonth) {
       const d = f["Distance Start Date"];
       if (!d) return false;
       const date = new Date(d + "T00:00:00Z");
-      const label = date.toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+      const label = date.toLocaleDateString("en-US", {
+        month: "long",
+        year: "numeric",
+        timeZone: "UTC",
+      });
       if (label !== selectedMonth) return false;
     }
     return true;
@@ -193,8 +205,7 @@ export default async function CostPage({
             })();
             $crisp.push(["on", "session:loaded", function() {
               setTimeout(function() {
-                $crisp.push(["do", "message:show", ["text", "The site is in beta! Any feedback? Features or races you'd like to see?"]]);
-                $crisp.push(["do", "message:show", ["text", "Things that we can fix or add that are broken? I'd love to hear it! Thanks, Danny"]]);
+                $crisp.push(["do", "message:show", ["text", "The site is in beta! Any feedback? Features or races you'd like to see? Thanks, Danny"]]);
               }, 1000);
             }]);
           `,
@@ -253,9 +264,21 @@ export default async function CostPage({
                     "Discover Amazing New Races",
                     "Create Your Race Calendar",
                   ].map((item) => (
-                    <li key={item} className="flex items-center gap-1.5 text-[11px] sm:text-base md:text-lg text-white/90 leading-snug">
-                      <svg className="shrink-0 w-3 h-3 sm:w-5 sm:h-5 text-white" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                        <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clipRule="evenodd" />
+                    <li
+                      key={item}
+                      className="flex items-center gap-1.5 text-[11px] sm:text-base md:text-lg text-white/90 leading-snug"
+                    >
+                      <svg
+                        className="shrink-0 w-3 h-3 sm:w-5 sm:h-5 text-white"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                       {item}
                     </li>
@@ -289,7 +312,10 @@ export default async function CostPage({
           {/* ...keep the rest of your page content here... */}
         </div>
 
-        <div id="cost-index" className="flex flex-wrap items-center justify-between gap-4 mb-4">
+        <div
+          id="cost-index"
+          className="flex flex-wrap items-center justify-between gap-4 mb-4"
+        >
           <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-neutral-400">
             Cost Transparency
             <span className="ml-2 normal-case font-bold text-neutral-600 tracking-normal">
@@ -316,7 +342,9 @@ export default async function CostPage({
           </div>
         ) : filteredRecords.length === 0 ? (
           <div className="rounded-xl border border-neutral-200 bg-white p-12 text-center">
-            <p className="text-sm text-neutral-500">No races found for this filter.</p>
+            <p className="text-sm text-neutral-500">
+              No races found for this filter.
+            </p>
           </div>
         ) : (
           <RaceList
