@@ -2,32 +2,12 @@
 
 import { useUser, useClerk } from "@clerk/nextjs";
 import { useState, useEffect, useRef } from "react";
+import { getFavorites, invalidateFavoritesCache } from "@/lib/favoritesCache";
 
 interface FavoriteButtonProps {
   entryFeeId: string;
   className?: string;
   size?: "sm" | "md" | "lg";
-}
-
-let favoritesPromise: Promise<string[]> | null = null;
-let cachedUserId: string | null = null;
-
-function getFavorites(userId: string): Promise<string[]> {
-  if (cachedUserId !== userId) {
-    cachedUserId = userId;
-    favoritesPromise = null;
-  }
-  if (!favoritesPromise) {
-    favoritesPromise = fetch("/api/favorites")
-      .then((r) => r.json())
-      .then((d) => (Array.isArray(d.favorites) ? d.favorites : []))
-      .catch(() => []);
-  }
-  return favoritesPromise;
-}
-
-function invalidateCache() {
-  favoritesPromise = null;
 }
 
 export default function FavoriteButton({
@@ -40,7 +20,7 @@ export default function FavoriteButton({
   const [isFavorited, setIsFavorited] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [checked, setChecked] = useState(false);
-  const mountedRef = useRef(true);
+  const mountedRef = useRef(false);
 
   const sizeClasses = {
     sm: "w-7 h-7 text-base",
@@ -84,7 +64,7 @@ export default function FavoriteButton({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ entry_fee_id: entryFeeId }),
       });
-      invalidateCache();
+      invalidateFavoritesCache();
     } catch {
       setIsFavorited(!newState);
     } finally {

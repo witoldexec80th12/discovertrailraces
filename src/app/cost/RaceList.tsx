@@ -225,9 +225,10 @@ export default function RaceList({
     setIsLoading(true);
     try {
       const res = await fetch("/api/races");
-      const data = await res.json();
-      setAllRecords(data.records);
-      return data.records as RaceRecord[];
+      const data = await res.json().catch(() => ({}));
+      const records = (data.records ?? []) as RaceRecord[];
+      setAllRecords(records);
+      return records;
     } finally {
       setIsLoading(false);
     }

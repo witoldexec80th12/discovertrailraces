@@ -17,7 +17,7 @@ async function getFavoriteEntryFeeIds(userId: string): Promise<string[]> {
     }
   );
   if (!res.ok) return [];
-  const data = await res.json();
+  const data = await res.json().catch(() => ({}));
   return (data.records ?? [])
     .map((r: { fields: { race_slug1?: string[] } }) => r.fields.race_slug1?.[0])
     .filter(Boolean) as string[];
@@ -36,7 +36,7 @@ async function getRaceDetails(recordIds: string[]) {
     }
   );
   if (!res.ok) return [];
-  const data = await res.json();
+  const data = await res.json().catch(() => ({}));
   return data.records ?? [];
 }
 
