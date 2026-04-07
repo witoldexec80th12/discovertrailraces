@@ -56,6 +56,7 @@ async function fetchEntryFeeRecords(recordIds: string[]): Promise<FavouriteEntry
         ID?: string | number;
         "Race Slug"?: string[];
         LKP_country?: string | string[];
+        LKP_terrain?: string | string[];
         "Distance (km)"?: string | number | string[];
         "AUTO €/km"?: number;
         "Distance Start Date"?: string;
@@ -68,6 +69,7 @@ async function fetchEntryFeeRecords(recordIds: string[]): Promise<FavouriteEntry
       const name = parseName(idText);
       const slug = f["Race Slug"]?.[0] ?? "";
       const country = asText(f.LKP_country) || null;
+      const terrain = asText(f.LKP_terrain) || null;
       const imageUrl =
         f.LKP_featured_image?.[0]?.url ??
         f.temporary_image?.[0]?.url ??
@@ -83,7 +85,7 @@ async function fetchEntryFeeRecords(recordIds: string[]): Promise<FavouriteEntry
         ? parseFloat(String(rawKm)) || null
         : null;
       const startDate = f["Distance Start Date"] ?? null;
-      return { entryFeeId: r.id, slug, name, imageUrl, eurPerKm, distanceKm, startDate, country };
+      return { entryFeeId: r.id, slug, name, imageUrl, eurPerKm, distanceKm, startDate, country, terrain };
     }
   );
 }

@@ -240,6 +240,7 @@ export default async function RacePage({
     distanceKm: distanceKmNum,
     startDate: f["Distance Start Date"] ?? null,
     country: country || null,
+    terrain: terrain || null,
   };
 
   return (

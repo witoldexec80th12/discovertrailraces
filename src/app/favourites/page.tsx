@@ -119,6 +119,14 @@ export default function FavouritesPage() {
                         {f.distanceKm != null ? `${f.distanceKm} km` : "—"}
                       </p>
                     </div>
+                    {f.terrain && (
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-neutral-400">Terrain</p>
+                        <p className="mt-0.5 text-sm font-medium text-neutral-600 truncate max-w-[120px]">
+                          {f.terrain}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </Link>

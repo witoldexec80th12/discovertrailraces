@@ -7,4 +7,5 @@ export type FavouriteEntry = {
   distanceKm: number | null;
   startDate: string | null;
   country: string | null;
+  terrain: string | null;
 };

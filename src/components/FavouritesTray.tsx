@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useUser, useClerk } from "@clerk/nextjs";
 import { useFavourites, type FavouriteEntry } from "@/lib/favouritesContext";
@@ -96,6 +96,17 @@ function SwipeableItem({
   );
 }
 
+const PENDING_SAVE_KEY = "dtr:pendingCalendarSave";
+
+async function doSaveCalendar(entryFeeIds: string[]) {
+  const res = await fetch("/api/save-calendar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ entry_fee_ids: entryFeeIds }),
+  });
+  return res.ok;
+}
+
 function SaveCalendarButton() {
   const { isSignedIn, isLoaded } = useUser();
   const { openSignIn } = useClerk();
@@ -103,10 +114,28 @@ function SaveCalendarButton() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState(false);
+  const autoSaveAttempted = useRef(false);
+
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn || autoSaveAttempted.current) return;
+    const pending = typeof window !== "undefined" && localStorage.getItem(PENDING_SAVE_KEY);
+    if (!pending) return;
+    autoSaveAttempted.current = true;
+    localStorage.removeItem(PENDING_SAVE_KEY);
+    setSaving(true);
+    doSaveCalendar(favourites.map((f) => f.entryFeeId))
+      .then((ok) => {
+        if (ok) { setSaved(true); setTimeout(() => setSaved(false), 3000); }
+        else { setSaveError(true); setTimeout(() => setSaveError(false), 3000); }
+      })
+      .catch(() => { setSaveError(true); setTimeout(() => setSaveError(false), 3000); })
+      .finally(() => setSaving(false));
+  }, [isLoaded, isSignedIn, favourites]);
 
   const handleSave = useCallback(async () => {
     if (!isLoaded) return;
     if (!isSignedIn) {
+      if (typeof window !== "undefined") localStorage.setItem(PENDING_SAVE_KEY, "1");
       openSignIn();
       return;
     }
@@ -114,18 +143,9 @@ function SaveCalendarButton() {
     setSaved(false);
     setSaveError(false);
     try {
-      const res = await fetch("/api/save-calendar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entry_fee_ids: favourites.map((f) => f.entryFeeId) }),
-      });
-      if (res.ok) {
-        setSaved(true);
-        setTimeout(() => setSaved(false), 3000);
-      } else {
-        setSaveError(true);
-        setTimeout(() => setSaveError(false), 3000);
-      }
+      const ok = await doSaveCalendar(favourites.map((f) => f.entryFeeId));
+      if (ok) { setSaved(true); setTimeout(() => setSaved(false), 3000); }
+      else { setSaveError(true); setTimeout(() => setSaveError(false), 3000); }
     } catch {
       setSaveError(true);
       setTimeout(() => setSaveError(false), 3000);

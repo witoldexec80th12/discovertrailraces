@@ -35,6 +35,7 @@ type EntryFeeFields = {
   "Race Slug"?: string[];
   "Distance Start Date"?: string;
   "Is Primary Distance (from Distance)"?: boolean | boolean[];
+  LKP_terrain?: string | string[];
 };
 
 function asText(v: unknown): string {
@@ -229,6 +230,7 @@ export default async function EventPage({
                   distanceKm: distKmNum,
                   startDate: f["Distance Start Date"] ?? null,
                   country: asText(pf.LKP_country) || null,
+                  terrain: asText(pf.LKP_terrain) || null,
                 } : null;
 
                 const cardInner = (
