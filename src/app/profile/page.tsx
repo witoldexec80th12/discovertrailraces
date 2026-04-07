@@ -53,7 +53,8 @@ export default async function ProfilePage() {
   const raceRecords = await getRaceDetails(entryFeeIds);
 
   type AirtableAttachment = { url: string; thumbnails?: Record<string, { url: string }> };
-  const races = raceRecords.map((r: { fields: Record<string, unknown> }) => {
+  type RaceItem = { slug: string; name: string; country: string; epk?: number; imgUrl: string | null };
+  const races: RaceItem[] = raceRecords.map((r: { fields: Record<string, unknown> }) => {
     const f = r.fields;
     const slugs = (f["Race Slug"] as string[] | undefined) ?? [];
     const slug = slugs[0] ?? "";
@@ -86,7 +87,7 @@ export default async function ProfilePage() {
           <Link href="/cost" className="text-sm text-neutral-600 hover:text-neutral-900">
             ← Cost Index
           </Link>
-          <UserButton afterSignOutUrl="/" />
+          <UserButton />
         </div>
       </nav>
 

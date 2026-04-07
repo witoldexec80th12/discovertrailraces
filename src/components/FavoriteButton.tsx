@@ -50,7 +50,7 @@ export default function FavoriteButton({
     e.stopPropagation();
 
     if (!isSignedIn) {
-      openSignIn({ redirectUrl: window.location.href });
+      openSignIn();
       return;
     }
 
