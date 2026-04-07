@@ -1,7 +1,7 @@
 "use client";
 
 import { useUser, useClerk } from "@clerk/nextjs";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface FavoriteButtonProps {
   entryFeeId: string;
@@ -9,16 +9,38 @@ interface FavoriteButtonProps {
   size?: "sm" | "md" | "lg";
 }
 
+let favoritesPromise: Promise<string[]> | null = null;
+let cachedUserId: string | null = null;
+
+function getFavorites(userId: string): Promise<string[]> {
+  if (cachedUserId !== userId) {
+    cachedUserId = userId;
+    favoritesPromise = null;
+  }
+  if (!favoritesPromise) {
+    favoritesPromise = fetch("/api/favorites")
+      .then((r) => r.json())
+      .then((d) => (Array.isArray(d.favorites) ? d.favorites : []))
+      .catch(() => []);
+  }
+  return favoritesPromise;
+}
+
+function invalidateCache() {
+  favoritesPromise = null;
+}
+
 export default function FavoriteButton({
   entryFeeId,
   className = "",
   size = "md",
 }: FavoriteButtonProps) {
-  const { isSignedIn, isLoaded } = useUser();
+  const { isSignedIn, isLoaded, user } = useUser();
   const { openSignIn } = useClerk();
   const [isFavorited, setIsFavorited] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [checked, setChecked] = useState(false);
+  const mountedRef = useRef(true);
 
   const sizeClasses = {
     sm: "w-7 h-7 text-base",
@@ -27,18 +49,21 @@ export default function FavoriteButton({
   };
 
   useEffect(() => {
-    if (!isLoaded || !isSignedIn) return;
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
-    fetch("/api/favorites")
-      .then((r) => r.json())
-      .then((d) => {
-        if (Array.isArray(d.favorites)) {
-          setIsFavorited(d.favorites.includes(entryFeeId));
-        }
-        setChecked(true);
-      })
-      .catch(() => setChecked(true));
-  }, [isLoaded, isSignedIn, entryFeeId]);
+  useEffect(() => {
+    if (!isLoaded || !isSignedIn || !user?.id) return;
+
+    getFavorites(user.id).then((favorites) => {
+      if (!mountedRef.current) return;
+      setIsFavorited(favorites.includes(entryFeeId));
+      setChecked(true);
+    });
+  }, [isLoaded, isSignedIn, user?.id, entryFeeId]);
 
   const toggle = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -59,10 +84,11 @@ export default function FavoriteButton({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ entry_fee_id: entryFeeId }),
       });
+      invalidateCache();
     } catch {
       setIsFavorited(!newState);
     } finally {
-      setIsLoading(false);
+      if (mountedRef.current) setIsLoading(false);
     }
   };
 
