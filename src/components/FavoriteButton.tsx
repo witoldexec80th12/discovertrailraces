@@ -4,13 +4,13 @@ import { useUser, useClerk } from "@clerk/nextjs";
 import { useState, useEffect } from "react";
 
 interface FavoriteButtonProps {
-  raceSlug: string;
+  entryFeeId: string;
   className?: string;
   size?: "sm" | "md" | "lg";
 }
 
 export default function FavoriteButton({
-  raceSlug,
+  entryFeeId,
   className = "",
   size = "md",
 }: FavoriteButtonProps) {
@@ -33,12 +33,12 @@ export default function FavoriteButton({
       .then((r) => r.json())
       .then((d) => {
         if (Array.isArray(d.favorites)) {
-          setIsFavorited(d.favorites.includes(raceSlug));
+          setIsFavorited(d.favorites.includes(entryFeeId));
         }
         setChecked(true);
       })
       .catch(() => setChecked(true));
-  }, [isLoaded, isSignedIn, raceSlug]);
+  }, [isLoaded, isSignedIn, entryFeeId]);
 
   const toggle = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -57,7 +57,7 @@ export default function FavoriteButton({
       await fetch("/api/favorites", {
         method: newState ? "POST" : "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ race_slug: raceSlug }),
+        body: JSON.stringify({ entry_fee_id: entryFeeId }),
       });
     } catch {
       setIsFavorited(!newState);

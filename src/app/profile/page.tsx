@@ -7,7 +7,7 @@ import Image from "next/image";
 const AIRTABLE_TOKEN = process.env.AIRTABLE_TOKEN!;
 const AIRTABLE_BASE_ID = process.env.AIRTABLE_BASE_ID!;
 
-async function getFavorites(userId: string): Promise<string[]> {
+async function getFavoriteEntryFeeIds(userId: string): Promise<string[]> {
   const formula = encodeURIComponent(`{clerk_user_id} = "${userId}"`);
   const res = await fetch(
     `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/Favorites?filterByFormula=${formula}`,
@@ -18,15 +18,15 @@ async function getFavorites(userId: string): Promise<string[]> {
   );
   if (!res.ok) return [];
   const data = await res.json();
-  return (data.records ?? []).map(
-    (r: { fields: { race_slug: string } }) => r.fields.race_slug
-  );
+  return (data.records ?? [])
+    .map((r: { fields: { race_slug1?: string[] } }) => r.fields.race_slug1?.[0])
+    .filter(Boolean) as string[];
 }
 
-async function getRaceDetails(slugs: string[]) {
-  if (slugs.length === 0) return [];
+async function getRaceDetails(recordIds: string[]) {
+  if (recordIds.length === 0) return [];
   const formula = encodeURIComponent(
-    `OR(${slugs.map((s) => `{Race Slug} = "${s}"`).join(",")})`
+    `OR(${recordIds.map((id) => `RECORD_ID()="${id}"`).join(",")})`
   );
   const res = await fetch(
     `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent("Entry Fees")}?filterByFormula=${formula}&view=entry_fees_public`,
@@ -49,8 +49,8 @@ export default async function ProfilePage() {
   if (!userId) redirect("/sign-in");
 
   const user = await currentUser();
-  const favoriteSlugs = await getFavorites(userId);
-  const raceRecords = await getRaceDetails(favoriteSlugs);
+  const entryFeeIds = await getFavoriteEntryFeeIds(userId);
+  const raceRecords = await getRaceDetails(entryFeeIds);
 
   type AirtableAttachment = { url: string; thumbnails?: Record<string, { url: string }> };
   const races = raceRecords.map((r: { fields: Record<string, unknown> }) => {
@@ -117,9 +117,9 @@ export default async function ProfilePage() {
         ) : (
           <ul className="space-y-4">
             {races.map((race) => (
-              <li key={race.slug}>
+              <li key={race.slug || race.name}>
                 <Link
-                  href={`/races/${race.slug}`}
+                  href={race.slug ? `/races/${race.slug}` : "/cost"}
                   className="flex items-center gap-4 bg-white border border-neutral-200 rounded-xl p-4 hover:shadow-md transition-shadow group"
                 >
                   {race.imgUrl ? (

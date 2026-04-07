@@ -11,47 +11,53 @@ const headers = {
   "Content-Type": "application/json",
 };
 
+type FavRecord = {
+  id: string;
+  fields: {
+    clerk_user_id?: string;
+    race_slug1?: string[];
+  };
+};
+
+async function getUserFavorites(userId: string): Promise<FavRecord[]> {
+  const formula = encodeURIComponent(`{clerk_user_id} = "${userId}"`);
+  const res = await fetch(`${BASE_URL}?filterByFormula=${formula}`, { headers, cache: "no-store" });
+  if (!res.ok) return [];
+  const data = await res.json();
+  return data.records ?? [];
+}
+
 export async function GET() {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const formula = encodeURIComponent(`{clerk_user_id} = "${userId}"`);
-  const res = await fetch(`${BASE_URL}?filterByFormula=${formula}`, { headers });
+  const records = await getUserFavorites(userId);
+  const favorites: string[] = records
+    .map((r) => r.fields.race_slug1?.[0])
+    .filter(Boolean) as string[];
 
-  if (!res.ok) {
-    console.error("[favorites/GET] Airtable error", await res.text());
-    return NextResponse.json({ error: "Failed to fetch favorites" }, { status: 500 });
-  }
-
-  const data = await res.json();
-  const slugs: string[] = (data.records ?? []).map(
-    (r: { fields: { race_slug: string } }) => r.fields.race_slug
-  );
-
-  return NextResponse.json({ favorites: slugs });
+  return NextResponse.json({ favorites });
 }
 
 export async function POST(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { race_slug } = await req.json();
-  if (!race_slug) return NextResponse.json({ error: "race_slug required" }, { status: 400 });
+  const { entry_fee_id } = await req.json();
+  if (!entry_fee_id) return NextResponse.json({ error: "entry_fee_id required" }, { status: 400 });
 
-  const checkFormula = encodeURIComponent(
-    `AND({clerk_user_id} = "${userId}", {race_slug} = "${race_slug}")`
-  );
-  const checkRes = await fetch(`${BASE_URL}?filterByFormula=${checkFormula}`, { headers });
-  const checkData = await checkRes.json();
-  if ((checkData.records ?? []).length > 0) {
-    return NextResponse.json({ ok: true, message: "Already favorited" });
-  }
+  const existing = await getUserFavorites(userId);
+  const alreadySaved = existing.some((r) => r.fields.race_slug1?.[0] === entry_fee_id);
+  if (alreadySaved) return NextResponse.json({ ok: true, message: "Already favorited" });
 
   const createRes = await fetch(BASE_URL, {
     method: "POST",
     headers,
     body: JSON.stringify({
-      fields: { clerk_user_id: userId, race_slug },
+      fields: {
+        clerk_user_id: userId,
+        race_slug1: [entry_fee_id],
+      },
     }),
   });
 
@@ -67,19 +73,15 @@ export async function DELETE(req: NextRequest) {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { race_slug } = await req.json();
-  if (!race_slug) return NextResponse.json({ error: "race_slug required" }, { status: 400 });
+  const { entry_fee_id } = await req.json();
+  if (!entry_fee_id) return NextResponse.json({ error: "entry_fee_id required" }, { status: 400 });
 
-  const formula = encodeURIComponent(
-    `AND({clerk_user_id} = "${userId}", {race_slug} = "${race_slug}")`
-  );
-  const findRes = await fetch(`${BASE_URL}?filterByFormula=${formula}`, { headers });
-  const findData = await findRes.json();
-  const record = (findData.records ?? [])[0];
+  const existing = await getUserFavorites(userId);
+  const match = existing.find((r) => r.fields.race_slug1?.[0] === entry_fee_id);
 
-  if (!record) return NextResponse.json({ ok: true, message: "Not found" });
+  if (!match) return NextResponse.json({ ok: true, message: "Not found" });
 
-  const delRes = await fetch(`${BASE_URL}/${record.id}`, {
+  const delRes = await fetch(`${BASE_URL}/${match.id}`, {
     method: "DELETE",
     headers,
   });

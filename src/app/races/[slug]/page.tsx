@@ -5,7 +5,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import FavoriteButton from "@/components/FavoriteButton";
 
 export const revalidate = 3600; // 1 hour ISR (safe MVP default)
 
@@ -235,15 +234,12 @@ export default async function RacePage({
           >
             ← Back to Cost Index
           </Link>
-          <div className="flex items-center gap-3">
-            <FavoriteButton raceSlug={slug} size="sm" />
-            <Link
-              href="/"
-              className="text-sm font-semibold text-neutral-700 hover:text-neutral-900"
-            >
-              Home
-            </Link>
-          </div>
+          <Link
+            href="/"
+            className="text-sm font-semibold text-neutral-700 hover:text-neutral-900"
+          >
+            Home
+          </Link>
         </div>
 
         {/* Hero */}

@@ -173,7 +173,11 @@ Views: entry_fees_public, race_events_public, homepage_featured,
 - **Favorites API**: `src/app/api/favorites/route.ts` — GET/POST/DELETE, uses `auth()` from `@clerk/nextjs/server`
 - **FavoriteButton**: `src/components/FavoriteButton.tsx` — heart toggle on race detail pages
 - **Env vars**: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` (env var), `CLERK_SECRET_KEY` (secret), `NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in`, `NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/profile`
-- **GDPR strategy**: Clerk stores email in EU; Airtable Favorites table stores only `clerk_user_id` (text) + `race_slug` (text) — no PII
+- **GDPR strategy**: Clerk stores email in EU; Airtable Favorites table stores only `clerk_user_id` (text) + `race_slug1` (linked record to Entry Fees) — no PII
+- **Favorites identifier**: Uses Airtable Entry Fees record ID (`recXXXXXX`) stored as a linked record in `race_slug1` field. NOT a text slug.
+- **FavoriteButton placement**: Cost page cards (thumbnail overlay) + Race Specificity cards (thumbnail overlay). Removed from Race Detail page.
+- **FavoriteButton prop**: `entryFeeId: string` (Airtable record ID). API body uses `entry_fee_id`.
+- **Profile page**: Fetches Favorites → extracts `race_slug1[0]` (Entry Fees record IDs) → fetches those Entry Fees records via `RECORD_ID()` formula.
 
 ## Recent Changes
 - Feb 26, 2026: Documented full reference snapshot including race detail page

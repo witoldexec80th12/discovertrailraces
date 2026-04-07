@@ -3,6 +3,7 @@
 import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
 import type { RaceEventRecord, DistanceRecord } from "./types";
+import FavoriteButton from "@/components/FavoriteButton";
 
 const MAX_VERT = 170;
 const BRAND_NAVY = "#1a2e4a";
@@ -35,12 +36,14 @@ type EnrichedDistance = {
   distanceName: string;
   distanceKm: number;
   pctIncrease: number;
+  entryFeeId: string | null;
 };
 
 export default function RaceSpecificityClient() {
   const [raceEvents, setRaceEvents] = useState<RaceEventRecord[]>([]);
   const [distances, setDistances] = useState<DistanceRecord[]>([]);
   const [slugImgMap, setSlugImgMap] = useState<Record<string, string>>({});
+  const [slugEntryFeeMap, setSlugEntryFeeMap] = useState<Record<string, { id: string; km: number }[]>>({});
   const [dataLoading, setDataLoading] = useState(true);
   const [dataError, setDataError] = useState<string | null>(null);
 
@@ -54,6 +57,7 @@ export default function RaceSpecificityClient() {
         setRaceEvents(d.raceEvents ?? []);
         setDistances(d.distances ?? []);
         setSlugImgMap(d.slugImgMap ?? {});
+        setSlugEntryFeeMap(d.slugEntryFeeMap ?? {});
       })
       .catch((e) => setDataError(e.message ?? "Failed to load"))
       .finally(() => setDataLoading(false));
@@ -102,6 +106,15 @@ export default function RaceSpecificityClient() {
           img?.url ??
           (slug ? slugImgMap[slug] : null) ??
           null;
+        const distanceKm = d.fields["Distance (km)"] ?? 0;
+        const entryFees = slug ? (slugEntryFeeMap[slug] ?? []) : [];
+        const exactMatch = entryFees.find((ef) => ef.km === distanceKm);
+        const closestMatch = entryFees.length > 0
+          ? entryFees.reduce((best, cur) =>
+              Math.abs(cur.km - distanceKm) < Math.abs(best.km - distanceKm) ? cur : best
+            )
+          : null;
+        const entryFeeId = exactMatch?.id ?? closestMatch?.id ?? null;
         return {
           raceId,
           raceName: race.fields["Race Name"] ?? "Unknown Race",
@@ -109,12 +122,13 @@ export default function RaceSpecificityClient() {
           terrain: race.fields["Terrain_multi"] ?? [],
           imgUrl,
           distanceName: d.fields["Distance Name"] ?? "",
-          distanceKm: d.fields["Distance (km)"] ?? 0,
+          distanceKm,
           pctIncrease: d.fields["AUTO% Increase"]!,
+          entryFeeId,
         } as EnrichedDistance;
       })
       .filter(Boolean) as EnrichedDistance[];
-  }, [raceEvents, distances]);
+  }, [raceEvents, distances, slugImgMap, slugEntryFeeMap]);
 
   const vertFiltered = useMemo(() => {
     return enrichedData.filter((r) => r.pctIncrease >= appliedMin && r.pctIncrease <= appliedMax);
@@ -641,11 +655,16 @@ function ResultCard({ race }: { race: EnrichedDistance }) {
           <div className="w-full h-full bg-gradient-to-br from-neutral-200 to-neutral-300" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-        <div className="absolute top-2.5 right-2.5">
+        <div className="absolute top-2.5 left-2.5">
           <span className="bg-white/95 rounded-full px-2.5 py-0.5 text-xs font-bold text-neutral-900 shadow-sm">
             {Math.round(race.pctIncrease)} D+/km
           </span>
         </div>
+        {race.entryFeeId && (
+          <div className="absolute top-2 right-2" onClick={(e) => e.preventDefault()}>
+            <FavoriteButton entryFeeId={race.entryFeeId} size="sm" />
+          </div>
+        )}
         <div className="absolute bottom-3 left-3 right-3">
           <p className="text-white font-bold text-sm leading-tight line-clamp-2">{race.raceName}</p>
         </div>

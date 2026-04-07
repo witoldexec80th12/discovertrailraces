@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ImageIcon, ArrowUpRight } from "lucide-react";
 import type React from "react";
+import FavoriteButton from "@/components/FavoriteButton";
 
 const PAGE_SIZE = 10;
 
@@ -79,10 +80,10 @@ function RaceCard({ r }: { r: RaceRecord }) {
         : "";
   const rowHref = slug ? `/races/${slug}` : null;
 
-  const inner = (
+  const cardContent = (
     <div className="sm:flex sm:gap-5">
       <div className="flex gap-4 sm:contents">
-        <div className="shrink-0">
+        <div className="shrink-0 relative">
           {thumbUrl ? (
             <img
               src={thumbUrl}
@@ -94,6 +95,9 @@ function RaceCard({ r }: { r: RaceRecord }) {
               <ImageIcon className="w-6 h-6 text-neutral-300" />
             </div>
           )}
+          <div className="absolute top-1.5 right-1.5">
+            <FavoriteButton entryFeeId={r.id} size="sm" />
+          </div>
         </div>
 
         <div className="flex flex-1 min-w-0 flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
@@ -192,10 +196,10 @@ function RaceCard({ r }: { r: RaceRecord }) {
 
   return rowHref ? (
     <Link href={rowHref} className={`block ${cardClass}`}>
-      {inner}
+      {cardContent}
     </Link>
   ) : (
-    <div className={cardClass}>{inner}</div>
+    <div className={cardClass}>{cardContent}</div>
   );
 }
 

@@ -17,24 +17,30 @@ export async function GET() {
     ]);
 
     const slugImgMap: Record<string, string> = {};
-    for (const record of entryFees as Array<{ fields: Record<string, unknown> }>) {
+    const slugEntryFeeMap: Record<string, { id: string; km: number }[]> = {};
+
+    for (const record of entryFees as Array<{ id: string; fields: Record<string, unknown> }>) {
       const f = record.fields;
       const slugs = (f["Race Slug"] as string[] | undefined) ?? [];
+      const km = (f["Distance (km)"] as number | undefined) ?? 0;
+
       const imgs =
         (f["LKP_featured_image"] as AirtableAttachment[] | undefined) ??
         (f["temporary_image"] as AirtableAttachment[] | undefined) ??
         [];
       const img = imgs[0];
       const url = img?.thumbnails?.large?.url ?? img?.thumbnails?.full?.url ?? img?.url;
-      if (url) {
-        for (const slug of slugs) {
-          if (slug && !slugImgMap[slug]) slugImgMap[slug] = url;
-        }
+
+      for (const slug of slugs) {
+        if (!slug) continue;
+        if (url && !slugImgMap[slug]) slugImgMap[slug] = url;
+        if (!slugEntryFeeMap[slug]) slugEntryFeeMap[slug] = [];
+        slugEntryFeeMap[slug].push({ id: record.id, km });
       }
     }
 
     return NextResponse.json(
-      { raceEvents, distances, slugImgMap },
+      { raceEvents, distances, slugImgMap, slugEntryFeeMap },
       {
         headers: {
           "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=300",
@@ -44,7 +50,7 @@ export async function GET() {
   } catch (err) {
     console.error("[race-specificity-data]", err);
     return NextResponse.json(
-      { raceEvents: [], distances: [], slugImgMap: {}, error: "Partial data failure" },
+      { raceEvents: [], distances: [], slugImgMap: {}, slugEntryFeeMap: {}, error: "Partial data failure" },
       {
         status: 200,
         headers: {
