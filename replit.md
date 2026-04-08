@@ -168,7 +168,8 @@ Views: entry_fees_public, race_events_public, homepage_featured,
 - **Package**: `@clerk/nextjs` installed
 - **Proxy**: `src/proxy.ts` — protects `/profile(.*)`; uses `clerkMiddleware` + `createRouteMatcher`. Next.js 16 renamed `middleware.ts` → `proxy.ts`; do NOT create both files at the same time (causes fatal conflict).
 - **Provider**: `ClerkProvider` wraps root layout in `src/app/layout.tsx`
-- **Sign-in page**: `src/app/sign-in/[[...sign-in]]/page.tsx` — email OTP, no passwords, branded
+- **Sign-in page**: `src/app/sign-in/[[...sign-in]]/page.tsx` — thin server component (metadata only); renders `AuthForm.tsx`
+- **AuthForm**: `src/app/sign-in/[[...sign-in]]/AuthForm.tsx` — unified sign-in/sign-up flow; tries email OTP sign-in first, falls back to sign-up if email not found; imports from `@clerk/nextjs/legacy` for `{ isLoaded, signIn/signUp, setActive }` API
 - **Profile page**: `src/app/profile/page.tsx` — server component, shows saved races fetched from Airtable Favorites table
 - **Favorites API**: `src/app/api/favorites/route.ts` — GET/POST/DELETE, uses `auth()` from `@clerk/nextjs/server`
 - **FavoriteButton**: `src/components/FavoriteButton.tsx` — heart toggle on race detail pages
