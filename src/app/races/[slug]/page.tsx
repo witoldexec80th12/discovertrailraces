@@ -371,8 +371,16 @@ export default async function RacePage({
             )}
 
             {/* Planning facts */}
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-[1fr_1.6fr_1fr] gap-4">
-              <div className="sm:col-span-1 rounded-xl border border-neutral-200 p-4 bg-neutral-50">
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-[0.7fr_1fr_1.1fr] gap-4 items-stretch">
+              <div className="rounded-xl border border-neutral-200 p-4 bg-neutral-50 flex flex-col justify-center">
+                <p className="text-[10px] uppercase tracking-wider text-neutral-500">
+                  Add to Calendar
+                </p>
+                <div className="mt-2">
+                  <HeartButton entry={heartEntry} size="lg" />
+                </div>
+              </div>
+              <div className="rounded-xl border border-neutral-200 p-4 bg-neutral-50">
                 <p className="text-[10px] uppercase tracking-wider text-neutral-500">
                   Terrain
                 </p>
@@ -380,15 +388,7 @@ export default async function RacePage({
                   {terrain || "—"}
                 </p>
               </div>
-              <div className="sm:col-span-1 rounded-xl border border-neutral-200 p-4 bg-neutral-50 flex items-center justify-center">
-                <div className="flex items-center gap-3">
-                  <HeartButton entry={heartEntry} size="lg" />
-                  <span className="text-sm font-semibold text-neutral-900">
-                    Add to Calendar
-                  </span>
-                </div>
-              </div>
-              <div className="sm:col-span-1 rounded-xl border border-neutral-200 p-4 bg-neutral-50">
+              <div className="rounded-xl border border-neutral-200 p-4 bg-neutral-50">
                 <p className="text-[10px] uppercase tracking-wider text-neutral-500">
                   Elevation Data
                 </p>
