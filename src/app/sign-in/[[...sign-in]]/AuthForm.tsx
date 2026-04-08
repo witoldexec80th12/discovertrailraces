@@ -103,11 +103,11 @@ export default function AuthForm() {
             />
           </a>
           <h1 className="text-2xl font-bold text-neutral-900 mb-2">
-            {step === "email" ? "Sign in or create an account" : "Check your email"}
+            {step === "email" ? "Create Your Account / Sign In" : "Check your email"}
           </h1>
           <p className="text-neutral-500 text-sm">
             {step === "email"
-              ? "We'll send a one-time code to your email — no password needed."
+              ? "Please enter your email address to continue"
               : `We sent a 6-digit code to ${email}`}
           </p>
         </div>

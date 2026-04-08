@@ -7,6 +7,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import HeartButton from "@/components/HeartButton";
 import ShareButton from "@/components/ShareButton";
+import BackLink from "@/components/BackLink";
 
 export const revalidate = 3600; // 1 hour ISR (safe MVP default)
 
@@ -123,18 +124,6 @@ function extractNameAndDistance(idField: string): {
     };
   }
   return { name: idField, distance: "" };
-}
-
-function BackLink({ fallbackHref, sourceTitle, children }: { fallbackHref: string; sourceTitle?: string; children: React.ReactNode }) {
-  return (
-    <a
-      href={fallbackHref}
-      className="text-sm font-semibold text-neutral-700 hover:text-neutral-900"
-      title={sourceTitle ? `Back to ${sourceTitle}` : undefined}
-    >
-      {children}
-    </a>
-  );
 }
 
 type SimilarFields = {
