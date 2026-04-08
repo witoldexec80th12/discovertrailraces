@@ -128,12 +128,6 @@ function BackLink({ fallbackHref, sourceTitle, children }: { fallbackHref: strin
   return (
     <a
       href={fallbackHref}
-      onClick={(e) => {
-        if (typeof window !== "undefined" && window.history.length > 1) {
-          e.preventDefault();
-          window.history.back();
-        }
-      }}
       className="text-sm font-semibold text-neutral-700 hover:text-neutral-900"
       title={sourceTitle ? `Back to ${sourceTitle}` : undefined}
     >
