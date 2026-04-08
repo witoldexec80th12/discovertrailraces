@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/cost", label: "Cost Index" },
   { href: "/race-specificity", label: "Race Finder" },
+  { href: "/search", label: "Search" },
 ];
 
 export default function MobileNav() {
