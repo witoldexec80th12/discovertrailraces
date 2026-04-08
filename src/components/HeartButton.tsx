@@ -7,6 +7,7 @@ interface HeartButtonProps {
   entry: FavouriteEntry;
   className?: string;
   size?: "sm" | "md" | "lg" | "xl";
+  ghost?: boolean;
 }
 
 const SIZE_CLASSES = {
@@ -20,13 +21,14 @@ const ICON_SIZES = {
   sm: 16,
   md: 20,
   lg: 24,
-  xl: 32,
+  xl: 48,
 };
 
 export default function HeartButton({
   entry,
   className = "",
   size = "md",
+  ghost = false,
 }: HeartButtonProps) {
   const { isFavourited, addFavourite, removeFavourite } = useFavourites();
   const isActive = isFavourited(entry.entryFeeId);
@@ -47,15 +49,17 @@ export default function HeartButton({
       aria-label={isActive ? "Remove from favourites" : "Add to favourites"}
       title={isActive ? "Remove from tray" : "Save to tray"}
       className={`
-        flex items-center justify-center rounded-full
+        flex items-center justify-center
         transition-all duration-150 select-none
-        ${
-          isActive
-            ? "bg-red-50 text-red-500 hover:bg-red-100"
-            : "bg-white/80 text-neutral-400 hover:text-red-400 hover:bg-red-50"
+        ${ghost
+          ? isActive
+            ? "text-red-500 hover:text-red-400"
+            : "text-neutral-400 hover:text-red-400"
+          : isActive
+            ? "rounded-full bg-red-50 text-red-500 hover:bg-red-100 shadow-sm border border-neutral-200"
+            : "rounded-full bg-white/80 text-neutral-400 hover:text-red-400 hover:bg-red-50 shadow-sm border border-neutral-200"
         }
-        shadow-sm border border-neutral-200
-        ${SIZE_CLASSES[size]}
+        ${ghost ? "" : SIZE_CLASSES[size]}
         ${className}
       `}
     >
