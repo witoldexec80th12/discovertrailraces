@@ -124,6 +124,23 @@ function extractNameAndDistance(idField: string): {
   return { name: idField, distance: "" };
 }
 
+function BackLink({ fallbackHref, children }: { fallbackHref: string; children: React.ReactNode }) {
+  return (
+    <a
+      href={fallbackHref}
+      onClick={(e) => {
+        if (window.history.length > 1) {
+          e.preventDefault();
+          window.history.back();
+        }
+      }}
+      className="text-sm font-semibold text-neutral-700 hover:text-neutral-900"
+    >
+      {children}
+    </a>
+  );
+}
+
 async function fetchEntryFeeRowsForSlug(slug: string) {
   // We fetch from Entry Fees and filter by formula (works even without a dedicated view)
   // "Race Slug" is an array field in your schema; Airtable stores it as text in formula context.
@@ -252,12 +269,7 @@ export default async function RacePage({
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10">
         {/* Simple top nav */}
         <div className="mb-6 flex items-center justify-between">
-          <Link
-            href="/cost"
-            className="text-sm font-semibold text-neutral-700 hover:text-neutral-900"
-          >
-            ← Back to Cost Index
-          </Link>
+          <BackLink fallbackHref="/cost">← Back</BackLink>
           <Link
             href="/"
             className="text-sm font-semibold text-neutral-700 hover:text-neutral-900"
