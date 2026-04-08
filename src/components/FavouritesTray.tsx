@@ -185,7 +185,6 @@ export default function FavouritesTray() {
 
   return (
     <>
-      {/* Mobile bottom sheet backdrop */}
       {isSheetOpen && (
         <div
           className="sm:hidden fixed inset-0 bg-black/40 z-40"
@@ -193,7 +192,6 @@ export default function FavouritesTray() {
         />
       )}
 
-      {/* Mobile bottom sheet */}
       <div
         className={`sm:hidden fixed left-0 right-0 z-50 bg-white rounded-t-2xl shadow-2xl transition-transform duration-300 ease-out ${
           isSheetOpen ? "translate-y-0" : "translate-y-full"
@@ -226,13 +224,12 @@ export default function FavouritesTray() {
             onClick={() => setIsSheetOpen(false)}
             className="flex-1 text-center rounded-full bg-neutral-900 text-white py-2.5 text-sm font-semibold hover:bg-neutral-700 transition-colors"
           >
-            Compare races
+            Saved
           </Link>
           <SaveCalendarButton />
         </div>
       </div>
 
-      {/* Desktop expand panel */}
       {isExpanded && (
         <div
           className="hidden sm:block fixed left-0 right-0 z-40 bg-white border-t border-neutral-200 shadow-[0_-4px_24px_rgba(0,0,0,0.10)]"
@@ -271,13 +268,11 @@ export default function FavouritesTray() {
         </div>
       )}
 
-      {/* Main bar — always visible */}
       <div
         className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-neutral-200 shadow-[0_-4px_24px_rgba(0,0,0,0.10)]"
         style={{ height: 64 }}
       >
         <div className="mx-auto max-w-6xl h-full px-4 sm:px-6 flex items-center gap-3 sm:gap-5">
-          {/* Left: heart + count — mobile: tap to open sheet; desktop: just count */}
           <button
             className="sm:hidden flex items-center gap-2 shrink-0"
             onClick={() => setIsSheetOpen((v) => !v)}
@@ -287,18 +282,13 @@ export default function FavouritesTray() {
             <span className="text-sm font-bold text-neutral-800">{count}</span>
           </button>
 
-          {/* Desktop: heart + count (not a button, just text) */}
           <div className="hidden sm:flex items-center gap-2 shrink-0">
             <span className="text-red-500 text-lg select-none">♥</span>
             <span className="text-sm font-bold text-neutral-800">
-              {count}{" "}
-              <span className="font-normal text-neutral-500">
-                {count === 1 ? "race saved" : "races saved"}
-              </span>
+              {count} <span className="font-normal text-neutral-500">{count === 1 ? "race saved" : "races saved"}</span>
             </span>
           </div>
 
-          {/* Thumbnails — desktop only */}
           <div className="hidden sm:flex items-center gap-1.5 shrink-0">
             {thumbsToShow.map((f) => (
               <div
@@ -313,36 +303,28 @@ export default function FavouritesTray() {
                 )}
               </div>
             ))}
-            {count > 4 && (
-              <span className="text-xs text-neutral-400 font-medium ml-0.5">+{count - 4}</span>
-            )}
+            {count > 4 && <span className="text-xs text-neutral-400 font-medium ml-0.5">+{count - 4}</span>}
           </div>
 
-          {/* Race names — large desktop only */}
           <div className="hidden lg:flex flex-col justify-center flex-1 min-w-0">
             <p className="text-xs text-neutral-500 truncate">
-              {favourites
-                .slice(0, 3)
-                .map((f) => f.name)
-                .join(" · ")}
+              {favourites.slice(0, 3).map((f) => f.name).join(" · ")}
               {count > 3 ? " …" : ""}
             </p>
           </div>
 
           <div className="flex-1 sm:flex-none" />
 
-          {/* Actions */}
           <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <Link
               href="/favourites"
               className="inline-flex items-center gap-1.5 rounded-full bg-neutral-900 text-white px-4 py-2 text-sm font-semibold hover:bg-neutral-700 transition-colors whitespace-nowrap"
             >
-              Compare
+              Saved
             </Link>
             <div className="hidden sm:block">
               <SaveCalendarButton />
             </div>
-            {/* Desktop expand toggle */}
             <button
               className="hidden sm:flex items-center justify-center w-8 h-8 rounded-full hover:bg-neutral-100 text-neutral-500 transition-colors text-base"
               onClick={() => setIsExpanded((v) => !v)}
