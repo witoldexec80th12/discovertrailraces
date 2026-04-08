@@ -11,6 +11,7 @@ const NAV_LINKS = [
 
 export default function MobileNav() {
   const pathname = usePathname();
+  if (pathname === "/") return null;
   return (
     <nav className="sm:hidden sticky top-0 z-50 bg-white border-b border-neutral-200">
       <div className="flex items-center justify-around h-11 px-4">
