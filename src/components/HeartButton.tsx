@@ -5,13 +5,14 @@ import { useFavourites, type FavouriteEntry } from "@/lib/favouritesContext";
 interface HeartButtonProps {
   entry: FavouriteEntry;
   className?: string;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
 }
 
 const SIZE_CLASSES = {
   sm: "w-7 h-7 text-base",
   md: "w-9 h-9 text-xl",
   lg: "w-11 h-11 text-2xl",
+  xl: "w-14 h-14 text-3xl",
 };
 
 export default function HeartButton({

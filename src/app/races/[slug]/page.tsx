@@ -372,12 +372,12 @@ export default async function RacePage({
 
             {/* Planning facts */}
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-[0.45fr_0.55fr_2fr] gap-4 items-stretch">
-              <div className="rounded-xl border border-neutral-200 p-4 bg-neutral-50 flex flex-col justify-center">
-                <p className="text-[10px] uppercase tracking-wider text-neutral-500">
-                  Add to Calendar
-                </p>
-                <div className="mt-2">
-                  <HeartButton entry={heartEntry} size="lg" />
+              <div className="group relative rounded-xl border border-neutral-200 bg-neutral-50 flex items-center justify-center overflow-hidden" style={{minHeight: "88px"}}>
+                <HeartButton entry={heartEntry} size="xl" />
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-neutral-50/90 rounded-xl pointer-events-none">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-600 text-center px-2 leading-snug">
+                    Add to<br />Calendar
+                  </span>
                 </div>
               </div>
               <div className="rounded-xl border border-neutral-200 p-4 bg-neutral-50">
