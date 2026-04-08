@@ -413,7 +413,7 @@ export default async function RacePage({
             )}
 
             {/* Planning facts */}
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-[0.45fr_0.55fr_2fr] gap-4 items-stretch">
+            <div className="mt-8 grid grid-cols-2 sm:grid-cols-[0.45fr_0.55fr_2fr] gap-4 items-stretch">
               <div className="group relative rounded-xl border border-neutral-200 bg-neutral-50 flex items-center justify-center overflow-hidden" style={{minHeight: "88px"}}>
                 <HeartButton entry={heartEntry} size="xl" ghost />
                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-neutral-50/90 rounded-xl pointer-events-none">
@@ -430,7 +430,7 @@ export default async function RacePage({
                   {terrain || "—"}
                 </p>
               </div>
-              <div className="rounded-xl border border-neutral-200 p-4 bg-neutral-50">
+              <div className="col-span-2 sm:col-span-1 rounded-xl border border-neutral-200 p-4 bg-neutral-50">
                 <p className="text-[10px] uppercase tracking-wider text-neutral-500">
                   Elevation Data
                 </p>
