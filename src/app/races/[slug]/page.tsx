@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import HeartButton from "@/components/HeartButton";
+import ShareButton from "@/components/ShareButton";
 
 export const revalidate = 3600; // 1 hour ISR (safe MVP default)
 
@@ -320,12 +321,15 @@ export default async function RacePage({
         {/* Simple top nav */}
         <div className="mb-6 flex items-center justify-between">
           <BackLink fallbackHref={backHref} sourceTitle={title}>{backLabel}</BackLink>
-          <Link
-            href="/"
-            className="text-sm font-semibold text-neutral-700 hover:text-neutral-900"
-          >
-            Home
-          </Link>
+          <div className="flex items-center gap-4">
+            <ShareButton name={name} />
+            <Link
+              href="/"
+              className="text-sm font-semibold text-neutral-700 hover:text-neutral-900"
+            >
+              Home
+            </Link>
+          </div>
         </div>
 
         {/* Hero */}
