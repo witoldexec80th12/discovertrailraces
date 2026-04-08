@@ -1,5 +1,6 @@
 "use client";
 
+import { Heart } from "lucide-react";
 import { useFavourites, type FavouriteEntry } from "@/lib/favouritesContext";
 
 interface HeartButtonProps {
@@ -9,10 +10,17 @@ interface HeartButtonProps {
 }
 
 const SIZE_CLASSES = {
-  sm: "w-7 h-7 text-base",
-  md: "w-9 h-9 text-xl",
-  lg: "w-11 h-11 text-2xl",
-  xl: "w-14 h-14 text-3xl",
+  sm: "w-7 h-7",
+  md: "w-9 h-9",
+  lg: "w-11 h-11",
+  xl: "w-14 h-14",
+};
+
+const ICON_SIZES = {
+  sm: 16,
+  md: 20,
+  lg: 24,
+  xl: 32,
 };
 
 export default function HeartButton({
@@ -51,7 +59,11 @@ export default function HeartButton({
         ${className}
       `}
     >
-      {isActive ? "♥" : "♡"}
+      <Heart
+        size={ICON_SIZES[size]}
+        strokeWidth={1.8}
+        fill={isActive ? "currentColor" : "none"}
+      />
     </button>
   );
 }
