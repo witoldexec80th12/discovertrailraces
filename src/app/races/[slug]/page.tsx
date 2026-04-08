@@ -371,7 +371,7 @@ export default async function RacePage({
             )}
 
             {/* Planning facts */}
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-[0.7fr_1fr_1.1fr] gap-4 items-stretch">
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-[0.45fr_0.55fr_2fr] gap-4 items-stretch">
               <div className="rounded-xl border border-neutral-200 p-4 bg-neutral-50 flex flex-col justify-center">
                 <p className="text-[10px] uppercase tracking-wider text-neutral-500">
                   Add to Calendar
