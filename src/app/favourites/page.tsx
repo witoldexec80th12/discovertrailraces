@@ -132,9 +132,9 @@ export default function FavouritesPage() {
                         )}
                         {f.percentIncrease != null && (
                           <div>
-                            <span className="text-[9px] uppercase tracking-wider text-neutral-400 block">Grade</span>
+                            <span className="text-[9px] uppercase tracking-wider text-neutral-400 block">D+/km</span>
                             <span className="text-base font-semibold tabular-nums text-neutral-700">
-                              {Math.round(f.percentIncrease)}%
+                              {Math.abs(Math.round(f.percentIncrease))} m
                             </span>
                           </div>
                         )}
