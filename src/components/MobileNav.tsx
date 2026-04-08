@@ -22,7 +22,7 @@ export default function MobileNav() {
             <Link
               key={href}
               href={href}
-              className={`text-sm font-medium transition-colors ${
+              className={`text-[11px] font-medium transition-colors ${
                 isActive
                   ? "text-neutral-900"
                   : "text-neutral-500 hover:text-neutral-800"
