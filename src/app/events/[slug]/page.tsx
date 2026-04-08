@@ -150,10 +150,11 @@ export default async function EventPage({
         {/* Nav */}
         <div className="mb-6 flex items-center justify-between">
           <Link
-            href="/cost"
+            href={{ pathname: "/races/[slug]", query: { slug, from: "/events", title: eventName } }}
+            as={`/races/${slug}?from=/events&title=${encodeURIComponent(eventName)}`}
             className="text-sm font-semibold text-neutral-700 hover:text-neutral-900"
           >
-            ← Back to Cost Index
+            ← Back to {eventName}
           </Link>
           <Link
             href="/temphome"
@@ -219,7 +220,7 @@ export default async function EventPage({
                   ? f["AUTO €/km"]
                   : null;
                 const rowSlug = f["Race Slug"]?.[0];
-                const href = isP && rowSlug ? `/races/${rowSlug}` : null;
+                const href = isP && rowSlug ? `/races/${rowSlug}?from=/events&title=${encodeURIComponent(eventName)}` : null;
 
                 const distKmNum = Array.isArray(distKm)
                   ? parseFloat(String(distKm)) || null
@@ -324,8 +325,7 @@ export default async function EventPage({
 
             {/* Footer */}
             <div className="mt-8 text-xs text-neutral-400">
-              Last checked:{" "}
-              {(() => {
+              Last checked: {(() => {
                 const lc = pf["Last Checked "];
                 if (!lc) return "—";
                 const d = new Date(lc);

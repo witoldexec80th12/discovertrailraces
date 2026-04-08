@@ -124,17 +124,18 @@ function extractNameAndDistance(idField: string): {
   return { name: idField, distance: "" };
 }
 
-function BackLink({ fallbackHref, children }: { fallbackHref: string; children: React.ReactNode }) {
+function BackLink({ fallbackHref, sourceTitle, children }: { fallbackHref: string; sourceTitle?: string; children: React.ReactNode }) {
   return (
     <a
       href={fallbackHref}
       onClick={(e) => {
-        if (window.history.length > 1) {
+        if (typeof window !== "undefined" && window.history.length > 1) {
           e.preventDefault();
           window.history.back();
         }
       }}
       className="text-sm font-semibold text-neutral-700 hover:text-neutral-900"
+      title={sourceTitle ? `Back to ${sourceTitle}` : undefined}
     >
       {children}
     </a>
@@ -181,10 +182,13 @@ export async function generateMetadata({
 
 export default async function RacePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ from?: string; title?: string }>;
 }) {
   const { slug } = await params;
+  const { from, title } = await searchParams;
 
   const rows = await fetchEntryFeeRowsForSlug(slug);
   if (!rows.length) notFound();
@@ -248,6 +252,9 @@ export default async function RacePage({
     ? parseFloat(String(distanceKmRaw)) || null
     : null;
 
+  const backHref = from || "/cost";
+  const backLabel = title ? `← Back to ${title}` : "← Back";
+
   const heartEntry = {
     entryFeeId: row.id,
     slug,
@@ -269,7 +276,7 @@ export default async function RacePage({
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10">
         {/* Simple top nav */}
         <div className="mb-6 flex items-center justify-between">
-          <BackLink fallbackHref="/cost">← Back</BackLink>
+          <BackLink fallbackHref={backHref} sourceTitle={title}>{backLabel}</BackLink>
           <Link
             href="/"
             className="text-sm font-semibold text-neutral-700 hover:text-neutral-900"
