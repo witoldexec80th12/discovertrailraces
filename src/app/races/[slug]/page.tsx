@@ -1,5 +1,5 @@
 // src/app/races/[slug]/page.tsx
-import { airtableFetch } from "@/lib/airtable";
+import { airtableFetch, type AirtableRecord } from "@/lib/airtable";
 import { AIRTABLE } from "@/lib/airtableConfig";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -136,6 +136,36 @@ function BackLink({ fallbackHref, sourceTitle, children }: { fallbackHref: strin
   );
 }
 
+type SimilarFields = {
+  ID?: string;
+  "Race Event"?: string | string[];
+  LKP_country?: string | string[];
+  "AUTO €/km"?: number;
+  "Distance (km)"?: string | string[];
+  "Race Slug"?: string[];
+  LKP_featured_image?: AirtableAttachment[];
+  temporary_image?: AirtableAttachment[];
+};
+
+async function fetchSimilarRaces(
+  country: string,
+  currentSlug: string,
+): Promise<AirtableRecord<SimilarFields>[]> {
+  if (!country) return [];
+  const safe = country.replace(/"/g, "");
+  const filterByFormula = `AND(FIND("${safe}", ARRAYJOIN({LKP_country})), NOT(FIND("${currentSlug}", ARRAYJOIN({Race Slug}))))`;
+  try {
+    const rows = await airtableFetch<SimilarFields>(
+      AIRTABLE.TABLES.ENTRY_FEES,
+      { view: AIRTABLE.VIEWS.ENTRY_FEES_PUBLIC, filterByFormula, pageSize: 6 },
+      3600,
+    );
+    return rows.slice(0, 3);
+  } catch {
+    return [];
+  }
+}
+
 async function fetchEntryFeeRowsForSlug(slug: string) {
   // We fetch from Entry Fees and filter by formula (works even without a dedicated view)
   // "Race Slug" is an array field in your schema; Airtable stores it as text in formula context.
@@ -168,9 +198,26 @@ export async function generateMetadata({
     asText(primary.fields.ID) || asText(primary.fields["Race Event"]);
   const { name } = extractNameAndDistance(idText);
 
+  const ogImage =
+    pickFirstUrl(primary.fields.LKP_featured_image) ??
+    pickFirstUrl(primary.fields.temporary_image);
+
   return {
     title: `${name} | Discover Trail Races`,
     description: `Key details for ${name}: date, distance, entry fee, and cost per km.`,
+    openGraph: {
+      title: `${name} | Discover Trail Races`,
+      description: `Key details for ${name}: date, distance, entry fee, and cost per km.`,
+      ...(ogImage
+        ? { images: [{ url: ogImage, width: 1200, height: 630, alt: name }] }
+        : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${name} | Discover Trail Races`,
+      description: `Key details for ${name}: date, distance, entry fee, and cost per km.`,
+      ...(ogImage ? { images: [ogImage] } : {}),
+    },
   };
 }
 
@@ -199,6 +246,8 @@ export default async function RacePage({
   const country = asText(f.LKP_country);
   const region = asText(f.LKP_region);
   const location = [country, region].filter(Boolean).join(" · ");
+
+  const similarRaces = await fetchSimilarRaces(country, slug);
 
   const dateLabel = formatDateShort(f["Distance Start Date"]);
   const fee =
@@ -622,6 +671,63 @@ export default async function RacePage({
             </div>
           </div>
         </div>
+
+        {/* Similar races */}
+        {similarRaces.length > 0 && (
+          <div className="mt-8">
+            <h2 className="text-base font-bold tracking-tight text-neutral-900 mb-4">
+              More races in {country}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {similarRaces.map((sr) => {
+                const srSlug = sr.fields["Race Slug"]?.[0] ?? "";
+                const srIdText =
+                  asText(sr.fields.ID) || asText(sr.fields["Race Event"]);
+                const { name: srName, distance: srDist } =
+                  extractNameAndDistance(srIdText);
+                const srEpk = sr.fields["AUTO €/km"];
+                const srImg =
+                  pickFirstUrl(sr.fields.LKP_featured_image) ??
+                  pickFirstUrl(sr.fields.temporary_image);
+                const srCountry = asText(sr.fields.LKP_country);
+                if (!srSlug) return null;
+                return (
+                  <a
+                    key={sr.id}
+                    href={`/races/${srSlug}`}
+                    className="rounded-xl border border-neutral-200 bg-white overflow-hidden hover:shadow-md transition-shadow group"
+                  >
+                    <div className="relative h-28 bg-neutral-100">
+                      {srImg && (
+                        <img
+                          src={srImg}
+                          alt={srName}
+                          className="h-full w-full object-cover group-hover:scale-[1.02] transition-transform duration-200"
+                        />
+                      )}
+                    </div>
+                    <div className="p-3">
+                      <p className="text-sm font-semibold text-neutral-900 line-clamp-2 leading-snug">
+                        {srName}
+                      </p>
+                      <p className="text-[11px] text-neutral-500 mt-0.5">
+                        {[srDist, srCountry].filter(Boolean).join(" · ")}
+                      </p>
+                      {srEpk != null && (
+                        <p className="text-sm font-bold text-neutral-900 mt-2">
+                          €{srEpk.toFixed(2)}{" "}
+                          <span className="text-[11px] font-normal text-neutral-500">
+                            / km
+                          </span>
+                        </p>
+                      )}
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );

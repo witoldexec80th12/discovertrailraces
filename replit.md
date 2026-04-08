@@ -188,6 +188,14 @@ Views: entry_fees_public, race_events_public, homepage_featured,
 - **Save Calendar API** (`src/app/api/save-calendar/route.ts`): POST endpoint, Clerk-authenticated. Receives `{ entry_fee_ids: string[] }`, deduplicates against existing Airtable Favorites, writes new ones.
 - **FavouriteEntry shape**: `{ entryFeeId, slug, name, imageUrl, eurPerKm, distanceKm, startDate, country }`
 
+## Global Components
+- **MobileNav** (`src/components/MobileNav.tsx`): Client component, sticky top bar (`sm:hidden`), links to Home / Cost Index / Race Finder with active-link highlighting via `usePathname`. Added to root layout above page content.
+
+## Race Page Enhancements (Apr 8, 2026)
+- **Similar races section**: Server-side `fetchSimilarRaces` fetches up to 3 races from the same country (excluding current slug) via Airtable formula; displayed as image cards below the main content.
+- **OpenGraph + Twitter Card metadata**: `generateMetadata` now includes `openGraph.images` and `twitter.card: summary_large_image` using the race's hero image URL, so shares on WhatsApp/X render with a photo preview.
+- **Heart button redesign**: Lucide `Heart` SVG (ghost mode, 48px) sits directly on the grey planning-facts box; hover reveals "Add to Calendar" overlay text.
+
 ## Recent Changes
 - Apr 7, 2026: Race Favourites Tray & Comparison Feature — removed FavoriteButton from cost/race-specificity cards; added localStorage FavouritesContext; HeartButton on /races/[slug] and /events/[slug] primary cards; sticky FavouritesTray; /favourites comparison page; /api/save-calendar Clerk sync. FavouriteEntry type extracted to favouritesTypes.ts to avoid Fast Refresh full-reload loop.
 - Feb 26, 2026: Documented full reference snapshot including race detail page

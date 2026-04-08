@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { FavouritesProvider } from "@/lib/favouritesContext";
 import FavouritesTray from "@/components/FavouritesTray";
+import MobileNav from "@/components/MobileNav";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -30,6 +31,7 @@ export default function RootLayout({
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <FavouritesProvider>
+            <MobileNav />
             {children}
             <FavouritesTray />
           </FavouritesProvider>
