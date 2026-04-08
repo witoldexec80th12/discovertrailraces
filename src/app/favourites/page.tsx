@@ -15,7 +15,7 @@ function parseDate(iso: string | null): { day: string; month: string; year: stri
 }
 
 export default function FavouritesPage() {
-  const { favourites, removeFavourite, clearAll } = useFavourites();
+  const { favourites, removeFavourite } = useFavourites();
 
   if (favourites.length === 0) {
     return (
@@ -50,37 +50,25 @@ export default function FavouritesPage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-neutral-50 to-white pb-32">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-10">
-
-        {/* Header */}
-        <div className="mb-8 flex items-start justify-between gap-4">
-          <div>
-            <Link
-              href="/cost"
-              className="text-sm font-semibold text-neutral-500 hover:text-neutral-800 transition-colors"
-            >
-              ← Cost Index
-            </Link>
-            <h1 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900">
-              Your saved races
-            </h1>
-            <p className="mt-1.5 text-sm text-neutral-500">
-              {favourites.length} {favourites.length === 1 ? "race" : "races"} · ordered by race date
-            </p>
-          </div>
-          <button
-            onClick={clearAll}
-            className="shrink-0 mt-1 text-xs font-semibold text-neutral-400 hover:text-red-500 underline underline-offset-2 transition-colors"
+        <div className="mb-8">
+          <Link
+            href="/cost"
+            className="text-sm font-semibold text-neutral-500 hover:text-neutral-800 transition-colors"
           >
-            Clear all
-          </button>
+            ← Cost Index
+          </Link>
+          <h1 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-neutral-900">
+            Your saved races
+          </h1>
+          <p className="mt-1.5 text-sm text-neutral-500">
+            {favourites.length} {favourites.length === 1 ? "race" : "races"} · ordered by race date
+          </p>
         </div>
 
-        {/* Calendar-style cards */}
         <div className="flex flex-col gap-3">
           {favourites.map((f) => {
             const date = parseDate(f.startDate);
             const hasLogistics = f.logistics || f.primaryAirport;
-            const hasStats = f.elevationM != null || f.percentIncrease != null;
 
             return (
               <div key={f.entryFeeId} className="relative group">
@@ -88,10 +76,7 @@ export default function FavouritesPage() {
                   href={`/races/${f.slug}`}
                   className="block bg-white rounded-xl border border-neutral-200 hover:border-neutral-300 hover:shadow-[0_2px_12px_rgba(0,0,0,0.07)] transition-all duration-200 overflow-hidden"
                 >
-                  {/* Main content */}
                   <div className="flex items-start gap-0">
-
-                    {/* Date column */}
                     <div className="shrink-0 w-20 sm:w-24 flex flex-col items-center justify-center py-5 px-2 bg-[#1a2e4a] text-white text-center self-stretch">
                       {date ? (
                         <>
@@ -110,10 +95,7 @@ export default function FavouritesPage() {
                       )}
                     </div>
 
-                    {/* Details */}
                     <div className="flex-1 min-w-0 py-4 px-4 sm:px-5">
-
-                      {/* Name + location */}
                       <p className="text-[10px] uppercase tracking-[0.12em] text-neutral-400 mb-0.5">
                         {[f.country].filter(Boolean).join(" · ")}
                       </p>
@@ -121,12 +103,8 @@ export default function FavouritesPage() {
                         {f.name}
                       </h2>
 
-                      {/* Terrain */}
-                      {f.terrain && (
-                        <p className="mt-1 text-xs text-neutral-400">{f.terrain}</p>
-                      )}
+                      {f.terrain && <p className="mt-1 text-xs text-neutral-400">{f.terrain}</p>}
 
-                      {/* Stats row */}
                       <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5">
                         {f.eurPerKm != null && (
                           <div>
@@ -162,12 +140,12 @@ export default function FavouritesPage() {
                         )}
                       </div>
 
-                      {/* Logistics section */}
-                      {(hasLogistics || hasStats) && (
+                      {(hasLogistics || f.logistics) && (
                         <div className="mt-3 pt-3 border-t border-neutral-100 flex flex-wrap gap-x-4 gap-y-1">
                           {f.primaryAirport && (
                             <span className="text-xs text-neutral-500">
                               <span className="text-neutral-300 mr-1">✈</span>
+                              <span className="font-medium text-neutral-600">Closest Airport:</span>{" "}
                               {f.primaryAirport}
                             </span>
                           )}
@@ -182,7 +160,6 @@ export default function FavouritesPage() {
                   </div>
                 </Link>
 
-                {/* Remove button */}
                 <button
                   onClick={() => removeFavourite(f.entryFeeId)}
                   aria-label="Remove from saved races"
