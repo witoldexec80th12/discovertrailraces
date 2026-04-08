@@ -102,6 +102,30 @@ export function FavouritesProvider({ children }: { children: React.ReactNode }) 
     }
   }, [favourites, hydrated]);
 
+  // Backfill entries that were saved before the logistics/elevation fields were added
+  useEffect(() => {
+    if (!hydrated) return;
+    const stale = favourites.filter(
+      (f) => (f as Record<string, unknown>).logistics === undefined
+    );
+    if (stale.length === 0) return;
+    const ids = stale.map((f) => f.entryFeeId).join(",");
+    fetch(`/api/entry-fees?ids=${encodeURIComponent(ids)}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data) return;
+        setFavourites((prev) =>
+          prev.map((f) =>
+            (f as Record<string, unknown>).logistics === undefined && data[f.entryFeeId]
+              ? { ...f, ...data[f.entryFeeId] }
+              : f
+          )
+        );
+      })
+      .catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrated]);
+
   const addFavourite = useCallback((entry: FavouriteEntry) => {
     setFavourites((prev) => {
       if (prev.some((f) => f.entryFeeId === entry.entryFeeId)) return prev;
