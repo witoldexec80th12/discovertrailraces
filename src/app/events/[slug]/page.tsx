@@ -36,6 +36,10 @@ type EntryFeeFields = {
   "Distance Start Date"?: string;
   "Is Primary Distance (from Distance)"?: boolean | boolean[];
   LKP_terrain?: string | string[];
+  LKP_logistics?: string | string[];
+  LKP_primaryairport?: string | string[];
+  LKP_elevation?: number | string;
+  "LKP_%increase"?: number | string;
 };
 
 function asText(v: unknown): string {
@@ -231,6 +235,10 @@ export default async function EventPage({
                   startDate: f["Distance Start Date"] ?? null,
                   country: asText(pf.LKP_country) || null,
                   terrain: asText(pf.LKP_terrain) || null,
+                  logistics: asText(f.LKP_logistics) || null,
+                  primaryAirport: asText(f.LKP_primaryairport) || null,
+                  elevationM: f.LKP_elevation != null ? Number(f.LKP_elevation) || null : null,
+                  percentIncrease: f["LKP_%increase"] != null ? Number(f["LKP_%increase"]) || null : null,
                 } : null;
 
                 const cardInner = (

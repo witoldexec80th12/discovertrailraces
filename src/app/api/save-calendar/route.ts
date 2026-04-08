@@ -62,6 +62,10 @@ async function fetchEntryFeeRecords(recordIds: string[]): Promise<FavouriteEntry
         "Distance Start Date"?: string;
         LKP_featured_image?: { url: string }[];
         temporary_image?: { url: string }[];
+        LKP_logistics?: string | string[];
+        LKP_primaryairport?: string | string[];
+        LKP_elevation?: number | string;
+        "LKP_%increase"?: number | string;
       };
     }): FavouriteEntry => {
       const f = r.fields;
@@ -85,7 +89,11 @@ async function fetchEntryFeeRecords(recordIds: string[]): Promise<FavouriteEntry
         ? parseFloat(String(rawKm)) || null
         : null;
       const startDate = f["Distance Start Date"] ?? null;
-      return { entryFeeId: r.id, slug, name, imageUrl, eurPerKm, distanceKm, startDate, country, terrain };
+      const logistics = asText(f.LKP_logistics) || null;
+      const primaryAirport = asText(f.LKP_primaryairport) || null;
+      const elevationM = f.LKP_elevation != null ? Number(f.LKP_elevation) || null : null;
+      const percentIncrease = f["LKP_%increase"] != null ? Number(f["LKP_%increase"]) || null : null;
+      return { entryFeeId: r.id, slug, name, imageUrl, eurPerKm, distanceKm, startDate, country, terrain, logistics, primaryAirport, elevationM, percentIncrease };
     }
   );
 }

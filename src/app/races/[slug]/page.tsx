@@ -241,6 +241,10 @@ export default async function RacePage({
     startDate: f["Distance Start Date"] ?? null,
     country: country || null,
     terrain: terrain || null,
+    logistics: asText(f.LKP_logistics) || null,
+    primaryAirport: asText(f.LKP_primaryairport) || null,
+    elevationM: f.LKP_elevation != null ? Number(f.LKP_elevation) || null : null,
+    percentIncrease: f["LKP_%increase"] != null ? Number(f["LKP_%increase"]) || null : null,
   };
 
   return (
