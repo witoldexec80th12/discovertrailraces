@@ -13,7 +13,8 @@ import type { FavouriteEntry } from "./favouritesTypes";
 
 export type { FavouriteEntry } from "./favouritesTypes";
 
-const MAX_FAVOURITES = 10;
+const MAX_FAVOURITES_GUEST = 3;
+const MAX_FAVOURITES_USER = 10;
 
 type FavouritesContextValue = {
   favourites: FavouriteEntry[];
@@ -21,6 +22,7 @@ type FavouritesContextValue = {
   removeFavourite: (entryFeeId: string) => void;
   isFavourited: (entryFeeId: string) => boolean;
   clearAll: () => void;
+  reachedGuestLimit: boolean;
 };
 
 const STORAGE_KEY = "dtr_favourites";
@@ -50,6 +52,7 @@ const FavouritesContext = createContext<FavouritesContextValue>({
   removeFavourite: () => {},
   isFavourited: () => false,
   clearAll: () => {},
+  reachedGuestLimit: false,
 });
 
 function FavouritesSyncManager({
@@ -79,6 +82,10 @@ function FavouritesSyncManager({
 }
 
 export function FavouritesProvider({ children }: { children: React.ReactNode }) {
+  const { isSignedIn } = useUser();
+  const isSignedInRef = useRef<boolean | undefined>(undefined);
+  isSignedInRef.current = isSignedIn ?? false;
+
   const [favourites, setFavourites] = useState<FavouriteEntry[]>([]);
   const [hydrated, setHydrated] = useState(false);
 
@@ -125,9 +132,10 @@ export function FavouritesProvider({ children }: { children: React.ReactNode }) 
   }, [hydrated, favourites]);
 
   const addFavourite = useCallback((entry: FavouriteEntry) => {
+    const cap = isSignedInRef.current ? MAX_FAVOURITES_USER : MAX_FAVOURITES_GUEST;
     setFavourites((prev) => {
       if (prev.some((f) => f.entryFeeId === entry.entryFeeId)) return prev;
-      if (prev.length >= MAX_FAVOURITES) return prev;
+      if (prev.length >= cap) return prev;
       return sortByDate([...prev, entry]);
     });
   }, []);
@@ -151,9 +159,11 @@ export function FavouritesProvider({ children }: { children: React.ReactNode }) 
     setFavourites((prev) => mergeEntries(prev, incoming));
   }, []);
 
+  const reachedGuestLimit = !isSignedIn && favourites.length >= MAX_FAVOURITES_GUEST;
+
   return (
     <FavouritesContext.Provider
-      value={{ favourites, addFavourite, removeFavourite, isFavourited, clearAll }}
+      value={{ favourites, addFavourite, removeFavourite, isFavourited, clearAll, reachedGuestLimit }}
     >
       <FavouritesSyncManager onMerge={handleMerge} />
       {children}

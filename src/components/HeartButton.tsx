@@ -1,6 +1,7 @@
 "use client";
 
 import { Heart } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useFavourites, type FavouriteEntry } from "@/lib/favouritesContext";
 
 interface HeartButtonProps {
@@ -30,33 +31,52 @@ export default function HeartButton({
   size = "md",
   ghost = false,
 }: HeartButtonProps) {
-  const { isFavourited, addFavourite, removeFavourite } = useFavourites();
+  const { isFavourited, addFavourite, removeFavourite, reachedGuestLimit } = useFavourites();
   const isActive = isFavourited(entry.entryFeeId);
+  const router = useRouter();
 
   const toggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (isActive) {
       removeFavourite(entry.entryFeeId);
+    } else if (reachedGuestLimit) {
+      router.push("/sign-in");
     } else {
       addFavourite(entry);
     }
   };
 
+  const label = isActive
+    ? "Remove from favourites"
+    : reachedGuestLimit
+    ? "Sign up to save more races"
+    : "Add to favourites";
+
+  const title = isActive
+    ? "Remove from tray"
+    : reachedGuestLimit
+    ? "Limit reached — sign up to save more"
+    : "Save to tray";
+
   return (
     <button
       onClick={toggle}
-      aria-label={isActive ? "Remove from favourites" : "Add to favourites"}
-      title={isActive ? "Remove from tray" : "Save to tray"}
+      aria-label={label}
+      title={title}
       className={`
         flex items-center justify-center
         transition-all duration-150 select-none
         ${ghost
           ? isActive
             ? "text-red-500 hover:text-red-400"
+            : reachedGuestLimit
+            ? "text-neutral-300 hover:text-neutral-400"
             : "text-neutral-400 hover:text-red-400"
           : isActive
             ? "rounded-full bg-red-50 text-red-500 hover:bg-red-100 shadow-sm border border-neutral-200"
+            : reachedGuestLimit
+            ? "rounded-full bg-white/80 text-neutral-300 hover:text-neutral-400 hover:bg-neutral-50 shadow-sm border border-neutral-200"
             : "rounded-full bg-white/80 text-neutral-400 hover:text-red-400 hover:bg-red-50 shadow-sm border border-neutral-200"
         }
         ${ghost ? "" : SIZE_CLASSES[size]}
