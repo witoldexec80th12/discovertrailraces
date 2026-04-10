@@ -147,9 +147,13 @@ export default async function CostPage({
     error = e instanceof Error ? e.message : "Failed to load data";
   }
 
-  // Exclude records that have a Next_Edition_Date — they'll reappear
-  // once that date becomes the Distance Start Date in a new record.
-  const visibleRecords = records.filter((r) => !r.fields.Next_Edition_Date);
+  // Visible = upcoming races (not past) OR "Future Unconfirmed" (past + no next date).
+  // Excluded = past races that already have a confirmed Next_Edition_Date.
+  const visibleRecords = records.filter((r) => {
+    const isPast = !!r.fields.AUTO_Date_is_past;
+    const hasNextDate = !!r.fields.Next_Edition_Date;
+    return !isPast || !hasNextDate;
+  });
 
   const FUTURE_UNCONFIRMED = "Future Unconfirmed";
 
