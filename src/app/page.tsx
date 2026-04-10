@@ -151,7 +151,7 @@ export default async function HomePage() {
               className="h-8 w-auto"
             />
           </Link>
-          <nav className="flex items-center gap-6 text-sm font-semibold text-neutral-600">
+          <nav className="flex items-center gap-3 sm:gap-6 text-[11px] sm:text-sm font-medium sm:font-semibold text-neutral-600">
             <Link
               href="/cost"
               className="hover:text-neutral-900 transition-colors"
