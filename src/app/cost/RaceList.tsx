@@ -13,6 +13,7 @@ type AirtableAttachment = {
   filename: string;
   width?: number;
   height?: number;
+  thumbnails?: Record<string, { url: string; width: number; height: number }>;
 };
 
 type EntryFeeFields = {
@@ -64,8 +65,8 @@ function RaceCard({ r }: { r: RaceRecord }) {
           day: "numeric",
         })
       : "";
-  const thumbUrl =
-    f["LKP_featured_image"]?.[0]?.url || f.temporary_image?.[0]?.url || null;
+  const _img = f["LKP_featured_image"]?.[0] ?? f.temporary_image?.[0] ?? null;
+  const thumbUrl = _img?.thumbnails?.large?.url ?? _img?.thumbnails?.full?.url ?? _img?.url ?? null;
   const blurb = asText(f["FINAL_blurb"]);
   const idText = asText(f["ID"]);
   const idParts = idText.split(/\s[–—-]\s/);
