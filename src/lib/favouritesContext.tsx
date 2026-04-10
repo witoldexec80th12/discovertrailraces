@@ -26,6 +26,7 @@ type FavouritesContextValue = {
 };
 
 const STORAGE_KEY = "dtr_favourites";
+const SESSION_REFRESH_KEY = "dtr_enriched_session";
 
 function sortByDate(entries: FavouriteEntry[]): FavouriteEntry[] {
   return [...entries].sort((a, b) => {
@@ -112,24 +113,35 @@ export function FavouritesProvider({ children }: { children: React.ReactNode }) 
   }, [favourites, hydrated]);
 
   useEffect(() => {
-    if (!hydrated) return;
-    const stale = favourites.filter((f) => (f as Record<string, unknown>).logistics === undefined);
-    if (stale.length === 0) return;
-    const ids = stale.map((f) => f.entryFeeId).join(",");
+    if (!hydrated || favourites.length === 0) return;
+    // Always refresh once per browser session to get fresh Airtable signed image URLs.
+    // Also catches newly-added entries that haven't been enriched yet.
+    const alreadyRefreshed = typeof sessionStorage !== "undefined" &&
+      sessionStorage.getItem(SESSION_REFRESH_KEY) === "1";
+    const hasUnenriched = favourites.some(
+      (f) => (f as Record<string, unknown>).logistics === undefined
+    );
+    if (alreadyRefreshed && !hasUnenriched) return;
+
+    const ids = favourites.map((f) => f.entryFeeId).join(",");
     fetch(`/api/entry-fees?ids=${encodeURIComponent(ids)}`)
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!data) return;
         setFavourites((prev) =>
           prev.map((f) =>
-            (f as Record<string, unknown>).logistics === undefined && data[f.entryFeeId]
+            data[f.entryFeeId]
               ? { ...f, ...data[f.entryFeeId] }
               : f
           )
         );
+        if (typeof sessionStorage !== "undefined") {
+          sessionStorage.setItem(SESSION_REFRESH_KEY, "1");
+        }
       })
       .catch(() => {});
-  }, [hydrated, favourites]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrated]);
 
   const addFavourite = useCallback((entry: FavouriteEntry) => {
     const cap = isSignedInRef.current ? MAX_FAVOURITES_USER : MAX_FAVOURITES_GUEST;
