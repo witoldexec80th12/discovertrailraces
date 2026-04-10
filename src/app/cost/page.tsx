@@ -199,6 +199,28 @@ export default async function CostPage({
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-neutral-50 to-white">
+      {/* ── DESKTOP NAV (mobile handled by MobileNav) ──────────── */}
+      <header className="hidden sm:flex border-b border-neutral-100 shadow-sm bg-white">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14 w-full">
+          <Link href="/" className="flex items-center">
+            <img
+              src="/images/logo_white.svg"
+              alt="DiscoverTrailRaces"
+              className="h-8 w-auto"
+            />
+          </Link>
+          <nav className="flex items-center gap-6 text-sm font-semibold text-neutral-600">
+            <Link href="/cost" className="text-neutral-900 transition-colors">Cost Index</Link>
+            <Link href="/race-specificity" className="hover:text-neutral-900 transition-colors">Race Finder</Link>
+            <Link href="/about" className="hover:text-neutral-900 transition-colors">About</Link>
+            <Link href="/favourites" className="flex items-center gap-1.5 text-teal-600 hover:text-teal-800 transition-colors">
+              Calendar
+              <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-teal-100 text-teal-700 leading-none">BETA</span>
+            </Link>
+          </nav>
+        </div>
+      </header>
+
       <Script
         id="crisp-chat"
         strategy="afterInteractive"

@@ -170,6 +170,15 @@ export default async function HomePage() {
             >
               About
             </Link>
+            <Link
+              href="/favourites"
+              className="flex items-center gap-1.5 text-teal-600 hover:text-teal-800 transition-colors"
+            >
+              Calendar
+              <span className="text-[9px] sm:text-[10px] font-bold px-1 sm:px-1.5 py-0.5 rounded-full bg-teal-100 text-teal-700 leading-none">
+                BETA
+              </span>
+            </Link>
           </nav>
         </div>
       </header>
