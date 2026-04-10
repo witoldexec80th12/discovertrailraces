@@ -44,7 +44,8 @@ type EntryFeeFields = {
   FINAL_blurb?: string | string[];
   "Race Slug"?: string[];
   "Distance Start Date"?: string;
-  "In Past"?: boolean;
+  AUTO_Date_is_past?: number | boolean;
+  Next_Edition_Date?: string;
 };
 
 function asText(v: unknown): string {
@@ -146,17 +147,23 @@ export default async function CostPage({
     error = e instanceof Error ? e.message : "Failed to load data";
   }
 
-  const allCountries = Array.from(
-    new Set(
-      records.map((r) => asText(r.fields["LKP_country"])).filter(Boolean),
-    ),
-  ).sort();
+  // Exclude records that have a Next_Edition_Date — they'll reappear
+  // once that date becomes the Distance Start Date in a new record.
+  const visibleRecords = records.filter((r) => !r.fields.Next_Edition_Date);
 
   const FUTURE_UNCONFIRMED = "Future Unconfirmed";
 
-  function getMonthLabel(r: (typeof records)[0]): string {
-    if (r.fields["In Past"]) return FUTURE_UNCONFIRMED;
-    const d = r.fields["Distance Start Date"];
+  const allCountries = Array.from(
+    new Set(
+      visibleRecords.map((r) => asText(r.fields["LKP_country"])).filter(Boolean),
+    ),
+  ).sort();
+
+  function getMonthLabel(r: (typeof visibleRecords)[0]): string {
+    const f = r.fields;
+    // Past date + no next confirmed date → Future Unconfirmed bucket
+    if (f.AUTO_Date_is_past && !f.Next_Edition_Date) return FUTURE_UNCONFIRMED;
+    const d = f["Distance Start Date"];
     if (!d) return "";
     const date = new Date(d + "T00:00:00Z");
     if (isNaN(date.getTime())) return "";
@@ -168,14 +175,14 @@ export default async function CostPage({
   }
 
   const allMonths = Array.from(
-    new Set(records.map(getMonthLabel).filter(Boolean)),
+    new Set(visibleRecords.map(getMonthLabel).filter(Boolean)),
   ).sort((a, b) => {
     if (a === FUTURE_UNCONFIRMED) return 1;
     if (b === FUTURE_UNCONFIRMED) return -1;
     return new Date("1 " + a).getTime() - new Date("1 " + b).getTime();
   });
 
-  const filteredRecords = records.filter((r) => {
+  const filteredRecords = visibleRecords.filter((r) => {
     const f = r.fields;
     if (selectedCountry && asText(f["LKP_country"]) !== selectedCountry)
       return false;
