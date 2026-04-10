@@ -44,6 +44,7 @@ type EntryFeeFields = {
   FINAL_blurb?: string | string[];
   "Race Slug"?: string[];
   "Distance Start Date"?: string;
+  "In Past"?: boolean;
 };
 
 function asText(v: unknown): string {
@@ -151,37 +152,35 @@ export default async function CostPage({
     ),
   ).sort();
 
+  const FUTURE_UNCONFIRMED = "Future Unconfirmed";
+
+  function getMonthLabel(r: (typeof records)[0]): string {
+    if (r.fields["In Past"]) return FUTURE_UNCONFIRMED;
+    const d = r.fields["Distance Start Date"];
+    if (!d) return "";
+    const date = new Date(d + "T00:00:00Z");
+    if (isNaN(date.getTime())) return "";
+    return date.toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
+      timeZone: "UTC",
+    });
+  }
+
   const allMonths = Array.from(
-    new Set(
-      records
-        .map((r) => {
-          const d = r.fields["Distance Start Date"];
-          if (!d) return "";
-          const date = new Date(d + "T00:00:00Z");
-          if (isNaN(date.getTime())) return "";
-          return date.toLocaleDateString("en-US", {
-            month: "long",
-            year: "numeric",
-            timeZone: "UTC",
-          });
-        })
-        .filter(Boolean),
-    ),
-  ).sort((a, b) => new Date("1 " + a).getTime() - new Date("1 " + b).getTime());
+    new Set(records.map(getMonthLabel).filter(Boolean)),
+  ).sort((a, b) => {
+    if (a === FUTURE_UNCONFIRMED) return 1;
+    if (b === FUTURE_UNCONFIRMED) return -1;
+    return new Date("1 " + a).getTime() - new Date("1 " + b).getTime();
+  });
 
   const filteredRecords = records.filter((r) => {
     const f = r.fields;
     if (selectedCountry && asText(f["LKP_country"]) !== selectedCountry)
       return false;
     if (selectedMonth) {
-      const d = f["Distance Start Date"];
-      if (!d) return false;
-      const date = new Date(d + "T00:00:00Z");
-      const label = date.toLocaleDateString("en-US", {
-        month: "long",
-        year: "numeric",
-        timeZone: "UTC",
-      });
+      const label = getMonthLabel(r);
       if (label !== selectedMonth) return false;
     }
     return true;
