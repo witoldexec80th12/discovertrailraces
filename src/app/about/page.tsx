@@ -66,13 +66,13 @@ export default function AboutPage() {
           </p>
 
           <p>
-            DiscoverTrailRaces.com is something I hope to grow by having short
-            interviews (quick calls or long async voice convos) with trail
-            runners about the recent ultras they ran so it&apos;s a trusted
-            resource for ultra runners. Knowing the key details from racers of
-            previous race editions can make or break it race day. These
-            &ldquo;Runners Voices&rdquo; will take more than a few convos. You
-            can{" "}
+            DiscoverTrailRaces.com is something I hope to grow consistently
+            over the years. There&rsquo;s lots planned. Right now, I&rsquo;m
+            interested in having short interviews (quick calls or longer
+            WhatsApp convos) with trail runners about recent ultras they ran,
+            so it&rsquo;s a more trusted resource for ultra runners. Knowing
+            the key details from racers of previous race editions can make or
+            break it race day. You can{" "}
             <Link
               href="/races/bulgaria_vitosha_100_100k"
               className="underline underline-offset-2 hover:text-neutral-900 transition-colors"
@@ -83,99 +83,52 @@ export default function AboutPage() {
           </p>
 
           <p>
-            If you can share your own Runner Voice,{" "}
-            <a
-              href="#contact"
-              className="underline underline-offset-2 hover:text-neutral-900 transition-colors"
-            >
-              just click here
-            </a>{" "}
-            and I&apos;ll reach out within a day.
+            If you can share your own Runner Voice or have a race recap to
+            contribute, just fill out the form below, and I&rsquo;ll reach out
+            within a day.
           </p>
 
           <p>
-            I&apos;d also like to see if this project can grow to help better
-            accommodate some of the greater number of runners in the sport, and
-            what they want to see more of. I don&apos;t think that people want
-            to go to just the cheapest ultras, even though that&apos;s cool too.
-            They want to go to races with culture, with views, with a good
-            refund policy, with clear terms, good communication, things like
-            that.
-          </p>
-
-          <p>
-            In the future, I&apos;ll add an email newsletter for those that want
-            to know when sign-ups open, how to get early bird tickets, and how
-            to (hopefully) get some free stuff like gels or other nutrition, or
-            even free race tickets, for contributing and being a reader. The
-            goal from the start was seeing some friends have race goals that
-            went astray because of lack of good information, and have difficulty
-            creating a good race calendar. So, it isn&apos;t to make a big
-            business from this, but look to have some ways to cover our costs —
-            sponsors welcome{" "}
-            <span className="italic text-neutral-500">
-              (cough: HOKA: cough)
-            </span>
-            . Feel free to write to me about any suggestions you have, for now
-            at{" "}
-            <a
-              href="mailto:dmichlewicz@gmail.com"
-              className="underline underline-offset-2 hover:text-neutral-900 transition-colors"
-            >
-              dmichlewicz@gmail.com
-            </a>
-            , although I&apos;ll get an official email address up promptly.
-          </p>
-
-          <p className="font-medium text-neutral-900">
             Thanks,
             <br />
             Danny
           </p>
 
           {/* P.S. */}
-          <div className="border-t border-neutral-200 pt-6 space-y-4">
+          <div className="border-t border-neutral-200 pt-6">
             <p>
-              <span className="font-semibold">P.S.</span> Here are some races
-              that I find interesting right now — late season races like the{" "}
+              <span className="font-semibold">P.S.</span> A bit about me — I
+              spend about half the year in Spain so love running in Spain&rsquo;s
+              mountains, particularly the islands. I&rsquo;m reasonably new to
+              ultra running — I&rsquo;ve run the{" "}
               <Link
-                href="/races/germany_kleiner_kobolt_140k"
+                href="/races/transgrancanaria_classic"
                 className="underline underline-offset-2 hover:text-neutral-900 transition-colors"
               >
-                Kleiner Kobolt 140
+                TransGranCanaria Classic
               </Link>{" "}
-              or{" "}
+              twice, as well as the first year of the{" "}
               <Link
-                href="/races/poland_pomerania_ultra_trail_100k"
+                href="/races/mallorca_utmb_pedra_seca_100k"
                 className="underline underline-offset-2 hover:text-neutral-900 transition-colors"
               >
-                Pomeranian Ultra
+                Mallorca UTMB Pedra Seca 100km
+              </Link>
+              , and the{" "}
+              <Link
+                href="/races/tryavna_ultra_80k"
+                className="underline underline-offset-2 hover:text-neutral-900 transition-colors"
+              >
+                Tryavna Ultra 80km
               </Link>{" "}
-              look interesting. There are also some lesser known, absolutely
-              brutal races, like the{" "}
+              in Bulgaria. My girlfriend is signed up for the{" "}
               <Link
-                href="/races/italy_utlac_ultra_trail_lago_di_como_250k"
+                href="/races/sormlands_100k"
                 className="underline underline-offset-2 hover:text-neutral-900 transition-colors"
               >
-                Ultra Trail Lago di Como
+                Sormlands 100km
               </Link>
-              , or the more affordable{" "}
-              <Link
-                href="/races/spain_ultra_trail_sierras_del_bandolero_163k"
-                className="underline underline-offset-2 hover:text-neutral-900 transition-colors"
-              >
-                Sierras Del Bandolero
-              </Link>
-              , an Andalusian classic that unfortunately got cancelled for 2026.
-            </p>
-
-            <p>
-              <span className="font-semibold">P.P.S.</span> If there is one
-              thing you could do for me to help — if you&apos;ve run a race and
-              wouldn&apos;t mind a short conversation, drop your details in the
-              form below. I&apos;ll be looking to reward folks with free
-              nutrition or contests for free nutrition as soon as possible, and
-              if you&apos;re in Europe, will send stuff your way.
+              , which I&rsquo;m looking forward to exploring as well.
             </p>
           </div>
         </div>
