@@ -111,8 +111,8 @@ export default function AboutPage() {
           <Image
             src="/images/about_photo.jpg"
             alt="Danny on a trail"
-            width={280}
-            height={378}
+            width={336}
+            height={454}
             className="float-right ml-6 mb-3 rounded-xl object-cover shadow-sm"
           />
           <p>
