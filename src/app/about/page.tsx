@@ -109,7 +109,7 @@ export default function AboutPage() {
         {/* P.S. with inline photo */}
         <div className="border-t border-neutral-200 mt-8 pt-6 text-neutral-700 text-base sm:text-lg leading-relaxed overflow-hidden">
           <Image
-            src="/images/about_photo.JPEG"
+            src="/images/about_photo.jpg"
             alt="Danny on a trail"
             width={200}
             height={270}
