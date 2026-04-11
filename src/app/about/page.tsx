@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import Script from "next/script";
 import CrispContactForm from "./CrispContactForm";
 
@@ -43,7 +44,8 @@ export default function AboutPage() {
         </Link>
       </div>
 
-      <div className="mx-auto max-w-2xl px-6 sm:px-10 pb-24 pt-4">
+      {/* ~30% wider than max-w-2xl on desktop */}
+      <div className="mx-auto max-w-2xl sm:max-w-[54rem] px-6 sm:px-10 pb-24 pt-4">
         {/* Heading */}
         <h1 className="text-4xl sm:text-5xl font-extrabold uppercase tracking-tight text-neutral-900 mb-10">
           About
@@ -87,58 +89,66 @@ export default function AboutPage() {
             contribute, just fill out the form below, and I&rsquo;ll reach out
             within a day.
           </p>
-
-          <p>
-            Thanks,
-            <br />
-            Danny
-          </p>
-
-          {/* P.S. */}
-          <div className="border-t border-neutral-200 pt-6">
-            <p>
-              <span className="font-semibold">P.S.</span> A bit about me — I
-              spend about half the year in Spain so love running in Spain&rsquo;s
-              mountains, particularly the islands. I&rsquo;m reasonably new to
-              ultra running — I&rsquo;ve run the{" "}
-              <Link
-                href="/races/transgrancanaria_classic"
-                className="underline underline-offset-2 hover:text-neutral-900 transition-colors"
-              >
-                TransGranCanaria Classic
-              </Link>{" "}
-              twice, as well as the first year of the{" "}
-              <Link
-                href="/races/mallorca_utmb_pedra_seca_100k"
-                className="underline underline-offset-2 hover:text-neutral-900 transition-colors"
-              >
-                Mallorca UTMB Pedra Seca 100km
-              </Link>
-              , and the{" "}
-              <Link
-                href="/races/tryavna_ultra_80k"
-                className="underline underline-offset-2 hover:text-neutral-900 transition-colors"
-              >
-                Tryavna Ultra 80km
-              </Link>{" "}
-              in Bulgaria. My girlfriend is signed up for the{" "}
-              <Link
-                href="/races/sormlands_100k"
-                className="underline underline-offset-2 hover:text-neutral-900 transition-colors"
-              >
-                Sormlands 100km
-              </Link>
-              , which I&rsquo;m looking forward to exploring as well.
-            </p>
-          </div>
         </div>
 
-        {/* Contact form */}
-        <div id="contact" className="mt-12 scroll-mt-8">
+        {/* Contact form — above the sign-off */}
+        <div id="contact" className="mt-8 mb-10 scroll-mt-8">
           <h2 className="text-xl font-extrabold uppercase tracking-tight text-neutral-900 mb-6">
             Share race recap
           </h2>
           <CrispContactForm />
+        </div>
+
+        {/* Sign-off */}
+        <p className="text-neutral-700 text-base sm:text-lg leading-relaxed">
+          Thanks,
+          <br />
+          Danny
+        </p>
+
+        {/* P.S. with inline photo */}
+        <div className="border-t border-neutral-200 mt-8 pt-6 text-neutral-700 text-base sm:text-lg leading-relaxed overflow-hidden">
+          <Image
+            src="/images/about_photo.JPEG"
+            alt="Danny on a trail"
+            width={200}
+            height={270}
+            className="float-right ml-6 mb-3 rounded-xl object-cover shadow-sm"
+          />
+          <p>
+            <span className="font-semibold">P.S.</span> A bit about me — I
+            spend about half the year in Spain so love running in
+            Spain&rsquo;s mountains, particularly the islands. I&rsquo;m
+            reasonably new to ultra running — I&rsquo;ve run the{" "}
+            <Link
+              href="/races/transgrancanaria_classic"
+              className="underline underline-offset-2 hover:text-neutral-900 transition-colors"
+            >
+              TransGranCanaria Classic
+            </Link>{" "}
+            twice, as well as the first year of the{" "}
+            <Link
+              href="/races/mallorca_utmb_pedra_seca_100k"
+              className="underline underline-offset-2 hover:text-neutral-900 transition-colors"
+            >
+              Mallorca UTMB Pedra Seca 100km
+            </Link>
+            , and the{" "}
+            <Link
+              href="/races/tryavna_ultra_80k"
+              className="underline underline-offset-2 hover:text-neutral-900 transition-colors"
+            >
+              Tryavna Ultra 80km
+            </Link>{" "}
+            in Bulgaria. My girlfriend is signed up for the{" "}
+            <Link
+              href="/races/sormlands_100k"
+              className="underline underline-offset-2 hover:text-neutral-900 transition-colors"
+            >
+              Sormlands 100km
+            </Link>
+            , which I&rsquo;m looking forward to exploring as well.
+          </p>
         </div>
       </div>
     </main>
