@@ -107,12 +107,16 @@ export async function airtableFetchAll<TFields>(
   revalidate: number | false = false,
 ): Promise<AirtableRecord<TFields>[]> {
   const baseParams = { ...params, pageSize: 100 };
-  const fetchOptions_ = fetchOptions(revalidate);
+  // Always fetch individual pages fresh — the page-level ISR revalidation
+  // handles caching at the right layer. Passing `next: { revalidate }`
+  // to paginated sub-requests risks Next.js serving a cached 422 response
+  // on retries, which would make the restart logic ineffective.
+  const pageRequestOptions: RequestInit = { cache: "no-store" };
   const headers = { Authorization: `Bearer ${AIRTABLE_TOKEN}` };
 
-  // We allow up to 2 full restarts if Airtable's pagination cursor expires
+  // We allow up to 3 full restarts if Airtable's pagination cursor expires
   // mid-way through (LIST_RECORDS_ITERATOR_NOT_AVAILABLE / 422).
-  const MAX_RESTARTS = 2;
+  const MAX_RESTARTS = 3;
 
   for (let attempt = 0; attempt <= MAX_RESTARTS; attempt++) {
     const all: AirtableRecord<TFields>[] = [];
@@ -132,7 +136,7 @@ export async function airtableFetchAll<TFields>(
 
       const res = await fetchWithRetry(url.toString(), {
         headers,
-        ...fetchOptions_,
+        ...pageRequestOptions,
       });
 
       const data = await res.json().catch(() => ({}) as any);
@@ -148,7 +152,7 @@ export async function airtableFetchAll<TFields>(
           `[Airtable] Pagination cursor expired for ${tableName} (attempt ${attempt + 1}/${MAX_RESTARTS + 1}), restarting from page 1.`,
         );
         cursorExpired = true;
-        await sleep(500);
+        await sleep(1000);
         break;
       }
 
