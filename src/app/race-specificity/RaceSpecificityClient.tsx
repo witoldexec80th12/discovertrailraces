@@ -92,7 +92,15 @@ export default function RaceSpecificityClient() {
   const enrichedData = useMemo<EnrichedDistance[]>(() => {
     const raceMap = new Map(raceEvents.map((r) => [r.id, r]));
     return distances
-      .filter((d) => d.fields["AUTO% Increase"] != null && (d.fields["Race"]?.length ?? 0) > 0)
+      .filter((d) => {
+        if (d.fields["AUTO% Increase"] == null) return false;
+        if ((d.fields["Race"]?.length ?? 0) === 0) return false;
+        // Only show races that have at least one priced entry fee
+        const raceId = d.fields["Race"]![0];
+        const race = raceMap.get(raceId);
+        const slug = race?.fields["Slug"] ?? "";
+        return slug ? (slugEntryFeeMap[slug]?.length ?? 0) > 0 : false;
+      })
       .map((d) => {
         const raceId = d.fields["Race"]![0];
         const race = raceMap.get(raceId);

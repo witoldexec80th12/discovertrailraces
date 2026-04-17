@@ -24,6 +24,11 @@ export async function GET() {
       const slugs = (f["Race Slug"] as string[] | undefined) ?? [];
       const km = (f["Distance (km)"] as number | undefined) ?? 0;
 
+      // Only include entry fees that have a real price — same validation as the Cost page.
+      const fee = Number(f["AUTO Fee used"] ?? 0);
+      const epk = Number(f["AUTO €/km"] ?? 0);
+      const hasPrce = fee > 0 && epk > 0;
+
       const imgs =
         (f["LKP_featured_image"] as AirtableAttachment[] | undefined) ??
         (f["temporary_image"] as AirtableAttachment[] | undefined) ??
@@ -34,8 +39,11 @@ export async function GET() {
       for (const slug of slugs) {
         if (!slug) continue;
         if (url && !slugImgMap[slug]) slugImgMap[slug] = url;
-        if (!slugEntryFeeMap[slug]) slugEntryFeeMap[slug] = [];
-        slugEntryFeeMap[slug].push({ id: record.id, km });
+        // Only add to the entry fee map if there's a valid price
+        if (hasPrce) {
+          if (!slugEntryFeeMap[slug]) slugEntryFeeMap[slug] = [];
+          slugEntryFeeMap[slug].push({ id: record.id, km });
+        }
       }
     }
 
