@@ -25,6 +25,13 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Hide Crisp chat widget on mobile */
+@media (max-width: 639px) {
+  #crisp-chatbox {
+    display: none !important;
+  }
+}
+
 /* Hide number input spinners */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
