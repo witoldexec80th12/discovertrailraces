@@ -442,7 +442,7 @@ export default async function RacePage({
                   ) : null}
                   {pctIncrease ? (
                     <p className="text-sm font-semibold text-neutral-900">
-                      {pctIncrease} Predicted Elevation per KM
+                      {pctIncrease} Predicted Elevation per Total KM
                     </p>
                   ) : null}
                   {!elevation && !pctIncrease && (
@@ -451,11 +451,9 @@ export default async function RacePage({
                 </div>
                 {pctIncrease && (
                   <p className="mt-3 text-xs leading-relaxed text-neutral-500">
-                    In a circular course, on your average climb, you'll be going
-                    up {pctIncrease} meters per KM. For context, the Tor des
-                    Géants 330 loop averages{" "}
+                    For context, the Tor des Géants 330 loop averages about{" "}
                     <span className="font-bold underline">145 meters</span> per
-                    km of climbing.
+                    total km.
                   </p>
                 )}
               </div>
