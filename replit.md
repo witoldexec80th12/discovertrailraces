@@ -40,7 +40,7 @@ The application is built with Next.js 16 (App Router) and React 19, leveraging T
     - Features a vertical drag-bar range slider for `AUTO% Increase` (m/km).
     - Country and Terrain bubble-selectors with faceted counts.
     - Results displayed in a grid of race cards.
-    - Data handled via `/api/race-specificity-data` for server-side filtering.
+    - Data: `/api/race-specificity-data` fetches **Entry Fees only** (one table, cached 1hr). Returns `{ entries: EnrichedDistance[] }` pre-joined. Fields: `LKP_auto_increase`, `Race Event`, `Race Slug`, `LKP_terrain_multi`, `LKP_country`, `LKP_featured_image`/`temporary_image`, `Distance (km)`, `Distance`, `AUTO Fee used`, `AUTO €/km`.
 
 - **Authentication & User Profiles (Clerk):**
     - Integrates Clerk for user authentication, protecting `/profile(.*)`.

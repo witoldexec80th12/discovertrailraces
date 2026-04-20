@@ -2,7 +2,7 @@
 
 import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
-import type { RaceEventRecord, DistanceRecord } from "./types";
+import type { EnrichedDistance } from "./types";
 
 const MAX_VERT = 170;
 const BRAND_NAVY = "#1a2e4a";
@@ -27,25 +27,8 @@ const ALL_TERRAIN_TYPES = [
   "Winter",
 ];
 
-type EnrichedDistance = {
-  raceId: string;
-  raceName: string;
-  slug: string;
-  terrain: string[];
-  country: string;
-  imgUrl: string | null;
-  distanceName: string;
-  distanceKm: number;
-  pctIncrease: number;
-  entryFeeId: string | null;
-};
-
 export default function RaceSpecificityClient() {
-  const [raceEvents, setRaceEvents] = useState<RaceEventRecord[]>([]);
-  const [distances, setDistances] = useState<DistanceRecord[]>([]);
-  const [slugImgMap, setSlugImgMap] = useState<Record<string, string>>({});
-  const [slugEntryFeeMap, setSlugEntryFeeMap] = useState<Record<string, { id: string; km: number }[]>>({});
-  const [slugCountryMap, setSlugCountryMap] = useState<Record<string, string>>({});
+  const [entries, setEntries] = useState<EnrichedDistance[]>([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [dataError, setDataError] = useState<string | null>(null);
 
@@ -56,11 +39,7 @@ export default function RaceSpecificityClient() {
         return r.json();
       })
       .then((d) => {
-        setRaceEvents(d.raceEvents ?? []);
-        setDistances(d.distances ?? []);
-        setSlugImgMap(d.slugImgMap ?? {});
-        setSlugEntryFeeMap(d.slugEntryFeeMap ?? {});
-        setSlugCountryMap(d.slugCountryMap ?? {});
+        setEntries(d.entries ?? []);
       })
       .catch((e) => setDataError(e.message ?? "Failed to load"))
       .finally(() => setDataLoading(false));
@@ -94,54 +73,7 @@ export default function RaceSpecificityClient() {
     return () => { if (autoApplyTimer.current) clearTimeout(autoApplyTimer.current); };
   }, [minVal, maxVal]);
 
-  const enrichedData = useMemo<EnrichedDistance[]>(() => {
-    const raceMap = new Map(raceEvents.map((r) => [r.id, r]));
-    return distances
-      .filter((d) => {
-        if (d.fields["AUTO% Increase"] == null) return false;
-        if ((d.fields["Race"]?.length ?? 0) === 0) return false;
-        // Only show races that have at least one priced entry fee
-        const raceId = d.fields["Race"]![0];
-        const race = raceMap.get(raceId);
-        const slug = race?.fields["Slug"] ?? "";
-        return slug ? (slugEntryFeeMap[slug]?.length ?? 0) > 0 : false;
-      })
-      .map((d) => {
-        const raceId = d.fields["Race"]![0];
-        const race = raceMap.get(raceId);
-        if (!race) return null;
-        const img = race.fields["Featured Image"]?.[0];
-        const slug = race.fields["Slug"] ?? "";
-        const imgUrl =
-          img?.thumbnails?.large?.url ??
-          img?.thumbnails?.full?.url ??
-          img?.url ??
-          (slug ? slugImgMap[slug] : null) ??
-          null;
-        const distanceKm = d.fields["Distance (km)"] ?? 0;
-        const entryFees = slug ? (slugEntryFeeMap[slug] ?? []) : [];
-        const exactMatch = entryFees.find((ef) => ef.km === distanceKm);
-        const closestMatch = entryFees.length > 0
-          ? entryFees.reduce((best, cur) =>
-              Math.abs(cur.km - distanceKm) < Math.abs(best.km - distanceKm) ? cur : best
-            )
-          : null;
-        const entryFeeId = exactMatch?.id ?? closestMatch?.id ?? null;
-        return {
-          raceId,
-          raceName: race.fields["Race Name"] ?? "Unknown Race",
-          slug,
-          terrain: race.fields["Terrain_multi"] ?? [],
-          country: slugCountryMap[slug] ?? "",
-          imgUrl,
-          distanceName: d.fields["Distance Name"] ?? "",
-          distanceKm,
-          pctIncrease: d.fields["AUTO% Increase"]!,
-          entryFeeId,
-        } as EnrichedDistance;
-      })
-      .filter(Boolean) as EnrichedDistance[];
-  }, [raceEvents, distances, slugImgMap, slugEntryFeeMap, slugCountryMap]);
+  const enrichedData = entries;
 
   const vertFiltered = useMemo(() => {
     return enrichedData.filter((r) => r.pctIncrease >= appliedMin && r.pctIncrease <= appliedMax);
@@ -670,7 +602,7 @@ export default function RaceSpecificityClient() {
                 <>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {pagedResults.map((r, i) => (
-                      <ResultCard key={`${r.raceId}-${i}`} race={r} />
+                      <ResultCard key={`${r.id}-${i}`} race={r} />
                     ))}
                   </div>
 

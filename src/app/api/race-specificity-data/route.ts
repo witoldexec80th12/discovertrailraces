@@ -9,52 +9,96 @@ type AirtableAttachment = {
   thumbnails?: Record<string, { url: string }>;
 };
 
+function asText(v: unknown): string {
+  if (Array.isArray(v)) return v.filter(Boolean).join(", ");
+  if (v === null || v === undefined) return "";
+  return String(v);
+}
+
+export type EnrichedEntry = {
+  id: string;
+  raceName: string;
+  slug: string;
+  terrain: string[];
+  country: string;
+  imgUrl: string | null;
+  distanceName: string;
+  distanceKm: number;
+  pctIncrease: number;
+  entryFeeId: string;
+};
+
 const fetchRaceSpecificityData = unstable_cache(
   async () => {
-    const [raceEvents, distances, entryFees] = await Promise.all([
-      airtableFetchAll("Race Events", {}, 3600).catch(() => []),
-      airtableFetchAll("Distances", {}, 3600).catch(() => []),
-      airtableFetchAll("Entry Fees", { view: "entry_fees_public" }, 3600).catch(() => []),
-    ]);
+    const entryFees = await airtableFetchAll(
+      "Entry Fees",
+      { view: "entry_fees_public" },
+      3600,
+    ).catch(() => []);
 
-    const slugImgMap: Record<string, string> = {};
-    const slugEntryFeeMap: Record<string, { id: string; km: number }[]> = {};
-    const slugCountryMap: Record<string, string> = {};
+    const entries: EnrichedEntry[] = [];
 
     for (const record of entryFees as Array<{ id: string; fields: Record<string, unknown> }>) {
       const f = record.fields;
-      const slugs = (f["Race Slug"] as string[] | undefined) ?? [];
-      const km = (f["Distance (km)"] as number | undefined) ?? 0;
 
       const fee = Number(f["AUTO Fee used"] ?? 0);
       const epk = Number(f["AUTO €/km"] ?? 0);
-      const hasPrce = fee > 0 && epk > 0;
+      if (fee <= 0 || epk <= 0) continue;
 
-      const raw = f["LKP_country"];
-      const country = Array.isArray(raw) ? (raw as string[])[0] ?? "" : String(raw ?? "");
+      const pctIncrease = Number(f["LKP_auto_increase"] ?? 0);
+      if (!pctIncrease) continue;
+
+      const slugsRaw = f["Race Slug"] as string[] | undefined;
+      const slug = slugsRaw?.[0] ?? "";
+      if (!slug) continue;
+
+      const raceName = asText(f["Race Event"]);
+      if (!raceName) continue;
+
+      const rawTerrain = f["LKP_terrain_multi"];
+      const terrain: string[] = Array.isArray(rawTerrain)
+        ? (rawTerrain as string[])
+        : rawTerrain
+        ? [String(rawTerrain)]
+        : [];
+
+      const rawCountry = f["LKP_country"];
+      const country = Array.isArray(rawCountry)
+        ? (rawCountry as string[])[0] ?? ""
+        : String(rawCountry ?? "");
+
+      const distanceKm = Number(f["Distance (km)"] ?? 0);
+      const distanceName = asText(f["Distance"]);
 
       const imgs =
         (f["LKP_featured_image"] as AirtableAttachment[] | undefined) ??
         (f["temporary_image"] as AirtableAttachment[] | undefined) ??
         [];
       const img = imgs[0];
-      const url = img?.thumbnails?.large?.url ?? img?.thumbnails?.full?.url ?? img?.url;
+      const imgUrl =
+        img?.thumbnails?.large?.url ??
+        img?.thumbnails?.full?.url ??
+        img?.url ??
+        null;
 
-      for (const slug of slugs) {
-        if (!slug) continue;
-        if (url && !slugImgMap[slug]) slugImgMap[slug] = url;
-        if (country && !slugCountryMap[slug]) slugCountryMap[slug] = country;
-        if (hasPrce) {
-          if (!slugEntryFeeMap[slug]) slugEntryFeeMap[slug] = [];
-          slugEntryFeeMap[slug].push({ id: record.id, km });
-        }
-      }
+      entries.push({
+        id: record.id,
+        raceName,
+        slug,
+        terrain,
+        country,
+        imgUrl,
+        distanceName,
+        distanceKm,
+        pctIncrease,
+        entryFeeId: record.id,
+      });
     }
 
-    return { raceEvents, distances, slugImgMap, slugEntryFeeMap, slugCountryMap };
+    return { entries };
   },
   ["race-specificity-data"],
-  { revalidate: 3600 }
+  { revalidate: 3600 },
 );
 
 export async function GET() {
@@ -68,13 +112,11 @@ export async function GET() {
   } catch (err) {
     console.error("[race-specificity-data]", err);
     return NextResponse.json(
-      { raceEvents: [], distances: [], slugImgMap: {}, slugEntryFeeMap: {}, slugCountryMap: {}, error: "Partial data failure" },
+      { entries: [], error: "Failed to load data" },
       {
         status: 200,
-        headers: {
-          "Cache-Control": "no-store",
-        },
-      }
+        headers: { "Cache-Control": "no-store" },
+      },
     );
   }
 }
