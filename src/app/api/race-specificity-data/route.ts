@@ -52,7 +52,11 @@ const fetchRaceSpecificityData = unstable_cache(
       const slug = slugsRaw?.[0] ?? "";
       if (!slug) continue;
 
-      const raceName = asText(f["Race Event"]);
+      // `ID` field is a formula like "Race Name – 50km" — same parsing as cost page
+      const idText = asText(f["ID"]);
+      const idParts = idText.split(/\s[–—-]\s/);
+      const raceName =
+        idParts.length > 1 ? idParts.slice(0, -1).join(" – ") : idText;
       if (!raceName) continue;
 
       const rawTerrain = f["LKP_terrain_multi"];
@@ -68,7 +72,12 @@ const fetchRaceSpecificityData = unstable_cache(
         : String(rawCountry ?? "");
 
       const distanceKm = Number(f["Distance (km)"] ?? 0);
-      const distanceName = asText(f["Distance"]);
+      const distanceName =
+        idParts.length > 1
+          ? idParts[idParts.length - 1]
+          : distanceKm
+          ? `${distanceKm} km`
+          : "";
 
       const imgs =
         (f["LKP_featured_image"] as AirtableAttachment[] | undefined) ??
