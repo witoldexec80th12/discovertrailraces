@@ -1,211 +1,65 @@
 # DiscoverTrailRaces — Cost Per KM
 
 ## Overview
-Next.js 16 application (App Router) for comparing European trail race costs. Features a **Cost Per KM** page at `/cost` (curated card feed) and individual **Race Pages** at `/races/[slug]` (detail view). Data sourced from Airtable.
+DiscoverTrailRaces is a Next.js 16 application designed to help users compare the costs of European trail races. Its primary features include a "Cost Per KM" page (`/cost`) displaying a curated feed of races with cost analysis, and individual "Race Pages" (`/races/[slug]`) providing detailed information for each race. The project aims to offer a comprehensive platform for trail running enthusiasts to discover and evaluate races based on value.
 
-## Project Architecture
-- **Framework**: Next.js 16 (App Router, React 19)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS v4
-- **Data Source**: Airtable REST API (server-side fetch, no-store cache on /cost; 1-hour ISR on race pages)
-- **Port**: Application runs on port 5000, bound to 0.0.0.0
-- **Fonts**: Geist Sans + Geist Mono (Google Fonts via next/font)
+## User Preferences
+I prefer simple language and clear explanations. I want iterative development with frequent check-ins. Ask before making major architectural changes or introducing new dependencies. Do not make changes to files outside of the `src/` directory, specifically `public/images/hero.jpg`, `public/images/logo_white.png`, `public/images/cost_per_km_white.png`, `public/images/logo.jpg`, and `public/images/cost-per-km.png`.
 
-## Environment Secrets
-- `AIRTABLE_TOKEN` — Airtable personal access token
-- `AIRTABLE_BASE_ID` — Airtable base identifier
-- `SESSION_SECRET` — Session secret
+## System Architecture
+The application is built with Next.js 16 (App Router) and React 19, leveraging TypeScript for type safety and Tailwind CSS v4 for styling. Data is primarily sourced from Airtable via its REST API, with server-side fetching and caching strategies (no-store for `/cost`, 1-hour ISR for race pages).
 
-## Directory Structure
-- `src/app/` — App Router pages and layouts
-- `src/app/page.tsx` — Home page (hero + featured races + runner voice + articles)
-- `src/app/cost/page.tsx` — **Cost Per KM page**: curated card feed with cost/km analysis (~429 lines)
-- `src/app/races/[slug]/page.tsx` — **Race detail page**: individual race view with stats, blurb, terrain, logistics (~347 lines)
-- `src/app/layout.tsx` — Root layout with Geist fonts and metadata
-- `src/app/globals.css` — Global styles (Tailwind v4 imports, CSS variables)
-- `src/lib/airtable.ts` — Airtable API fetch utility (generic typed fetch, no-store cache)
-- `src/lib/airtableConfig.ts` — Airtable table/view name constants
-- `public/images/` — Static image assets
-- `attached_assets/` — User-uploaded source images
+**UI/UX Decisions:**
+- **Typography:** Uses Geist Sans and Geist Mono fonts via `next/font`.
+- **Color Scheme:** Light-mode designed with a background gradient (neutral-50 to white) and a neutral color palette.
+- **Card Design:** Races are presented in `rounded-xl` cards with white backgrounds, neutral-200 borders, and interactive hover effects (shadow + scale).
+- **Hero Sections:** Feature full-width layouts with background images (e.g., `hero.jpg`) and dark gradient overlays.
 
-## Development
-- Run: `npm run dev` (starts Next.js dev server on port 5000)
-- Build: `npm run build`
-- Start: `npm run start`
-- User pushes to GitHub via SSH shell for production deploy
+**Core Features & Implementations:**
 
----
+- **Cost Per KM Page (`/cost`):**
+    - Displays a curated feed of race cards.
+    - Desktop card layout includes a thumbnail, race name, location, blurb, and three stat columns: "Price per km", "Race Distance" (underlined), and "Verified Date".
+    - Mobile card layout features a square thumbnail, condensed blurb, and a full-width stats row.
+    - Data from Airtable "Entry Fees" table, "entry_fees_public" view, sorted by "AUTO €/km".
+    - Image priority: `LKP_featured_image` → `temporary_image` → placeholder.
+    - Blurb from `FINAL_blurb`.
+    - Requires fee and €/km > 0 for valid entries.
 
-## REFERENCE SNAPSHOT — Feb 26, 2026
+- **Race Detail Page (`/races/[slug]`):**
+    - Fetches race data by slug, preferring "Is Primary Distance" row.
+    - Layout includes a hero section with race image, name, location, and distance.
+    - Key stats grid (Date, Entry fee, €/km, Series).
+    - Blurb, planning facts (Terrain, Elevation/% increase), and logistics (Nearest airport).
+    - "Similar races" section displays up to 3 races from the same country.
+    - Dynamic OpenGraph and Twitter Card metadata generated from race details.
+    - Integrates a `HeartButton` for local storage-based favoriting.
 
-**This section documents the exact configuration as of this date. These designs are intentional and should not be changed automatically.**
+- **Race Specificity Page (`/race-specificity`):**
+    - Interactive page with a background image (`mountain.png`).
+    - Features a vertical drag-bar range slider for `AUTO% Increase` (m/km).
+    - Country and Terrain bubble-selectors with faceted counts.
+    - Results displayed in a grid of race cards.
+    - Data handled via `/api/race-specificity-data` for server-side filtering.
 
-### Images Inventory
+- **Authentication & User Profiles (Clerk):**
+    - Integrates Clerk for user authentication, protecting `/profile(.*)`.
+    - Provides a unified sign-in/sign-up flow.
+    - User profile page (`/profile`) displays saved races fetched from an Airtable Favorites table.
+    - Favorites API (`/api/favorites`) supports GET/POST/DELETE operations.
+    - GDPR compliant: Clerk stores email in EU; Airtable Favorites stores `clerk_user_id` and linked `race_slug1` (Airtable record ID), avoiding PII.
 
-#### public/images/ (served at /images/*)
-| File | Description | Used? |
-|------|-------------|-------|
-| `hero.jpg` | Mountain/trail hero background photo | YES — hero section background |
-| `logo_white.png` | White DiscoverTrailRaces logo | YES — top-left of hero |
-| `cost_per_km_white.png` | White "COST-PER-KM" wordmark | YES — hero left column |
-| `logo.jpg` | Dark/standard logo | NO — not referenced |
-| `cost-per-km.png` | Dark version of Cost Per KM image | NO — not referenced |
+- **Race Favourites Tray (localStorage):**
+    - `FavouritesContext` (localStorage-based) manages `FavouriteEntry` objects (entryFeeId, slug, name, imageUrl, eurPerKm, distanceKm, startDate, country).
+    - `HeartButton` component for adding/removing favorites, used on race detail pages.
+    - `FavouritesTray` (sticky bottom bar) shows saved races, count, and thumbnails.
+    - "Compare" button links to a dedicated `/favourites` comparison page.
+    - "Save Calendar" feature syncs local favorites to Airtable via `api/save-calendar` (Clerk-authenticated).
 
-### Cost Page Layout (src/app/cost/page.tsx)
+- **Global Components:**
+    - `MobileNav`: Sticky top bar for small screens with navigation links.
 
-#### Hero Section
-- Full-width section, 69vh mobile / 75vh desktop
-- Background: `hero.jpg` with `Image fill` + dark gradient overlay
-- Top bar: White logo (`logo_white.png`), sizes h-20/h-28/h-36/h-[168px] responsive
-- Content: 2-column grid on md+ — wordmark left, description + CTAs right
-- Anchor: `#cost-index` links down to race list
-
-#### Card Layout — Desktop (sm+)
-- Thumbnail: 160×108px rounded-lg (rectangular)
-- Text area: Race name (from ID field, parsed before last dash), location, blurb (sm:max-w-[50%])
-- Three right-side stat columns:
-  1. **Price per km** — text-2xl/3xl bold, "price per km" label, fee amount below
-  2. **Race Distance** — text-lg/xl underlined, "Race Distance" label
-  3. **Verified Date** — black rounded box with white text, "Verified Date" label
-
-#### Card Layout — Mobile
-- Top row: Square thumbnail (w-28 h-28, 1:1) left, title + location + blurb right
-- Blurb: text-[11px], line-clamp-2
-- Stats row: Full-width below, separated by border-t, three equal flex-1 columns:
-  1. **Verified Date** (left-aligned) — text-base bold, "Verified Date" label
-  2. **Price Per KM** (centered) — text-xl bold, "Price Per KM" label
-  3. **Distance** (right-aligned) — text-base semibold, "Distance" label
-
-#### Data Handling
-- Fetches from Airtable "Entry Fees" table, view "entry_fees_public"
-- Sorted by "AUTO €/km" ascending, pageSize 20
-- Race name parsed from ID field: splits on ` – ` (em dash), name = everything before last part, distance = last part
-- "Race Event" and "Distance" are linked record fields (return record IDs, not text) — **do not use directly for display**
-- Image priority: LKP_featured_image → temporary_image → placeholder
-- Blurb source: FINAL_blurb field
-- Validates fee and €/km must be > 0
-
-#### Airtable Fields Used (Cost Page)
-```
-ID, Race Event (linked), LKP_country, LKP_region,
-Distance (linked), Distance (km), Currency, AUTO Fee used,
-AUTO €/km, AUTO Price Bands, Last Checked,
-LKP_featured_image, temporary_image, FINAL_blurb,
-Race Slug, Distance Start Date
-```
-
-### Race Detail Page (src/app/races/[slug]/page.tsx)
-
-#### Structure
-- Fetches rows by slug using FIND formula on Race Slug field
-- Prefers "Is Primary Distance" row, falls back to first
-- ISR with 1-hour revalidation
-- Dynamic metadata from race name
-
-#### Layout
-- Top nav: "← Back to Cost Index" + "Home" links
-- Hero: Full-width rounded card with race image (240px/320px), gradient overlay, name + location + distance
-- Key stats grid (2×2 mobile, 4-col desktop): Date, Entry fee, €/km, Series (UTMB/Independent)
-- Blurb section: FINAL_blurb → Featured Blurb fallback
-- Planning facts: Terrain, Elevation/% increase (rounded cards)
-- Logistics section: Nearest airport + notes
-- Footer: "Last checked" provenance
-
-#### Airtable Fields Used (Race Page)
-```
-ID, Race Event (linked), LKP_country, LKP_region,
-Distance (linked), Distance (km), Currency, AUTO Fee used,
-AUTO €/km, AUTO Price Bands, Last Checked,
-LKP_featured_image, temporary_image, Featured Blurb, FINAL_blurb,
-Race Slug, Distance Start Date, Is Primary Distance (from Distance),
-LKP_terrain, LKP_elevation, LKP_%increase, LKP_utmb,
-LKP_logistics, LKP_primaryairport, LKP_airportcode,
-LKP_lessthan30, LKP_cartransfertime
-```
-
-### Airtable Config (src/lib/airtableConfig.ts)
-```
-Tables: Entry Fees, Race Events
-Views: entry_fees_public, race_events_public, homepage_featured,
-       race_pages_primary, explore_value_* (5 price band views)
-```
-
-### Key Functions (Cost Page)
-- `asText(v)` — Safely converts arrays/nulls to display strings
-- `getBandColor(band)` — Returns Tailwind classes for price band badge coloring (unused in current layout)
-- `formatBand(band)` — Normalizes band text (unused in current layout)
-
-### Key Functions (Race Page)
-- `asText(v)` — Same utility
-- `pickFirstUrl(a)` — Gets first attachment URL or null
-- `formatMoney(amount, currency)` — Formats fee with currency string
-- `formatEurPerKm(epk)` — Formats €/km value
-- `formatDateShort(iso)` — Formats ISO date to "Month Day, Year"
-- `extractNameAndDistance(idField)` — Splits ID field into name and distance parts
-
-### Styling
-- Background: gradient neutral-50 to white
-- Cards: white bg, neutral-200 border, rounded-xl, hover shadow + scale 1.01
-- Typography: Geist Sans, neutral color palette
-- Light-mode designed
-
-### Important Notes
-- **Turbopack fix**: Delete `.next` directory when Turbopack panics (`rm -rf .next`)
-- **Fast Refresh loop**: Known non-blocking Replit preview issue
-- **Linked record fields**: "Race Event" and "Distance" return Airtable record IDs — always parse from ID field instead
-
----
-
-## Race Specificity Page (`/race-specificity`)
-- Two-step interactive visual filter overlaid on `mountain.png` background
-- **Step 1**: Vertical drag-bar range slider for `AUTO% Increase` (m/km) from Distances table (0–170, default 80–120)
-- **Step 2**: Terrain tag selector from `Terrain_multi` field on Race Events table; grayed out until Step 1 applied
-- Results grid of race cards (with image, name, distance, terrain tags) linked to `/races/[slug]`
-- Data: fetches all Distances + all Race Events, joins client-side by Race record ID
-- Desktop-first layout (3-column: instructions | mountain | terrain)
-
-## Clerk Auth Integration
-- **Package**: `@clerk/nextjs` installed
-- **Proxy**: `src/proxy.ts` — protects `/profile(.*)`; uses `clerkMiddleware` + `createRouteMatcher`. Next.js 16 renamed `middleware.ts` → `proxy.ts`; do NOT create both files at the same time (causes fatal conflict).
-- **Provider**: `ClerkProvider` wraps root layout in `src/app/layout.tsx`
-- **Sign-in page**: `src/app/sign-in/[[...sign-in]]/page.tsx` — thin server component (metadata only); renders `AuthForm.tsx`
-- **AuthForm**: `src/app/sign-in/[[...sign-in]]/AuthForm.tsx` — unified sign-in/sign-up flow; tries email OTP sign-in first, falls back to sign-up if email not found; imports from `@clerk/nextjs/legacy` for `{ isLoaded, signIn/signUp, setActive }` API
-- **Profile page**: `src/app/profile/page.tsx` — server component, shows saved races fetched from Airtable Favorites table
-- **Favorites API**: `src/app/api/favorites/route.ts` — GET/POST/DELETE, uses `auth()` from `@clerk/nextjs/server`
-- **FavoriteButton**: `src/components/FavoriteButton.tsx` — heart toggle on race detail pages
-- **Env vars**: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` (env var), `CLERK_SECRET_KEY` (secret), `NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in`, `NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/profile`
-- **GDPR strategy**: Clerk stores email in EU; Airtable Favorites table stores only `clerk_user_id` (text) + `race_slug1` (linked record to Entry Fees) — no PII
-- **Favorites identifier**: Uses Airtable Entry Fees record ID (`recXXXXXX`) stored as a linked record in `race_slug1` field. NOT a text slug.
-- **FavoriteButton placement**: Removed from cost page and race-specificity cards (no longer on list pages). HeartButton (localStorage-based) only on `/races/[slug]` hero.
-- **FavoriteButton prop**: `entryFeeId: string` (Airtable record ID). API body uses `entry_fee_id`.
-- **Profile page**: Fetches Favorites → extracts `race_slug1[0]` (Entry Fees record IDs) → fetches those Entry Fees records via `RECORD_ID()` formula.
-
-## Race Favourites Tray (localStorage)
-- **FavouritesContext** (`src/lib/favouritesContext.tsx`): localStorage-based provider storing `FavouriteEntry[]` (entryFeeId, slug, name, imageUrl, eurPerKm, distanceKm, startDate, country). Sorted chronologically by startDate ascending. Wraps root layout.
-- **HeartButton** (`src/components/HeartButton.tsx`): Client component reading/writing FavouritesContext. Used on `/races/[slug]` hero (top-right, size="lg").
-- **FavouritesTray** (`src/components/FavouritesTray.tsx`): Fixed bottom bar shown when ≥1 race saved. Shows heart icon + count + up to 4 thumbnails + race names (desktop). "Compare" button links to `/favourites`. "Save Calendar" syncs to Airtable if signed in, opens Clerk sign-in otherwise.
-- **Favourites page** (`src/app/favourites/page.tsx`): Full comparison grid page. Cards with image, name, date, €/km, distance. Per-card remove button. "Clear all" action. Links to individual race pages.
-- **Save Calendar API** (`src/app/api/save-calendar/route.ts`): POST endpoint, Clerk-authenticated. Receives `{ entry_fee_ids: string[] }`, deduplicates against existing Airtable Favorites, writes new ones.
-- **FavouriteEntry shape**: `{ entryFeeId, slug, name, imageUrl, eurPerKm, distanceKm, startDate, country }`
-
-## Global Components
-- **MobileNav** (`src/components/MobileNav.tsx`): Client component, sticky top bar (`sm:hidden`), links to Home / Cost Index / Race Finder with active-link highlighting via `usePathname`. Added to root layout above page content.
-
-## Race Page Enhancements (Apr 8, 2026)
-- **Similar races section**: Server-side `fetchSimilarRaces` fetches up to 3 races from the same country (excluding current slug) via Airtable formula; displayed as image cards below the main content.
-- **OpenGraph + Twitter Card metadata**: `generateMetadata` now includes `openGraph.images` and `twitter.card: summary_large_image` using the race's hero image URL, so shares on WhatsApp/X render with a photo preview.
-- **Heart button redesign**: Lucide `Heart` SVG (ghost mode, 48px) sits directly on the grey planning-facts box; hover reveals "Add to Calendar" overlay text.
-
-## Recent Changes
-- Apr 7, 2026: Race Favourites Tray & Comparison Feature — removed FavoriteButton from cost/race-specificity cards; added localStorage FavouritesContext; HeartButton on /races/[slug] and /events/[slug] primary cards; sticky FavouritesTray; /favourites comparison page; /api/save-calendar Clerk sync. FavouriteEntry type extracted to favouritesTypes.ts to avoid Fast Refresh full-reload loop.
-- Feb 26, 2026: Documented full reference snapshot including race detail page
-- Feb 26, 2026: User added race detail page at `/races/[slug]` with terrain, logistics, stats
-- Feb 26, 2026: Updated Airtable field names (LKP_country, LKP_region, LKP_featured_image, temporary_image, FINAL_blurb)
-- Feb 26, 2026: Swapped blurb source from Featured Blurb to FINAL_blurb on cost page
-- Feb 26, 2026: Mobile stats row: full-width with "Verified Date", "Price Per KM", "Distance" labels
-- Feb 26, 2026: Mobile thumbnails changed to 1:1 square, blurb reduced ~33%
-- Feb 26, 2026: Race title now parsed from ID field (Race Event returns record IDs)
-- Feb 26, 2026: Added Distance column with underline + "Race Distance" label on desktop
-- Feb 24, 2026: Documented full reference snapshot of previous configuration
-- Feb 19, 2026: Hero section, card-based feed, data validation, Turbopack fixes
-- Set up Next.js project with create-next-app (Feb 2026)
+## External Dependencies
+- **Airtable:** Primary data source for all race information, entry fees, and user favorites. Accessed via REST API.
+- **Clerk:** Authentication service for user management, sign-in/sign-up flows, and securing user-specific data.
+- **Google Fonts:** Used for Geist Sans and Geist Mono typography via `next/font`.

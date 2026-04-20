@@ -6,6 +6,7 @@ import type { RaceEventRecord, DistanceRecord } from "./types";
 
 const MAX_VERT = 170;
 const BRAND_NAVY = "#1a2e4a";
+const COUNTRY_COLOR = "#7c3d12";
 const RESULTS_PER_PAGE = 6;
 
 const ALL_TERRAIN_TYPES = [
@@ -31,6 +32,7 @@ type EnrichedDistance = {
   raceName: string;
   slug: string;
   terrain: string[];
+  country: string;
   imgUrl: string | null;
   distanceName: string;
   distanceKm: number;
@@ -43,6 +45,7 @@ export default function RaceSpecificityClient() {
   const [distances, setDistances] = useState<DistanceRecord[]>([]);
   const [slugImgMap, setSlugImgMap] = useState<Record<string, string>>({});
   const [slugEntryFeeMap, setSlugEntryFeeMap] = useState<Record<string, { id: string; km: number }[]>>({});
+  const [slugCountryMap, setSlugCountryMap] = useState<Record<string, string>>({});
   const [dataLoading, setDataLoading] = useState(true);
   const [dataError, setDataError] = useState<string | null>(null);
 
@@ -57,6 +60,7 @@ export default function RaceSpecificityClient() {
         setDistances(d.distances ?? []);
         setSlugImgMap(d.slugImgMap ?? {});
         setSlugEntryFeeMap(d.slugEntryFeeMap ?? {});
+        setSlugCountryMap(d.slugCountryMap ?? {});
       })
       .catch((e) => setDataError(e.message ?? "Failed to load"))
       .finally(() => setDataLoading(false));
@@ -73,6 +77,7 @@ export default function RaceSpecificityClient() {
   const [appliedMin, setAppliedMin] = useState<number>(60);
   const [appliedMax, setAppliedMax] = useState<number>(80);
   const [selectedTerrain, setSelectedTerrain] = useState<string | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   const step2Ref = useRef<HTMLDivElement>(null);
@@ -127,6 +132,7 @@ export default function RaceSpecificityClient() {
           raceName: race.fields["Race Name"] ?? "Unknown Race",
           slug,
           terrain: race.fields["Terrain_multi"] ?? [],
+          country: slugCountryMap[slug] ?? "",
           imgUrl,
           distanceName: d.fields["Distance Name"] ?? "",
           distanceKm,
@@ -135,7 +141,7 @@ export default function RaceSpecificityClient() {
         } as EnrichedDistance;
       })
       .filter(Boolean) as EnrichedDistance[];
-  }, [raceEvents, distances, slugImgMap, slugEntryFeeMap]);
+  }, [raceEvents, distances, slugImgMap, slugEntryFeeMap, slugCountryMap]);
 
   const vertFiltered = useMemo(() => {
     return enrichedData.filter((r) => r.pctIncrease >= appliedMin && r.pctIncrease <= appliedMax);
@@ -146,22 +152,44 @@ export default function RaceSpecificityClient() {
     return enrichedData.filter((r) => r.pctIncrease >= minVal && r.pctIncrease <= maxVal).length;
   }, [enrichedData, minVal, maxVal]);
 
+  const allCountries = useMemo(() => {
+    const seen = new Set<string>();
+    enrichedData.forEach((r) => { if (r.country) seen.add(r.country); });
+    return [...seen].sort();
+  }, [enrichedData]);
+
+  // Faceted counts: terrain counts respect the active country filter
   const terrainCounts = useMemo(() => {
     const counts: Record<string, number> = {};
     ALL_TERRAIN_TYPES.forEach((t) => { counts[t] = 0; });
-    vertFiltered.forEach((r) => r.terrain.forEach((t) => {
+    const base = selectedCountry ? vertFiltered.filter((r) => r.country === selectedCountry) : vertFiltered;
+    base.forEach((r) => r.terrain.forEach((t) => {
       if (counts[t] !== undefined) counts[t]++;
     }));
     return counts;
-  }, [vertFiltered]);
+  }, [vertFiltered, selectedCountry]);
+
+  // Faceted counts: country counts respect the active terrain filter
+  const countryCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    allCountries.forEach((c) => { counts[c] = 0; });
+    const base = selectedTerrain ? vertFiltered.filter((r) => r.terrain.includes(selectedTerrain)) : vertFiltered;
+    base.forEach((r) => {
+      if (r.country && counts[r.country] !== undefined) counts[r.country]++;
+    });
+    return counts;
+  }, [vertFiltered, allCountries, selectedTerrain]);
 
   const allResults = useMemo(() => {
     let results = vertFiltered;
+    if (selectedCountry) {
+      results = results.filter((r) => r.country === selectedCountry);
+    }
     if (selectedTerrain) {
       results = results.filter((r) => r.terrain.includes(selectedTerrain));
     }
     return [...results].sort((a, b) => b.pctIncrease - a.pctIncrease);
-  }, [vertFiltered, selectedTerrain]);
+  }, [vertFiltered, selectedTerrain, selectedCountry]);
 
   const totalPages = Math.max(1, Math.ceil(allResults.length / RESULTS_PER_PAGE));
   const pagedResults = allResults.slice((currentPage - 1) * RESULTS_PER_PAGE, currentPage * RESULTS_PER_PAGE);
@@ -187,6 +215,7 @@ export default function RaceSpecificityClient() {
     setMinVal(60);
     setMaxVal(80);
     setSelectedTerrain(null);
+    setSelectedCountry(null);
     setCurrentPage(1);
   };
 
@@ -465,6 +494,70 @@ export default function RaceSpecificityClient() {
       </div>
 
       {/* ── STEP 2 + RESULTS — always visible ────────────────── */}
+      {/* ── COUNTRY FILTER ──────────────────────────────────── */}
+      {allCountries.length > 0 && (
+        <div className="px-6 sm:px-10 lg:px-16 py-10 sm:py-14" style={{ backgroundColor: COUNTRY_COLOR }}>
+          <div className="flex flex-col sm:flex-row sm:items-start gap-6 sm:gap-16">
+            <div className="shrink-0">
+              <div className="inline-flex items-center gap-2 mb-3">
+                <span className="px-2.5 h-6 rounded-full flex items-center justify-center text-xs font-black bg-white"
+                  style={{ color: COUNTRY_COLOR }}>Country</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-white/60">
+                  Filter
+                </span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-white mb-2">
+                Filter by Country
+              </h2>
+              <p className="text-sm text-white/70 max-w-[200px]">
+                {vertFiltered.length} race{vertFiltered.length !== 1 ? "s" : ""} across {allCountries.length} countries.
+                Click to filter.
+              </p>
+              {selectedCountry && (
+                <button
+                  onClick={() => { setSelectedCountry(null); setCurrentPage(1); }}
+                  className="mt-3 text-xs font-semibold text-white/50 hover:text-white transition-colors underline"
+                >
+                  Clear country
+                </button>
+              )}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex flex-wrap gap-2">
+                {allCountries.map((c) => {
+                  const count = countryCounts[c] ?? 0;
+                  const isSelected = selectedCountry === c;
+                  const hasRaces = count > 0;
+                  return (
+                    <button
+                      key={c}
+                      onClick={() => {
+                        if (!hasRaces) return;
+                        setSelectedCountry((prev) => prev === c ? null : c);
+                        setCurrentPage(1);
+                      }}
+                      className="px-4 py-2 rounded-full text-sm font-bold border-2 transition-all"
+                      style={{
+                        backgroundColor: isSelected ? COUNTRY_COLOR : "white",
+                        color: isSelected ? "#fff" : hasRaces ? COUNTRY_COLOR : "#d1d5db",
+                        borderColor: isSelected ? COUNTRY_COLOR : hasRaces ? COUNTRY_COLOR : "#e5e7eb",
+                        cursor: hasRaces ? "pointer" : "default",
+                        opacity: hasRaces ? 1 : 0.45,
+                      }}
+                    >
+                      {c}
+                      {hasRaces && (
+                        <span className="ml-1.5 text-[10px] font-normal opacity-70">{count}</span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div ref={step2Ref}>
         <div className="bg-white border-t border-neutral-200">
 
@@ -542,6 +635,7 @@ export default function RaceSpecificityClient() {
                   </h3>
                   <p className="text-sm text-neutral-500 mt-1">
                     {appliedMin}–{appliedMax} D+/km
+                    {selectedCountry ? ` · ${selectedCountry}` : ""}
                     {selectedTerrain ? ` · ${selectedTerrain}` : ""}
                     {totalPages > 1 ? ` · Page ${currentPage} of ${totalPages}` : ""}
                   </p>

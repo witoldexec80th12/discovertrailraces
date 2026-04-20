@@ -18,6 +18,7 @@ export async function GET() {
 
     const slugImgMap: Record<string, string> = {};
     const slugEntryFeeMap: Record<string, { id: string; km: number }[]> = {};
+    const slugCountryMap: Record<string, string> = {};
 
     for (const record of entryFees as Array<{ id: string; fields: Record<string, unknown> }>) {
       const f = record.fields;
@@ -29,6 +30,9 @@ export async function GET() {
       const epk = Number(f["AUTO €/km"] ?? 0);
       const hasPrce = fee > 0 && epk > 0;
 
+      const raw = f["LKP_country"];
+      const country = Array.isArray(raw) ? (raw as string[])[0] ?? "" : String(raw ?? "");
+
       const imgs =
         (f["LKP_featured_image"] as AirtableAttachment[] | undefined) ??
         (f["temporary_image"] as AirtableAttachment[] | undefined) ??
@@ -39,6 +43,7 @@ export async function GET() {
       for (const slug of slugs) {
         if (!slug) continue;
         if (url && !slugImgMap[slug]) slugImgMap[slug] = url;
+        if (country && !slugCountryMap[slug]) slugCountryMap[slug] = country;
         // Only add to the entry fee map if there's a valid price
         if (hasPrce) {
           if (!slugEntryFeeMap[slug]) slugEntryFeeMap[slug] = [];
@@ -48,7 +53,7 @@ export async function GET() {
     }
 
     return NextResponse.json(
-      { raceEvents, distances, slugImgMap, slugEntryFeeMap },
+      { raceEvents, distances, slugImgMap, slugEntryFeeMap, slugCountryMap },
       {
         headers: {
           "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=300",
