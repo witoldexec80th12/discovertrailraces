@@ -452,7 +452,7 @@ export default async function RacePage({
                 {pctIncrease && (
                   <p className="mt-3 text-xs leading-relaxed text-neutral-500">
                     For context, the Tor des Géants 330 loop averages about{" "}
-                    <span className="font-bold underline">145 meters</span> per
+                    <span className="font-bold underline">73 meters</span> per
                     total km.
                   </p>
                 )}
