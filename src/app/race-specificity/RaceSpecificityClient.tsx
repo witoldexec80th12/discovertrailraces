@@ -66,16 +66,16 @@ export default function RaceSpecificityClient() {
       .finally(() => setDataLoading(false));
   }, []);
 
-  const minValRef = useRef(60);
-  const maxValRef = useRef(80);
-  const [minVal, setMinValState] = useState(60);
-  const [maxVal, setMaxValState] = useState(80);
+  const minValRef = useRef(30);
+  const maxValRef = useRef(40);
+  const [minVal, setMinValState] = useState(30);
+  const [maxVal, setMaxValState] = useState(40);
   const setMinVal = useCallback((v: number) => { minValRef.current = v; setMinValState(v); }, []);
   const setMaxVal = useCallback((v: number) => { maxValRef.current = v; setMaxValState(v); }, []);
 
-  // Results always shown — initialised with defaults (60–80 D+/km)
-  const [appliedMin, setAppliedMin] = useState<number>(60);
-  const [appliedMax, setAppliedMax] = useState<number>(80);
+  // Results always shown — initialised with defaults (30–40 D+/km)
+  const [appliedMin, setAppliedMin] = useState<number>(30);
+  const [appliedMax, setAppliedMax] = useState<number>(40);
   const [selectedTerrain, setSelectedTerrain] = useState<string | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -212,8 +212,8 @@ export default function RaceSpecificityClient() {
   };
 
   const reset = () => {
-    setMinVal(60);
-    setMaxVal(80);
+    setMinVal(30);
+    setMaxVal(40);
     setSelectedTerrain(null);
     setSelectedCountry(null);
     setCurrentPage(1);

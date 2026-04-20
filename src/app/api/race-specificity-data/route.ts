@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { unstable_cache } from "next/cache";
 import { airtableFetchAll } from "@/lib/airtable";
 
 export const revalidate = 3600;
@@ -8,8 +9,8 @@ type AirtableAttachment = {
   thumbnails?: Record<string, { url: string }>;
 };
 
-export async function GET() {
-  try {
+const fetchRaceSpecificityData = unstable_cache(
+  async () => {
     const [raceEvents, distances, entryFees] = await Promise.all([
       airtableFetchAll("Race Events", {}, 3600).catch(() => []),
       airtableFetchAll("Distances", {}, 3600).catch(() => []),
@@ -25,7 +26,6 @@ export async function GET() {
       const slugs = (f["Race Slug"] as string[] | undefined) ?? [];
       const km = (f["Distance (km)"] as number | undefined) ?? 0;
 
-      // Only include entry fees that have a real price — same validation as the Cost page.
       const fee = Number(f["AUTO Fee used"] ?? 0);
       const epk = Number(f["AUTO €/km"] ?? 0);
       const hasPrce = fee > 0 && epk > 0;
@@ -44,7 +44,6 @@ export async function GET() {
         if (!slug) continue;
         if (url && !slugImgMap[slug]) slugImgMap[slug] = url;
         if (country && !slugCountryMap[slug]) slugCountryMap[slug] = country;
-        // Only add to the entry fee map if there's a valid price
         if (hasPrce) {
           if (!slugEntryFeeMap[slug]) slugEntryFeeMap[slug] = [];
           slugEntryFeeMap[slug].push({ id: record.id, km });
@@ -52,18 +51,24 @@ export async function GET() {
       }
     }
 
-    return NextResponse.json(
-      { raceEvents, distances, slugImgMap, slugEntryFeeMap, slugCountryMap },
-      {
-        headers: {
-          "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=300",
-        },
-      }
-    );
+    return { raceEvents, distances, slugImgMap, slugEntryFeeMap, slugCountryMap };
+  },
+  ["race-specificity-data"],
+  { revalidate: 3600 }
+);
+
+export async function GET() {
+  try {
+    const data = await fetchRaceSpecificityData();
+    return NextResponse.json(data, {
+      headers: {
+        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=300",
+      },
+    });
   } catch (err) {
     console.error("[race-specificity-data]", err);
     return NextResponse.json(
-      { raceEvents: [], distances: [], slugImgMap: {}, slugEntryFeeMap: {}, error: "Partial data failure" },
+      { raceEvents: [], distances: [], slugImgMap: {}, slugEntryFeeMap: {}, slugCountryMap: {}, error: "Partial data failure" },
       {
         status: 200,
         headers: {
