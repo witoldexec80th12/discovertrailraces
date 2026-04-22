@@ -602,7 +602,7 @@ export default function RaceSpecificityClient() {
                 <>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {pagedResults.map((r, i) => (
-                      <ResultCard key={`${r.id}-${i}`} race={r} />
+                      <ResultCard key={`${r.raceId}-${i}`} race={r} />
                     ))}
                   </div>
 
