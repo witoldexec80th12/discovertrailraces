@@ -56,6 +56,26 @@ async function fetchWithRetry(
   }
 }
 
+export async function airtableFetchRecord<TFields>(
+  tableName: string,
+  recordId: string,
+  revalidate: number | false = 3600,
+): Promise<AirtableRecord<TFields> | null> {
+  const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(tableName)}/${recordId}`;
+  try {
+    const res = await fetchWithRetry(url, {
+      headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` },
+      ...fetchOptions(revalidate),
+    });
+    if (!res.ok) return null;
+    const data = await res.json().catch(() => null);
+    if (!data?.id) return null;
+    return data as AirtableRecord<TFields>;
+  } catch {
+    return null;
+  }
+}
+
 export async function airtableFetch<TFields>(
   tableName: string,
   params: Record<string, string | number | boolean | undefined> = {},

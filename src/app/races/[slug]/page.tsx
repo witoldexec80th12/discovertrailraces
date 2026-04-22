@@ -1,5 +1,5 @@
 // src/app/races/[slug]/page.tsx
-import { airtableFetch, type AirtableRecord } from "@/lib/airtable";
+import { airtableFetch, airtableFetchRecord, type AirtableRecord } from "@/lib/airtable";
 import { AIRTABLE } from "@/lib/airtableConfig";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -75,6 +75,72 @@ type EntryFeeFields = {
   LKP_cartransfertime?: string | number;
   "LKP_Far?"?: boolean | Array<boolean | null>;
   LKP_officialwebsite?: string | string[];
+
+  Mae_Notes?: string;
+  First_year_event?: string | number;
+  "Participants 2026"?: number;
+  "Participants 2025 copy"?: number;
+  "Cost Confidence"?: string;
+  "AUTO_Date_is_past"?: number;
+};
+
+type DistancesFields = {
+  "Distance Name"?: string;
+  "Elevation (m)"?: number;
+  "AUTO% Increase"?: number;
+  "Best candidate (URL)"?: string;
+  "Source site"?: string;
+  "Reported dist (km)"?: string;
+  "Dist Δ%"?: string;
+  "Download notes"?: string;
+  "GPX download?"?: boolean;
+  track_name?: string;
+  analyzed_on?: string;
+  methodology_version?: string;
+  measured_dist_km?: number;
+  dist_dev_pct?: number;
+  gain_strava_1m?: number;
+  gain_real_10m?: number;
+  gain_2pct_m?: number;
+  pct_uphill?: number;
+  pct_flat?: number;
+  pct_downhill?: number;
+  dw_avg_uphill_grad_pct?: number;
+  dw_avg_downhill_grad_pct?: number;
+  uphill_km_2_5_pct?: number;
+  uphill_km_5_10_pct?: number;
+  uphill_km_10_15_pct?: number;
+  uphill_km_15_20_pct?: number;
+  uphill_km_20plus_pct?: number;
+  num_sustained_climbs?: number;
+  num_ups_50m?: number;
+  num_ups_100m?: number;
+  top1_start_km?: number;
+  top1_length_m?: number;
+  top1_rise_m?: number;
+  top1_avg_grad_pct?: number;
+  top1_max_grad_pct?: number;
+  top2_start_km?: number;
+  top2_length_m?: number;
+  top2_rise_m?: number;
+  top2_avg_grad_pct?: number;
+  top2_max_grad_pct?: number;
+  top3_start_km?: number;
+  top3_length_m?: number;
+  top3_rise_m?: number;
+  top3_avg_grad_pct?: number;
+  top3_max_grad_pct?: number;
+  top4_start_km?: number;
+  top4_length_m?: number;
+  top4_rise_m?: number;
+  top4_avg_grad_pct?: number;
+  top4_max_grad_pct?: number;
+  top5_start_km?: number;
+  top5_length_m?: number;
+  top5_rise_m?: number;
+  top5_avg_grad_pct?: number;
+  top5_max_grad_pct?: number;
+  elevation_map_climbs?: AirtableAttachment[];
 };
 
 function asText(v: unknown): string {
@@ -171,6 +237,15 @@ async function fetchEntryFeeRowsForSlug(slug: string) {
   return rows;
 }
 
+async function fetchDistancesRecord(recordId: string): Promise<DistancesFields | null> {
+  try {
+    const rec = await airtableFetchRecord<DistancesFields>("Distances", recordId, 3600);
+    return rec?.fields ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -230,6 +305,16 @@ export default async function RacePage({
     rows[0];
   const f = row.fields;
 
+  // Fetch linked Distances record for GPX/route analysis data
+  const distanceRecordId = Array.isArray(f.Distance)
+    ? f.Distance[0]
+    : typeof f.Distance === "string"
+    ? f.Distance
+    : null;
+  const distData: DistancesFields | null = distanceRecordId
+    ? await fetchDistancesRecord(distanceRecordId)
+    : null;
+
   const idText = asText(f.ID) || asText(f["Race Event"]);
   const { name, distance } = extractNameAndDistance(idText);
 
@@ -284,6 +369,55 @@ export default async function RacePage({
     : distanceKmRaw != null
     ? parseFloat(String(distanceKmRaw)) || null
     : null;
+
+  const maeNotes = f.Mae_Notes?.trim() || null;
+  const firstYear = f.First_year_event ? String(f.First_year_event) : null;
+  const participants =
+    typeof f["Participants 2026"] === "number"
+      ? f["Participants 2026"]
+      : typeof f["Participants 2025 copy"] === "number"
+      ? f["Participants 2025 copy"]
+      : null;
+
+  // Distances-derived values
+  const hasTerrain =
+    typeof distData?.pct_uphill === "number" &&
+    typeof distData?.pct_flat === "number" &&
+    typeof distData?.pct_downhill === "number";
+  const hasGradientBands =
+    typeof distData?.uphill_km_2_5_pct === "number" ||
+    typeof distData?.uphill_km_5_10_pct === "number";
+  const hasTopClimbs = typeof distData?.top1_length_m === "number";
+  const elevationMapUrl = pickFirstUrl(distData?.elevation_map_climbs);
+
+  const gradientBands = [
+    { label: "2–5%", km: distData?.uphill_km_2_5_pct },
+    { label: "5–10%", km: distData?.uphill_km_5_10_pct },
+    { label: "10–15%", km: distData?.uphill_km_10_15_pct },
+    { label: "15–20%", km: distData?.uphill_km_15_20_pct },
+    { label: "20%+", km: distData?.uphill_km_20plus_pct },
+  ].filter((b) => typeof b.km === "number" && b.km > 0);
+
+  const topClimbs = [1, 2, 3, 4, 5]
+    .map((n) => {
+      const d = distData as Record<string, number | undefined> | null;
+      if (!d) return null;
+      const lengthM = d[`top${n}_length_m`];
+      const riseM = d[`top${n}_rise_m`];
+      const startKm = d[`top${n}_start_km`];
+      const avgGrad = d[`top${n}_avg_grad_pct`];
+      const maxGrad = d[`top${n}_max_grad_pct`];
+      if (!lengthM || !riseM) return null;
+      return { n, startKm, lengthM, riseM, avgGrad, maxGrad };
+    })
+    .filter(Boolean) as {
+    n: number;
+    startKm?: number;
+    lengthM: number;
+    riseM: number;
+    avgGrad?: number;
+    maxGrad?: number;
+  }[];
 
   const backHref = from || "/cost";
   const backLabel = title ? `← Back to ${title}` : "← Back";
@@ -404,11 +538,36 @@ export default async function RacePage({
               </div>
             </div>
 
+            {/* Secondary stats — since year, field size */}
+            {(firstYear || participants) && (
+              <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1">
+                {firstYear && (
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-neutral-400">Since</p>
+                    <p className="text-sm font-semibold text-neutral-700">{firstYear}</p>
+                  </div>
+                )}
+                {participants && (
+                  <div>
+                    <p className="text-[10px] uppercase tracking-wider text-neutral-400">Field size</p>
+                    <p className="text-sm font-semibold text-neutral-700">~{participants} starters</p>
+                  </div>
+                )}
+              </div>
+            )}
+
             {blurb && (
               <div className="mt-6">
                 <p className="text-sm sm:text-lg leading-relaxed text-neutral-700">
                   {blurb}
                 </p>
+              </div>
+            )}
+
+            {maeNotes && (
+              <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+                <p className="text-xs font-bold uppercase tracking-wider text-amber-700 mb-1">Note</p>
+                <p className="text-sm text-amber-900 leading-relaxed">{maeNotes}</p>
               </div>
             )}
 
@@ -485,6 +644,140 @@ export default async function RacePage({
                     </p>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* Route Profile — from Distances GPX analysis */}
+            {(hasTerrain || hasGradientBands || hasTopClimbs || elevationMapUrl || distData?.["GPX download?"]) && (
+              <div className="mt-8">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-sm font-bold tracking-tight text-neutral-900">Route Profile</h2>
+                  <div className="flex items-center gap-3">
+                    {distData?.["GPX download?"] && distData?.["Best candidate (URL)"] && (
+                      <a
+                        href={distData["Best candidate (URL)"]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-full border border-neutral-300 bg-white px-3 py-1 text-xs font-semibold text-neutral-700 hover:border-neutral-500 hover:text-neutral-900 transition-colors"
+                      >
+                        <span>GPX</span>
+                        <span className="text-neutral-400">↗</span>
+                      </a>
+                    )}
+                    {distData?.analyzed_on && (
+                      <span className="text-xs text-neutral-400">Analysed {distData.analyzed_on}</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Terrain Breakdown */}
+                {hasTerrain && (
+                  <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 mb-4">
+                    <p className="text-[10px] uppercase tracking-wider text-neutral-500 mb-3">Terrain breakdown</p>
+                    <div className="flex rounded-full overflow-hidden h-3 mb-3">
+                      <div
+                        className="bg-green-500"
+                        style={{ width: `${(distData!.pct_uphill! * 100).toFixed(1)}%` }}
+                        title={`Uphill ${(distData!.pct_uphill! * 100).toFixed(1)}%`}
+                      />
+                      <div
+                        className="bg-neutral-300"
+                        style={{ width: `${(distData!.pct_flat! * 100).toFixed(1)}%` }}
+                        title={`Flat ${(distData!.pct_flat! * 100).toFixed(1)}%`}
+                      />
+                      <div
+                        className="bg-blue-400"
+                        style={{ width: `${(distData!.pct_downhill! * 100).toFixed(1)}%` }}
+                        title={`Downhill ${(distData!.pct_downhill! * 100).toFixed(1)}%`}
+                      />
+                    </div>
+                    <div className="flex gap-6 text-xs text-neutral-600">
+                      <span className="flex items-center gap-1.5">
+                        <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500" />
+                        <span className="font-semibold">{(distData!.pct_uphill! * 100).toFixed(1)}%</span> Uphill
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <span className="inline-block w-2.5 h-2.5 rounded-full bg-neutral-300" />
+                        <span className="font-semibold">{(distData!.pct_flat! * 100).toFixed(1)}%</span> Flat
+                      </span>
+                      <span className="flex items-center gap-1.5">
+                        <span className="inline-block w-2.5 h-2.5 rounded-full bg-blue-400" />
+                        <span className="font-semibold">{(distData!.pct_downhill! * 100).toFixed(1)}%</span> Downhill
+                      </span>
+                    </div>
+                    {distData?.num_sustained_climbs && (
+                      <p className="mt-2 text-xs text-neutral-500">
+                        {distData.num_sustained_climbs} sustained climbs
+                        {distData.num_ups_100m ? ` · ${distData.num_ups_100m} climbs of 100m+` : ""}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Gradient Distribution */}
+                {hasGradientBands && gradientBands.length > 0 && (
+                  <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 mb-4">
+                    <p className="text-[10px] uppercase tracking-wider text-neutral-500 mb-3">Uphill gradient distribution</p>
+                    <div className="space-y-2">
+                      {(() => {
+                        const maxKm = Math.max(...gradientBands.map((b) => b.km as number));
+                        return gradientBands.map((band) => (
+                          <div key={band.label} className="flex items-center gap-3">
+                            <span className="w-14 text-xs text-neutral-500 shrink-0">{band.label}</span>
+                            <div className="flex-1 h-2 rounded-full bg-neutral-200 overflow-hidden">
+                              <div
+                                className="h-full rounded-full bg-green-400"
+                                style={{ width: `${((band.km as number) / maxKm) * 100}%` }}
+                              />
+                            </div>
+                            <span className="text-xs font-semibold text-neutral-700 w-14 text-right shrink-0">
+                              {(band.km as number).toFixed(1)} km
+                            </span>
+                          </div>
+                        ));
+                      })()}
+                    </div>
+                  </div>
+                )}
+
+                {/* Elevation Map Image */}
+                {elevationMapUrl && (
+                  <div className="rounded-xl border border-neutral-200 overflow-hidden mb-4">
+                    <p className="px-4 pt-3 text-[10px] uppercase tracking-wider text-neutral-500 mb-2">Elevation profile</p>
+                    <img
+                      src={elevationMapUrl}
+                      alt="Elevation profile"
+                      className="w-full object-cover"
+                      style={{ maxHeight: "260px", objectFit: "contain", background: "#fff" }}
+                    />
+                  </div>
+                )}
+
+                {/* Top Climbs */}
+                {hasTopClimbs && topClimbs.length > 0 && (
+                  <div className="rounded-xl border border-neutral-200 bg-neutral-50 p-4">
+                    <p className="text-[10px] uppercase tracking-wider text-neutral-500 mb-3">Top climbs</p>
+                    <div className="space-y-2">
+                      {topClimbs.map((climb) => (
+                        <div key={climb.n} className="flex items-start gap-3 text-sm">
+                          <span className="shrink-0 w-5 h-5 rounded-full bg-neutral-200 text-neutral-600 text-[10px] font-bold flex items-center justify-center mt-0.5">
+                            {climb.n}
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <span className="font-semibold text-neutral-900">
+                              {(climb.lengthM / 1000).toFixed(1)} km · {Math.round(climb.riseM)} m gain
+                            </span>
+                            <span className="text-neutral-500 ml-2 text-xs">
+                              {climb.startKm != null ? `starts at km ${Math.round(climb.startKm)}` : ""}
+                              {climb.avgGrad != null ? ` · avg ${(climb.avgGrad * 100).toFixed(1)}%` : ""}
+                              {climb.maxGrad != null ? ` · max ${(climb.maxGrad * 100).toFixed(1)}%` : ""}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

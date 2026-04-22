@@ -27,7 +27,11 @@ The application is built with Next.js 16 (App Router) and React 19, leveraging T
     - Requires fee and €/km > 0 for valid entries.
 
 - **Race Detail Page (`/races/[slug]`):**
-    - Fetches race data by slug, preferring "Is Primary Distance" row.
+    - Fetches race data by slug from Entry Fees table, preferring "Is Primary Distance" row.
+    - Also fetches the linked Distances record by ID (`airtableFetchRecord`) for GPX analysis data.
+    - Displays secondary stats: "Since [year]" (First_year_event) and "~N starters" (Participants 2026/2025).
+    - Displays Mae_Notes as an amber editorial note box (e.g. "SOLD OUT!").
+    - Route Profile section (shows only when Distances data is filled in): terrain breakdown bar (% uphill/flat/downhill), uphill gradient distribution by steepness band, elevation profile image (elevation_map_climbs), top climbs list, GPX download link.
     - Layout includes a hero section with race image, name, location, and distance.
     - Key stats grid (Date, Entry fee, €/km, Series).
     - Blurb, planning facts (Terrain, Elevation/% increase), and logistics (Nearest airport).
