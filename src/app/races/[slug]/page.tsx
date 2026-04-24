@@ -84,6 +84,10 @@ type EntryFeeFields = {
   "AUTO_Date_is_past"?: number;
 };
 
+// Lookup fields (from gpx_file) are Airtable rollup/lookup fields that return single-element arrays
+type GpxNum = number[] | undefined;
+type GpxStr = string[] | undefined;
+
 type DistancesFields = {
   "Distance Name"?: string;
   "Elevation (m)"?: number;
@@ -94,54 +98,62 @@ type DistancesFields = {
   "Dist Δ%"?: string;
   "Download notes"?: string;
   "GPX download?"?: boolean;
-  track_name?: string;
-  analyzed_on?: string;
-  methodology_version?: string;
-  measured_dist_km?: number;
-  dist_dev_pct?: number;
-  gain_strava_1m?: number;
-  gain_real_10m?: number;
-  gain_2pct_m?: number;
-  pct_uphill?: number;
-  pct_flat?: number;
-  pct_downhill?: number;
-  dw_avg_uphill_grad_pct?: number;
-  dw_avg_downhill_grad_pct?: number;
-  uphill_km_2_5_pct?: number;
-  uphill_km_5_10_pct?: number;
-  uphill_km_10_15_pct?: number;
-  uphill_km_15_20_pct?: number;
-  uphill_km_20plus_pct?: number;
-  num_sustained_climbs?: number;
-  num_ups_50m?: number;
-  num_ups_100m?: number;
-  top1_start_km?: number;
-  top1_length_m?: number;
-  top1_rise_m?: number;
-  top1_avg_grad_pct?: number;
-  top1_max_grad_pct?: number;
-  top2_start_km?: number;
-  top2_length_m?: number;
-  top2_rise_m?: number;
-  top2_avg_grad_pct?: number;
-  top2_max_grad_pct?: number;
-  top3_start_km?: number;
-  top3_length_m?: number;
-  top3_rise_m?: number;
-  top3_avg_grad_pct?: number;
-  top3_max_grad_pct?: number;
-  top4_start_km?: number;
-  top4_length_m?: number;
-  top4_rise_m?: number;
-  top4_avg_grad_pct?: number;
-  top4_max_grad_pct?: number;
-  top5_start_km?: number;
-  top5_length_m?: number;
-  top5_rise_m?: number;
-  top5_avg_grad_pct?: number;
-  top5_max_grad_pct?: number;
-  elevation_map_climbs?: AirtableAttachment[];
+  "track_name (from gpx_file)"?: GpxStr;
+  "analyzed_on (from gpx_file)"?: GpxStr;
+  "methodology_version (from gpx_file)"?: GpxStr;
+  "measured_dist_km (from gpx_file)"?: GpxNum;
+  "dist_dev_pct (from gpx_file)"?: GpxNum;
+  "gain_strava_1m (from gpx_file)"?: GpxNum;
+  "gain_real_10m (from gpx_file)"?: GpxNum;
+  "gain_2pct_m (from gpx_file)"?: GpxNum;
+  "pct_uphill (from gpx_file)"?: GpxNum;
+  "pct_flat (from gpx_file)"?: GpxNum;
+  "pct_downhill (from gpx_file)"?: GpxNum;
+  "dw_avg_uphill_grad_pct (from gpx_file)"?: GpxNum;
+  "dw_avg_downhill_grad_pct (from gpx_file)"?: GpxNum;
+  "uphill_km_2_5_pct (from gpx_file)"?: GpxNum;
+  "uphill_km_5_10_pct (from gpx_file)"?: GpxNum;
+  "uphill_km_10_15_pct (from gpx_file)"?: GpxNum;
+  "uphill_km_15_20_pct (from gpx_file)"?: GpxNum;
+  "uphill_km_20plus_pct (from gpx_file)"?: GpxNum;
+  "num_sustained_climbs (from gpx_file)"?: GpxNum;
+  "num_ups_50m (from gpx_file)"?: GpxNum;
+  "num_ups_100m (from gpx_file)"?: GpxNum;
+  "top1_start_km (from gpx_file)"?: GpxNum;
+  "top1_length_m (from gpx_file)"?: GpxNum;
+  "top1_rise_m (from gpx_file)"?: GpxNum;
+  "top1_avg_grad_pct (from gpx_file)"?: GpxNum;
+  "top1_max_grad_pct (from gpx_file)"?: GpxNum;
+  "top2_start_km (from gpx_file)"?: GpxNum;
+  "top2_length_m (from gpx_file)"?: GpxNum;
+  "top2_rise_m (from gpx_file)"?: GpxNum;
+  "top2_avg_grad_pct (from gpx_file)"?: GpxNum;
+  "top2_max_grad_pct (from gpx_file)"?: GpxNum;
+  "top3_start_km (from gpx_file)"?: GpxNum;
+  "top3_length_m (from gpx_file)"?: GpxNum;
+  "top3_rise_m (from gpx_file)"?: GpxNum;
+  "top3_avg_grad_pct (from gpx_file)"?: GpxNum;
+  "top3_max_grad_pct (from gpx_file)"?: GpxNum;
+  "top4_start_km (from gpx_file)"?: GpxNum;
+  "top4_length_m (from gpx_file)"?: GpxNum;
+  "top4_rise_m (from gpx_file)"?: GpxNum;
+  "top4_avg_grad_pct (from gpx_file)"?: GpxNum;
+  "top4_max_grad_pct (from gpx_file)"?: GpxNum;
+  "top5_start_km (from gpx_file)"?: GpxNum;
+  "top5_length_m (from gpx_file)"?: GpxNum;
+  "top5_rise_m (from gpx_file)"?: GpxNum;
+  "top5_avg_grad_pct (from gpx_file)"?: GpxNum;
+  "top5_max_grad_pct (from gpx_file)"?: GpxNum;
+  "elevation_map_climbs (from gpx_file)"?: AirtableAttachment[];
 };
+
+/** Extract the first element from a gpx_file lookup array field. */
+function gpxNum(arr: GpxNum): number | undefined {
+  return Array.isArray(arr) ? arr[0] : undefined;
+}
+function gpxStr(arr: GpxStr): string | undefined {
+  return Array.isArray(arr) ? arr[0] : undefined;
+}
 
 function asText(v: unknown): string {
   if (Array.isArray(v)) return v.filter(Boolean).join(", ");
@@ -379,34 +391,41 @@ export default async function RacePage({
       ? f["Participants 2025 copy"]
       : null;
 
-  // Distances-derived values
+  // Distances-derived values — unwrap single-element lookup arrays with gpxNum/gpxStr
+  const pctUphill = gpxNum(distData?.["pct_uphill (from gpx_file)"]);
+  const pctFlat = gpxNum(distData?.["pct_flat (from gpx_file)"]);
+  const pctDownhill = gpxNum(distData?.["pct_downhill (from gpx_file)"]);
+  const analyzedOn = gpxStr(distData?.["analyzed_on (from gpx_file)"]);
+  const numSustainedClimbs = gpxNum(distData?.["num_sustained_climbs (from gpx_file)"]);
+  const numUps100m = gpxNum(distData?.["num_ups_100m (from gpx_file)"]);
+
   const hasTerrain =
-    typeof distData?.pct_uphill === "number" &&
-    typeof distData?.pct_flat === "number" &&
-    typeof distData?.pct_downhill === "number";
+    typeof pctUphill === "number" &&
+    typeof pctFlat === "number" &&
+    typeof pctDownhill === "number";
   const hasGradientBands =
-    typeof distData?.uphill_km_2_5_pct === "number" ||
-    typeof distData?.uphill_km_5_10_pct === "number";
-  const hasTopClimbs = typeof distData?.top1_length_m === "number";
-  const elevationMapUrl = pickFirstUrl(distData?.elevation_map_climbs);
+    typeof gpxNum(distData?.["uphill_km_2_5_pct (from gpx_file)"]) === "number" ||
+    typeof gpxNum(distData?.["uphill_km_5_10_pct (from gpx_file)"]) === "number";
+  const hasTopClimbs = typeof gpxNum(distData?.["top1_length_m (from gpx_file)"]) === "number";
+  const elevationMapUrl = pickFirstUrl(distData?.["elevation_map_climbs (from gpx_file)"]);
 
   const gradientBands = [
-    { label: "2–5%", km: distData?.uphill_km_2_5_pct },
-    { label: "5–10%", km: distData?.uphill_km_5_10_pct },
-    { label: "10–15%", km: distData?.uphill_km_10_15_pct },
-    { label: "15–20%", km: distData?.uphill_km_15_20_pct },
-    { label: "20%+", km: distData?.uphill_km_20plus_pct },
+    { label: "2–5%", km: gpxNum(distData?.["uphill_km_2_5_pct (from gpx_file)"]) },
+    { label: "5–10%", km: gpxNum(distData?.["uphill_km_5_10_pct (from gpx_file)"]) },
+    { label: "10–15%", km: gpxNum(distData?.["uphill_km_10_15_pct (from gpx_file)"]) },
+    { label: "15–20%", km: gpxNum(distData?.["uphill_km_15_20_pct (from gpx_file)"]) },
+    { label: "20%+", km: gpxNum(distData?.["uphill_km_20plus_pct (from gpx_file)"]) },
   ].filter((b) => typeof b.km === "number" && b.km > 0);
 
   const topClimbs = [1, 2, 3, 4, 5]
     .map((n) => {
-      const d = distData as Record<string, number | undefined> | null;
-      if (!d) return null;
-      const lengthM = d[`top${n}_length_m`];
-      const riseM = d[`top${n}_rise_m`];
-      const startKm = d[`top${n}_start_km`];
-      const avgGrad = d[`top${n}_avg_grad_pct`];
-      const maxGrad = d[`top${n}_max_grad_pct`];
+      if (!distData) return null;
+      const key = (suffix: string) => `top${n}_${suffix} (from gpx_file)` as keyof DistancesFields;
+      const lengthM = gpxNum(distData[key("length_m")] as GpxNum);
+      const riseM = gpxNum(distData[key("rise_m")] as GpxNum);
+      const startKm = gpxNum(distData[key("start_km")] as GpxNum);
+      const avgGrad = gpxNum(distData[key("avg_grad_pct")] as GpxNum);
+      const maxGrad = gpxNum(distData[key("max_grad_pct")] as GpxNum);
       if (!lengthM || !riseM) return null;
       return { n, startKm, lengthM, riseM, avgGrad, maxGrad };
     })
@@ -664,8 +683,8 @@ export default async function RacePage({
                         <span className="text-neutral-400">↗</span>
                       </a>
                     )}
-                    {distData?.analyzed_on && (
-                      <span className="text-xs text-neutral-400">Analysed {distData.analyzed_on}</span>
+                    {analyzedOn && (
+                      <span className="text-xs text-neutral-400">Analysed {analyzedOn}</span>
                     )}
                   </div>
                 </div>
@@ -677,38 +696,38 @@ export default async function RacePage({
                     <div className="flex rounded-full overflow-hidden h-3 mb-3">
                       <div
                         className="bg-green-500"
-                        style={{ width: `${(distData!.pct_uphill! * 100).toFixed(1)}%` }}
-                        title={`Uphill ${(distData!.pct_uphill! * 100).toFixed(1)}%`}
+                        style={{ width: `${(pctUphill! * 100).toFixed(1)}%` }}
+                        title={`Uphill ${(pctUphill! * 100).toFixed(1)}%`}
                       />
                       <div
                         className="bg-neutral-300"
-                        style={{ width: `${(distData!.pct_flat! * 100).toFixed(1)}%` }}
-                        title={`Flat ${(distData!.pct_flat! * 100).toFixed(1)}%`}
+                        style={{ width: `${(pctFlat! * 100).toFixed(1)}%` }}
+                        title={`Flat ${(pctFlat! * 100).toFixed(1)}%`}
                       />
                       <div
                         className="bg-blue-400"
-                        style={{ width: `${(distData!.pct_downhill! * 100).toFixed(1)}%` }}
-                        title={`Downhill ${(distData!.pct_downhill! * 100).toFixed(1)}%`}
+                        style={{ width: `${(pctDownhill! * 100).toFixed(1)}%` }}
+                        title={`Downhill ${(pctDownhill! * 100).toFixed(1)}%`}
                       />
                     </div>
                     <div className="flex gap-6 text-xs text-neutral-600">
                       <span className="flex items-center gap-1.5">
                         <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500" />
-                        <span className="font-semibold">{(distData!.pct_uphill! * 100).toFixed(1)}%</span> Uphill
+                        <span className="font-semibold">{(pctUphill! * 100).toFixed(1)}%</span> Uphill
                       </span>
                       <span className="flex items-center gap-1.5">
                         <span className="inline-block w-2.5 h-2.5 rounded-full bg-neutral-300" />
-                        <span className="font-semibold">{(distData!.pct_flat! * 100).toFixed(1)}%</span> Flat
+                        <span className="font-semibold">{(pctFlat! * 100).toFixed(1)}%</span> Flat
                       </span>
                       <span className="flex items-center gap-1.5">
                         <span className="inline-block w-2.5 h-2.5 rounded-full bg-blue-400" />
-                        <span className="font-semibold">{(distData!.pct_downhill! * 100).toFixed(1)}%</span> Downhill
+                        <span className="font-semibold">{(pctDownhill! * 100).toFixed(1)}%</span> Downhill
                       </span>
                     </div>
-                    {distData?.num_sustained_climbs && (
+                    {numSustainedClimbs && (
                       <p className="mt-2 text-xs text-neutral-500">
-                        {distData.num_sustained_climbs} sustained climbs
-                        {distData.num_ups_100m ? ` · ${distData.num_ups_100m} climbs of 100m+` : ""}
+                        {numSustainedClimbs} sustained climbs
+                        {numUps100m ? ` · ${numUps100m} climbs of 100m+` : ""}
                       </p>
                     )}
                   </div>
