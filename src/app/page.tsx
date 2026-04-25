@@ -122,10 +122,8 @@ async function fetchView(
   try {
     return await airtableFetch<FeaturedRaceEventFields>(
       AIRTABLE.TABLES.RACE_EVENTS,
-      {
-        view,
-        pageSize,
-      },
+      { view, pageSize },
+      3600,
     );
   } catch {
     return [];

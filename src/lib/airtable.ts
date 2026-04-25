@@ -10,6 +10,33 @@ if (!AIRTABLE_TOKEN || !AIRTABLE_BASE_ID) {
   throw new Error("Missing AIRTABLE_TOKEN or AIRTABLE_BASE_ID in env");
 }
 
+// ---------------------------------------------------------------------------
+// Module-level in-memory TTL cache
+// Prevents repeated Airtable calls within the same server process (helps both
+// dev mode — which has no HTTP cache — and production under rapid traffic).
+// ---------------------------------------------------------------------------
+type CacheEntry<T> = { data: T; expiresAt: number };
+const _memCache = new Map<string, CacheEntry<unknown>>();
+
+function _getCached<T>(key: string): T | null {
+  const entry = _memCache.get(key) as CacheEntry<T> | undefined;
+  if (!entry) return null;
+  if (Date.now() > entry.expiresAt) { _memCache.delete(key); return null; }
+  return entry.data;
+}
+
+function _setCached<T>(key: string, data: T, ttlSeconds: number): void {
+  _memCache.set(key, { data, expiresAt: Date.now() + ttlSeconds * 1000 });
+}
+
+function _cacheKey(
+  namespace: string,
+  params: Record<string, string | number | boolean | undefined>,
+): string {
+  return `${namespace}::${JSON.stringify(params)}`;
+}
+// ---------------------------------------------------------------------------
+
 function fetchOptions(revalidate: number | false): RequestInit {
   if (revalidate === false) return { cache: "no-store" };
   return { next: { revalidate } } as RequestInit;
@@ -61,6 +88,11 @@ export async function airtableFetchRecord<TFields>(
   recordId: string,
   revalidate: number | false = 3600,
 ): Promise<AirtableRecord<TFields> | null> {
+  const ttl = revalidate === false ? 60 : revalidate;
+  const key = _cacheKey(`record:${tableName}`, { recordId });
+  const cached = _getCached<AirtableRecord<TFields>>(key);
+  if (cached) return cached;
+
   const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(tableName)}/${recordId}`;
   try {
     const res = await fetchWithRetry(url, {
@@ -70,6 +102,7 @@ export async function airtableFetchRecord<TFields>(
     if (!res.ok) return null;
     const data = await res.json().catch(() => null);
     if (!data?.id) return null;
+    _setCached(key, data as AirtableRecord<TFields>, ttl);
     return data as AirtableRecord<TFields>;
   } catch {
     return null;
@@ -81,6 +114,11 @@ export async function airtableFetch<TFields>(
   params: Record<string, string | number | boolean | undefined> = {},
   revalidate: number | false = false,
 ): Promise<AirtableRecord<TFields>[]> {
+  const ttl = revalidate === false ? 60 : revalidate;
+  const key = _cacheKey(`fetch:${tableName}`, params);
+  const cached = _getCached<AirtableRecord<TFields>[]>(key);
+  if (cached) return cached;
+
   const url = new URL(
     `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(tableName)}`,
   );
@@ -118,7 +156,9 @@ export async function airtableFetch<TFields>(
     throw new Error(`Airtable response missing records array`);
   }
 
-  return data.records as AirtableRecord<TFields>[];
+  const records = data.records as AirtableRecord<TFields>[];
+  _setCached(key, records, ttl);
+  return records;
 }
 
 export async function airtableFetchAll<TFields>(
@@ -126,6 +166,11 @@ export async function airtableFetchAll<TFields>(
   params: Record<string, string | number | boolean | undefined> = {},
   revalidate: number | false = false,
 ): Promise<AirtableRecord<TFields>[]> {
+  const ttl = revalidate === false ? 60 : revalidate;
+  const key = _cacheKey(`fetchAll:${tableName}`, params);
+  const cached = _getCached<AirtableRecord<TFields>[]>(key);
+  if (cached) return cached;
+
   const baseParams = { ...params, pageSize: 100 };
   // Always fetch individual pages fresh — the page-level ISR revalidation
   // handles caching at the right layer. Passing `next: { revalidate }`
@@ -207,7 +252,8 @@ export async function airtableFetchAll<TFields>(
       if (data.offset) {
         offset = data.offset;
       } else {
-        // Completed successfully
+        // Completed successfully — save to in-memory cache before returning
+        _setCached(key, all, ttl);
         return all;
       }
     }
