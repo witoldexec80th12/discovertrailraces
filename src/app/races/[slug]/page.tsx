@@ -241,10 +241,10 @@ async function fetchEntryFeeRowsForSlug(slug: string) {
   const filterByFormula = `FIND("${slug}", ARRAYJOIN({Race Slug}))`;
 
   const rows = await airtableFetch<EntryFeeFields>(AIRTABLE.TABLES.ENTRY_FEES, {
-    view: AIRTABLE.VIEWS.ENTRY_FEES_PUBLIC, // ok to keep public view
+    view: AIRTABLE.VIEWS.ENTRY_FEES_PUBLIC,
     filterByFormula,
     pageSize: 50,
-  });
+  }, 3600);
 
   return rows;
 }
