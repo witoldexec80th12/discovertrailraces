@@ -637,35 +637,6 @@ export default async function RacePage({
               </div>
             </div>
 
-            {/* Logistics */}
-            {(logistics || airport || airportCode) && (
-              <div className="mt-8">
-                <h2 className="text-sm font-bold tracking-tight text-neutral-900">
-                  Logistics
-                </h2>
-                <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="rounded-xl border border-neutral-200 p-4">
-                    <p className="text-[10px] uppercase tracking-wider text-neutral-400">
-                      Nearest airport
-                    </p>
-                    <p className="mt-1 text-sm font-semibold text-neutral-900">
-                      {[airport, airportCode ? `(${airportCode})` : ""]
-                        .filter(Boolean)
-                        .join(" ") || "—"}
-                    </p>
-                  </div>
-                  <div className="sm:col-span-2 rounded-xl border border-neutral-200 p-4">
-                    <p className="text-[10px] uppercase tracking-wider text-neutral-400">
-                      Notes
-                    </p>
-                    <p className="mt-1 text-sm text-neutral-700 leading-relaxed">
-                      {logistics || "—"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Route Profile — from Distances GPX analysis */}
             {(hasTerrain || hasGradientBands || hasTopClimbs || elevationMapUrl || distData?.["GPX download?"]) && (
               <div className="mt-8">
@@ -800,40 +771,71 @@ export default async function RacePage({
               </div>
             )}
 
-            {/* FAR Banner */}
-            {isFar && (
-              <div
-                className="mt-6 flex items-start gap-4 rounded-xl border-2 px-5 py-4 shadow-sm"
-                style={{
-                  borderColor: "rgb(56, 67, 82)",
-                  backgroundColor: "rgba(56, 67, 82, 0.06)",
-                }}
-              >
-                <div className="shrink-0 mt-0.5">
-                  <Image
-                    src="/images/icon_far2.png"
-                    alt="Remote location icon"
-                    width={60}
-                    height={60}
-                    className="object-contain"
-                  />
-                </div>
-                <div>
-                  <p
-                    className="text-base font-extrabold tracking-widest uppercase mb-1"
-                    style={{ color: "rgb(56, 67, 82)" }}
+            {/* Logistics + FAR — side by side below Route Profile */}
+            {(logistics || airport || airportCode || isFar) && (
+              <div className="mt-8 flex flex-col sm:flex-row gap-4 items-start">
+                {(logistics || airport || airportCode) && (
+                  <div className="flex-1 min-w-0">
+                    <h2 className="text-sm font-bold tracking-tight text-neutral-900 mb-3">
+                      Logistics
+                    </h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <div className="rounded-xl border border-neutral-200 p-4">
+                        <p className="text-[10px] uppercase tracking-wider text-neutral-400">
+                          Nearest airport
+                        </p>
+                        <p className="mt-1 text-sm font-semibold text-neutral-900">
+                          {[airport, airportCode ? `(${airportCode})` : ""]
+                            .filter(Boolean)
+                            .join(" ") || "—"}
+                        </p>
+                      </div>
+                      <div className="sm:col-span-2 rounded-xl border border-neutral-200 p-4">
+                        <p className="text-[10px] uppercase tracking-wider text-neutral-400">
+                          Notes
+                        </p>
+                        <p className="mt-1 text-sm text-neutral-700 leading-relaxed">
+                          {logistics || "—"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {isFar && (
+                  <div
+                    className="sm:w-72 shrink-0 flex items-start gap-4 rounded-xl border-2 px-5 py-4 shadow-sm"
+                    style={{
+                      borderColor: "rgb(56, 67, 82)",
+                      backgroundColor: "rgba(56, 67, 82, 0.06)",
+                    }}
                   >
-                    FAR
-                  </p>
-                  <p
-                    className="text-sm leading-relaxed"
-                    style={{ color: "rgb(56, 67, 82)" }}
-                  >
-                    It&rsquo;ll possibly take 3+ hours from the closest large
-                    airport to arrive. Plan your adventure accordingly, take an
-                    extra day for those after-race beers or Curranz.
-                  </p>
-                </div>
+                    <div className="shrink-0 mt-0.5">
+                      <Image
+                        src="/images/icon_far2.png"
+                        alt="Remote location icon"
+                        width={60}
+                        height={60}
+                        className="object-contain"
+                      />
+                    </div>
+                    <div>
+                      <p
+                        className="text-base font-extrabold tracking-widest uppercase mb-1"
+                        style={{ color: "rgb(56, 67, 82)" }}
+                      >
+                        FAR
+                      </p>
+                      <p
+                        className="text-sm leading-relaxed"
+                        style={{ color: "rgb(56, 67, 82)" }}
+                      >
+                        It&rsquo;ll possibly take 3+ hours from the closest large
+                        airport to arrive. Plan your adventure accordingly, take an
+                        extra day for those after-race beers or Curranz.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
