@@ -4,7 +4,7 @@ import { useState, useRef, useMemo, useEffect, useCallback } from "react";
 import Link from "next/link";
 import type { EnrichedDistance } from "./types";
 
-const MAX_VERT = 170;
+const MAX_VERT = 85;
 const BRAND_NAVY = "#1a2e4a";
 const COUNTRY_COLOR = "#7c3d12";
 const RESULTS_PER_PAGE = 6;
@@ -225,7 +225,7 @@ export default function RaceSpecificityClient() {
           <div className="rounded-xl p-5 shadow-sm mb-5" style={{ backgroundColor: BRAND_NAVY }}>
             <p className="text-base text-white/90 leading-relaxed">
               <span className="font-black text-white text-lg">Slide Min and Max</span> to set your elevation
-              gain range — 0 D+/km (flat) to 170 D+/km (hiking-steep).
+              gain range — 0 D+/km (flat) to 85 D+/km (hiking-steep).
               Results update automatically.
             </p>
           </div>
@@ -285,10 +285,10 @@ export default function RaceSpecificityClient() {
               <input
                 type="number"
                 min={0}
-                max={170}
+                max={85}
                 value={minVal}
                 onChange={(e) => {
-                  const v = Math.max(0, Math.min(170, Number(e.target.value) || 0));
+                  const v = Math.max(0, Math.min(85, Number(e.target.value) || 0));
                   setMinVal(v);
                 }}
                 onBlur={() => {
@@ -301,14 +301,14 @@ export default function RaceSpecificityClient() {
               <input
                 type="number"
                 min={0}
-                max={170}
+                max={85}
                 value={maxVal}
                 onChange={(e) => {
-                  const v = Math.max(0, Math.min(170, Number(e.target.value) || 0));
+                  const v = Math.max(0, Math.min(85, Number(e.target.value) || 0));
                   setMaxVal(v);
                 }}
                 onBlur={() => {
-                  if (maxVal < minVal + 5) setMaxVal(Math.min(170, minVal + 5));
+                  if (maxVal < minVal + 5) setMaxVal(Math.min(85, minVal + 5));
                 }}
                 className="w-16 text-2xl font-black text-center bg-transparent border-b-2 outline-none appearance-none"
                 style={{ color: BRAND_NAVY, borderColor: BRAND_NAVY }}
@@ -378,9 +378,9 @@ export default function RaceSpecificityClient() {
 
           {/* Reference race labels */}
           {([
-            { value: 145, label: "Tor De Géants 330 · 145 D+/km" },
-            { value: 65,  label: "Salomon Cappadocia Ultra · 65 D+/km" },
-            { value: 38,  label: "Trail Menorca Camí de Cavalls 185 · 38 D+/km" },
+            { value: 73, label: "Tor De Géants 330 · 73 D+/km" },
+            { value: 33, label: "Salomon Cappadocia Ultra · 33 D+/km" },
+            { value: 19, label: "Trail Menorca Camí de Cavalls 185 · 19 D+/km" },
           ] as { value: number; label: string }[]).map(({ value, label }) => {
             const topPct = toTopPct(value);
             return (
@@ -407,7 +407,7 @@ export default function RaceSpecificityClient() {
           {/* Anchor labels at top and bottom */}
           <div className="absolute pointer-events-none z-20" style={{ top: "7%", left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap" }}>
             <span className="text-xs font-black px-3 py-1 rounded-full" style={{ backgroundColor: "rgba(0,0,0,0.55)", color: "#fff" }}>
-              ↑ 170 D+/km (brutal)
+              ↑ 85 D+/km (brutal)
             </span>
           </div>
           <div className="absolute pointer-events-none z-20" style={{ bottom: "35%", left: "50%", transform: "translateX(-50%)", whiteSpace: "nowrap" }}>
