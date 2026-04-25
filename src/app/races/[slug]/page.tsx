@@ -583,13 +583,6 @@ export default async function RacePage({
               </div>
             )}
 
-            {maeNotes && (
-              <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-                <p className="text-xs font-bold uppercase tracking-wider text-amber-700 mb-1">Note</p>
-                <p className="text-sm text-amber-900 leading-relaxed">{maeNotes}</p>
-              </div>
-            )}
-
             {/* Planning facts */}
             <div className="mt-8 grid grid-cols-2 sm:grid-cols-[0.45fr_0.55fr_2fr] gap-4 items-stretch">
               <div className="group relative rounded-xl border border-neutral-200 bg-neutral-50 flex items-center justify-center overflow-hidden" style={{minHeight: "88px"}}>
