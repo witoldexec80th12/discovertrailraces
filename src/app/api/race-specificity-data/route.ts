@@ -32,7 +32,7 @@ const fetchRaceSpecificityData = unstable_cache(
   async () => {
     const entryFees = await airtableFetchAll(
       "Entry Fees",
-      { view: "entry_fees_public" },
+      { view: "race_finder_public" },
       3600,
     ).catch(() => []);
 
