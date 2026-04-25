@@ -785,37 +785,35 @@ export default async function RacePage({
                 )}
                 {isFar && (
                   <div
-                    className="sm:w-72 shrink-0 flex items-start gap-4 rounded-xl border-2 px-5 py-4 shadow-sm"
+                    className="sm:w-72 shrink-0 rounded-xl border-2 px-5 py-4 shadow-sm"
                     style={{
                       borderColor: "rgb(56, 67, 82)",
                       backgroundColor: "rgba(56, 67, 82, 0.06)",
                     }}
                   >
-                    <div className="shrink-0 mt-0.5">
+                    <div className="flex items-center gap-2 mb-2">
                       <Image
                         src="/images/icon_far2.png"
                         alt="Remote location icon"
-                        width={60}
-                        height={60}
-                        className="object-contain"
+                        width={28}
+                        height={28}
+                        className="object-contain shrink-0"
                       />
-                    </div>
-                    <div>
                       <p
-                        className="text-base font-extrabold tracking-widest uppercase mb-1"
+                        className="text-base font-extrabold tracking-widest uppercase"
                         style={{ color: "rgb(56, 67, 82)" }}
                       >
                         FAR
                       </p>
-                      <p
-                        className="text-sm leading-relaxed"
-                        style={{ color: "rgb(56, 67, 82)" }}
-                      >
-                        It&rsquo;ll possibly take 3+ hours from the closest large
-                        airport to arrive. Plan your adventure accordingly, take an
-                        extra day for those after-race beers or Curranz.
-                      </p>
                     </div>
+                    <p
+                      className="text-sm leading-relaxed"
+                      style={{ color: "rgb(56, 67, 82)" }}
+                    >
+                      It&rsquo;ll possibly take 3+ hours from the closest large
+                      airport to arrive. Plan your adventure accordingly, take an
+                      extra day for those after-race beers or Curranz.
+                    </p>
                   </div>
                 )}
               </div>
