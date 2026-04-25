@@ -631,22 +631,11 @@ export default async function RacePage({
             </div>
 
             {/* Route Profile — from Distances GPX analysis */}
-            {(hasTerrain || hasGradientBands || hasTopClimbs || elevationMapUrl || distData?.["GPX download?"]) && (
+            {(hasTerrain || hasGradientBands || hasTopClimbs || elevationMapUrl) && (
               <div className="mt-8">
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-sm font-bold tracking-tight text-neutral-900">Route Profile</h2>
                   <div className="flex items-center gap-3">
-                    {distData?.["GPX download?"] && distData?.["Best candidate (URL)"] && (
-                      <a
-                        href={distData["Best candidate (URL)"]}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 rounded-full border border-neutral-300 bg-white px-3 py-1 text-xs font-semibold text-neutral-700 hover:border-neutral-500 hover:text-neutral-900 transition-colors"
-                      >
-                        <span>GPX</span>
-                        <span className="text-neutral-400">↗</span>
-                      </a>
-                    )}
                     {analyzedOn && (
                       <span className="text-xs text-neutral-400">Analysed {analyzedOn}</span>
                     )}
