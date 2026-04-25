@@ -85,11 +85,7 @@ const fetchRaceSpecificityData = unstable_cache(
         (f["temporary_image"] as AirtableAttachment[] | undefined) ??
         [];
       const img = imgs[0];
-      const imgUrl =
-        img?.thumbnails?.large?.url ??
-        img?.thumbnails?.full?.url ??
-        img?.url ??
-        null;
+      const imgUrl = img?.thumbnails?.large?.url ?? null;
 
       const startDate =
         typeof f["Distance Start Date"] === "string" && f["Distance Start Date"]
