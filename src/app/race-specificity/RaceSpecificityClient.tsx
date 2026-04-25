@@ -602,7 +602,7 @@ export default function RaceSpecificityClient() {
                 <>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {pagedResults.map((r, i) => (
-                      <ResultCard key={`${r.raceId}-${i}`} race={r} />
+                      <ResultCard key={`${r.id}-${i}`} race={r} />
                     ))}
                   </div>
 
@@ -713,6 +713,11 @@ function ResultCard({ race }: { race: EnrichedDistance }) {
         <div className="absolute top-2.5 left-2.5">
           <span className="bg-white/95 rounded-full px-2.5 py-0.5 text-xs font-bold text-neutral-900 shadow-sm">
             {Math.round(race.pctIncrease)} D+/km
+          </span>
+        </div>
+        <div className="absolute top-2.5 right-2.5">
+          <span className="bg-white/95 rounded-full px-2.5 py-0.5 text-xs font-bold text-neutral-900 shadow-sm">
+            €{race.eurPerKm.toFixed(2)}/km
           </span>
         </div>
         <div className="absolute bottom-3 left-3 right-3">

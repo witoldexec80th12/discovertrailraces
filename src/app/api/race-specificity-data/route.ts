@@ -25,6 +25,7 @@ export type EnrichedEntry = {
   distanceName: string;
   distanceKm: number;
   pctIncrease: number;
+  eurPerKm: number;
   entryFeeId: string;
 };
 
@@ -100,6 +101,7 @@ const fetchRaceSpecificityData = unstable_cache(
         distanceName,
         distanceKm,
         pctIncrease,
+        eurPerKm: epk,
         entryFeeId: record.id,
       });
     }
