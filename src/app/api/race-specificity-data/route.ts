@@ -25,7 +25,7 @@ export type EnrichedEntry = {
   distanceName: string;
   distanceKm: number;
   pctIncrease: number;
-  eurPerKm: number;
+  startDate: string | null;
   entryFeeId: string;
 };
 
@@ -91,6 +91,11 @@ const fetchRaceSpecificityData = unstable_cache(
         img?.url ??
         null;
 
+      const startDate =
+        typeof f["Distance Start Date"] === "string" && f["Distance Start Date"]
+          ? (f["Distance Start Date"] as string)
+          : null;
+
       entries.push({
         id: record.id,
         raceName,
@@ -101,7 +106,7 @@ const fetchRaceSpecificityData = unstable_cache(
         distanceName,
         distanceKm,
         pctIncrease,
-        eurPerKm: epk,
+        startDate,
         entryFeeId: record.id,
       });
     }

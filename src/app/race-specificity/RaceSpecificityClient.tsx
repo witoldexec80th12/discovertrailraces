@@ -715,11 +715,13 @@ function ResultCard({ race }: { race: EnrichedDistance }) {
             {Math.round(race.pctIncrease)} D+/km
           </span>
         </div>
-        <div className="absolute top-2.5 right-2.5">
-          <span className="bg-white/95 rounded-full px-2.5 py-0.5 text-xs font-bold text-neutral-900 shadow-sm">
-            €{race.eurPerKm.toFixed(2)}/km
-          </span>
-        </div>
+        {race.startDate && (
+          <div className="absolute top-2.5 right-2.5">
+            <span className="bg-white/95 rounded-full px-2.5 py-0.5 text-xs font-bold text-neutral-900 shadow-sm">
+              {new Date(race.startDate + "T00:00:00Z").toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+            </span>
+          </div>
+        )}
         <div className="absolute bottom-3 left-3 right-3">
           <p className="text-white font-bold text-sm leading-tight line-clamp-2">{race.raceName}</p>
         </div>

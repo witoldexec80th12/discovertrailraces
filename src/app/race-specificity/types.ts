@@ -8,6 +8,6 @@ export type EnrichedDistance = {
   distanceName: string;
   distanceKm: number;
   pctIncrease: number;
-  eurPerKm: number;
+  startDate: string | null;
   entryFeeId: string;
 };
