@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Suspense } from "react";
 import Script from "next/script";
 import FilterBar from "./FilterBar";
-import RaceList from "./RaceList";
+import CostClient from "./CostClient";
 
 // Cache the page for 1 hour. Increase to e.g. 86400 (24h) when data updates are very infrequent.
 export const revalidate = 3600;
@@ -123,10 +123,9 @@ function formatBand(band: unknown): string {
 export default async function CostPage({
   searchParams,
 }: {
-  searchParams: Promise<{ country?: string; month?: string }>;
+  searchParams: Promise<{ country?: string }>;
 }) {
-  const { country: selectedCountry = "", month: selectedMonth = "" } =
-    await searchParams;
+  const { country: selectedCountry = "" } = await searchParams;
 
   let records: Awaited<ReturnType<typeof airtableFetchAll<EntryFeeFields>>> =
     [];
@@ -155,47 +154,18 @@ export default async function CostPage({
     return !isPast || !hasNextDate;
   });
 
-  const FUTURE_UNCONFIRMED = "Future Unconfirmed";
-
   const allCountries = Array.from(
     new Set(
       visibleRecords.map((r) => asText(r.fields["LKP_country"])).filter(Boolean),
     ),
   ).sort();
 
-  function getMonthLabel(r: (typeof visibleRecords)[0]): string {
-    const f = r.fields;
-    // Past date + no next confirmed date → Future Unconfirmed bucket
-    if (f.AUTO_Date_is_past && !f.Next_Edition_Date) return FUTURE_UNCONFIRMED;
-    const d = f["Distance Start Date"];
-    if (!d) return "";
-    const date = new Date(d + "T00:00:00Z");
-    if (isNaN(date.getTime())) return "";
-    return date.toLocaleDateString("en-US", {
-      month: "long",
-      year: "numeric",
-      timeZone: "UTC",
-    });
-  }
-
-  const allMonths = Array.from(
-    new Set(visibleRecords.map(getMonthLabel).filter(Boolean)),
-  ).sort((a, b) => {
-    if (a === FUTURE_UNCONFIRMED) return 1;
-    if (b === FUTURE_UNCONFIRMED) return -1;
-    return new Date("1 " + a).getTime() - new Date("1 " + b).getTime();
-  });
-
-  const filteredRecords = visibleRecords.filter((r) => {
-    const f = r.fields;
-    if (selectedCountry && asText(f["LKP_country"]) !== selectedCountry)
-      return false;
-    if (selectedMonth) {
-      const label = getMonthLabel(r);
-      if (label !== selectedMonth) return false;
-    }
-    return true;
-  });
+  // Country filter (server-side). Month filter + sort are handled client-side in CostClient.
+  const countryFilteredRecords = selectedCountry
+    ? visibleRecords.filter(
+        (r) => asText(r.fields["LKP_country"]) === selectedCountry,
+      )
+    : visibleRecords;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-neutral-50 to-white">
@@ -357,9 +327,7 @@ export default async function CostPage({
           <Suspense fallback={null}>
             <FilterBar
               countries={allCountries}
-              months={allMonths}
               selectedCountry={selectedCountry}
-              selectedMonth={selectedMonth}
             />
           </Suspense>
         </div>
@@ -372,22 +340,8 @@ export default async function CostPage({
               correctly.
             </p>
           </div>
-        ) : filteredRecords.length === 0 ? (
-          <div className="rounded-xl border border-neutral-200 bg-white p-12 text-center">
-            <p className="text-sm text-neutral-500">
-              No races found for this filter.
-            </p>
-          </div>
         ) : (
-          <RaceList
-            records={
-              selectedCountry || selectedMonth
-                ? filteredRecords
-                : filteredRecords.slice(0, 10)
-            }
-            totalCount={records.length}
-            isFiltered={!!(selectedCountry || selectedMonth)}
-          />
+          <CostClient records={countryFilteredRecords} />
         )}
       </div>
     </main>

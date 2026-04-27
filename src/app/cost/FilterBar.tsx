@@ -5,17 +5,10 @@ import { useCallback } from "react";
 
 type Props = {
   countries: string[];
-  months: string[];
   selectedCountry: string;
-  selectedMonth: string;
 };
 
-export default function FilterBar({
-  countries,
-  months,
-  selectedCountry,
-  selectedMonth,
-}: Props) {
+export default function FilterBar({ countries, selectedCountry }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -32,53 +25,31 @@ export default function FilterBar({
     [router, searchParams],
   );
 
-  const hasFilters = selectedCountry || selectedMonth;
-
   return (
-    <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
-      {/* Row 1: label + Country */}
-      <div className="flex items-center gap-3">
-        <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-neutral-400">
-          Filter By
-        </span>
-        <select
-          value={selectedCountry}
-          onChange={(e) => updateFilter("country", e.target.value)}
-          className="rounded-lg border border-neutral-300 bg-white px-3 py-2 text-base text-neutral-900 font-bold focus:outline-none focus:ring-2 focus:ring-neutral-400 cursor-pointer"
+    <div className="flex items-center gap-3">
+      <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-neutral-400">
+        Filter By
+      </span>
+      <select
+        value={selectedCountry}
+        onChange={(e) => updateFilter("country", e.target.value)}
+        className="rounded-lg border border-neutral-300 bg-white px-3 py-2 text-base text-neutral-900 font-bold focus:outline-none focus:ring-2 focus:ring-neutral-400 cursor-pointer"
+      >
+        <option value="">Country</option>
+        {countries.map((c) => (
+          <option key={c} value={c}>
+            {c}
+          </option>
+        ))}
+      </select>
+      {selectedCountry && (
+        <button
+          onClick={() => updateFilter("country", "")}
+          className="text-xs text-neutral-400 hover:text-neutral-600 underline underline-offset-2"
         >
-          <option value="">Country</option>
-          {countries.map((c) => (
-            <option key={c} value={c}>
-              {c}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Row 2 on mobile (centred): Month + Clear — becomes inline on sm+ */}
-      <div className="flex justify-center items-center gap-3 sm:contents">
-        <select
-          value={selectedMonth}
-          onChange={(e) => updateFilter("month", e.target.value)}
-          className="rounded-lg border border-neutral-300 bg-white px-3 py-2 text-base text-neutral-900 font-bold focus:outline-none focus:ring-2 focus:ring-neutral-400 cursor-pointer"
-        >
-          <option value="">Month</option>
-          {months.map((m) => (
-            <option key={m} value={m}>
-              {m}
-            </option>
-          ))}
-        </select>
-
-        {hasFilters && (
-          <button
-            onClick={() => router.push("/cost#cost-index", { scroll: false })}
-            className="text-xs text-neutral-400 hover:text-neutral-600 underline underline-offset-2"
-          >
-            Clear
-          </button>
-        )}
-      </div>
+          Clear
+        </button>
+      )}
     </div>
   );
 }
