@@ -319,8 +319,8 @@ export default function CostClient({ records }: { records: RaceRecord[] }) {
   }, [filtered, sortBy, priceDir]);
 
   const isMonthFiltered = selectedMonths.length > 0;
-  const displayed = sorted.slice(0, isMonthFiltered ? sorted.length : visibleCount);
-  const hasMore = !isMonthFiltered && visibleCount < sorted.length;
+  const displayed = sorted.slice(0, visibleCount);
+  const hasMore = visibleCount < sorted.length;
 
   return (
     <>
@@ -430,13 +430,7 @@ export default function CostClient({ records }: { records: RaceRecord[] }) {
       )}
 
       {/* Footer count */}
-      {isMonthFiltered && (
-        <p className="mt-8 text-xs text-neutral-400 text-center">
-          {sorted.length} result{sorted.length !== 1 ? "s" : ""} &middot;{" "}
-          {sortBy === "price" ? "sorted by \u20AC/km" : "sorted by date"}
-        </p>
-      )}
-      {!isMonthFiltered && !hasMore && sorted.length > 0 && (
+      {!hasMore && sorted.length > 0 && (
         <p className="mt-8 text-xs text-neutral-400 text-center">
           All {sorted.length} races shown &middot;{" "}
           {sortBy === "price" ? "sorted by \u20AC/km" : "sorted by date"}
