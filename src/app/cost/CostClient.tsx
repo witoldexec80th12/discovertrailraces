@@ -317,7 +317,7 @@ export default function CostClient({ records }: { records: RaceRecord[] }) {
   return (
     <>
       {/* Month bubbles */}
-      <div className="flex flex-wrap gap-2 mb-5">
+      <div className="flex flex-wrap justify-center gap-2 mb-5">
         {allMonths.map((m) => {
           const isSelected = selectedMonths.includes(m);
           return (
@@ -357,17 +357,16 @@ export default function CostClient({ records }: { records: RaceRecord[] }) {
           <div className="min-w-0 flex-1 sm:max-w-[50%]" />
           {/* sort buttons aligned with stat columns */}
           <div className="flex items-end gap-8 shrink-0">
+            <span className="text-[10px] uppercase tracking-wider text-neutral-400 font-semibold self-center mr-1">
+              Sort
+            </span>
             <SortButton
               label="Price per KM"
               subLabel="↑ cheapest first"
               active={sortBy === "price"}
               onClick={() => setSortBy("price")}
             />
-            <div className="flex flex-col items-center gap-0.5">
-              <span className="text-[10px] uppercase tracking-wider text-neutral-300">
-                Race Distance
-              </span>
-            </div>
+            <div className="w-px" />
             <SortButton
               label="Date"
               subLabel="↑ soonest first"

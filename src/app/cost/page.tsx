@@ -316,14 +316,8 @@ export default async function CostPage({
 
         <div
           id="cost-index"
-          className="flex flex-wrap items-center justify-between gap-4 mb-4"
+          className="flex justify-center mb-4"
         >
-          <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-neutral-400">
-            Cost Transparency
-            <span className="ml-2 normal-case font-bold text-neutral-600 tracking-normal">
-              Displaying the top 10 most affordable trail races in Europe below.
-            </span>
-          </p>
           <Suspense fallback={null}>
             <FilterBar
               countries={allCountries}
