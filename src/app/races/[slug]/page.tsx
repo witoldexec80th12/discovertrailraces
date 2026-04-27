@@ -396,8 +396,7 @@ export default async function RacePage({
   const pctFlat = gpxNum(distData?.["pct_flat (from gpx_file)"]);
   const pctDownhill = gpxNum(distData?.["pct_downhill (from gpx_file)"]);
   const analyzedOn = gpxStr(distData?.["analyzed_on (from gpx_file)"]);
-  const numSustainedClimbs = gpxNum(distData?.["num_sustained_climbs (from gpx_file)"]);
-  const numUps100m = gpxNum(distData?.["num_ups_100m (from gpx_file)"]);
+  const numUps50m = gpxNum(distData?.["num_ups_50m (from gpx_file)"]);
 
   const hasTerrain =
     typeof pctUphill === "number" &&
@@ -649,40 +648,34 @@ export default async function RacePage({
                     <div className="flex rounded-full overflow-hidden h-3 mb-3">
                       <div
                         className="bg-green-500"
-                        style={{ width: `${(pctUphill! * 100).toFixed(1)}%` }}
-                        title={`Uphill ${(pctUphill! * 100).toFixed(1)}%`}
+                        style={{ width: `${Math.round(pctUphill! * 100)}%` }}
+                        title={`Uphill ${Math.round(pctUphill! * 100)}%`}
                       />
                       <div
                         className="bg-neutral-300"
-                        style={{ width: `${(pctFlat! * 100).toFixed(1)}%` }}
-                        title={`Flat ${(pctFlat! * 100).toFixed(1)}%`}
+                        style={{ width: `${Math.round(pctFlat! * 100)}%` }}
+                        title={`Flat ${Math.round(pctFlat! * 100)}%`}
                       />
                       <div
                         className="bg-blue-400"
-                        style={{ width: `${(pctDownhill! * 100).toFixed(1)}%` }}
-                        title={`Downhill ${(pctDownhill! * 100).toFixed(1)}%`}
+                        style={{ width: `${Math.round(pctDownhill! * 100)}%` }}
+                        title={`Downhill ${Math.round(pctDownhill! * 100)}%`}
                       />
                     </div>
                     <div className="flex gap-6 text-xs text-neutral-600">
                       <span className="flex items-center gap-1.5">
                         <span className="inline-block w-2.5 h-2.5 rounded-full bg-green-500" />
-                        <span className="font-semibold">{(pctUphill! * 100).toFixed(1)}%</span> Uphill
+                        <span className="font-semibold">{Math.round(pctUphill! * 100)}%</span> Uphill
                       </span>
                       <span className="flex items-center gap-1.5">
                         <span className="inline-block w-2.5 h-2.5 rounded-full bg-neutral-300" />
-                        <span className="font-semibold">{(pctFlat! * 100).toFixed(1)}%</span> Flat
+                        <span className="font-semibold">{Math.round(pctFlat! * 100)}%</span> Flat
                       </span>
                       <span className="flex items-center gap-1.5">
                         <span className="inline-block w-2.5 h-2.5 rounded-full bg-blue-400" />
-                        <span className="font-semibold">{(pctDownhill! * 100).toFixed(1)}%</span> Downhill
+                        <span className="font-semibold">{Math.round(pctDownhill! * 100)}%</span> Downhill
                       </span>
                     </div>
-                    {numSustainedClimbs && (
-                      <p className="mt-2 text-xs text-neutral-500">
-                        {numSustainedClimbs} sustained climbs
-                        {numUps100m ? ` · ${numUps100m} climbs of 100m+` : ""}
-                      </p>
-                    )}
                   </div>
                 )}
 
@@ -748,6 +741,11 @@ export default async function RacePage({
                         </div>
                       ))}
                     </div>
+                    {numUps50m != null && (
+                      <p className="mt-3 pt-3 border-t border-neutral-200 text-xs text-neutral-500">
+                        <span className="font-semibold text-neutral-700">{numUps50m}</span> climbs of 50m+, measured trough to peak
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
