@@ -208,6 +208,7 @@ type SimilarFields = {
   ID?: string;
   "Race Event"?: string | string[];
   LKP_country?: string | string[];
+  "LKP_%increase"?: number | string;
   "AUTO €/km"?: number;
   "Distance (km)"?: string | string[];
   "Race Slug"?: string[];
@@ -216,12 +217,13 @@ type SimilarFields = {
 };
 
 async function fetchSimilarRaces(
-  country: string,
+  pctIncrease: number | "",
   currentSlug: string,
 ): Promise<AirtableRecord<SimilarFields>[]> {
-  if (!country) return [];
-  const safe = country.replace(/"/g, "");
-  const filterByFormula = `AND(FIND("${safe}", ARRAYJOIN({LKP_country})), NOT(FIND("${currentSlug}", ARRAYJOIN({Race Slug}))))`;
+  if (pctIncrease === "" || typeof pctIncrease !== "number") return [];
+  const min = pctIncrease - 5;
+  const max = pctIncrease + 5;
+  const filterByFormula = `AND(NOT(FIND("${currentSlug}", ARRAYJOIN({Race Slug}))), {LKP_%increase} >= ${min}, {LKP_%increase} <= ${max})`;
   try {
     const rows = await airtableFetch<SimilarFields>(
       AIRTABLE.TABLES.ENTRY_FEES,
@@ -334,8 +336,6 @@ export default async function RacePage({
   const region = asText(f.LKP_region);
   const location = [country, region].filter(Boolean).join(" · ");
 
-  const similarRaces = await fetchSimilarRaces(country, slug);
-
   const dateLabel = formatDateShort(f["Distance Start Date"]);
   const fee =
     typeof f["AUTO Fee used"] === "number" && f["AUTO Fee used"] > 0
@@ -360,6 +360,11 @@ export default async function RacePage({
         : parseFloat(parseFloat(String(pctIncreaseRaw)).toFixed(2)) ||
           pctIncreaseRaw
       : "";
+
+  const similarRaces = await fetchSimilarRaces(
+    typeof pctIncrease === "number" ? pctIncrease : "",
+    slug,
+  );
   const utmbSeries = asText(f["UTMB_series?"]);
   const isUtmb = utmbSeries.toLowerCase().includes("utmb");
   const wserSeries = asText(f["WSER?"]);
@@ -959,7 +964,7 @@ export default async function RacePage({
         {similarRaces.length > 0 && (
           <div className="mt-8">
             <h2 className="text-base font-bold tracking-tight text-neutral-900 mb-4">
-              More races in {country}
+              Races with a similar gradient
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {similarRaces.map((sr) => {
@@ -973,6 +978,8 @@ export default async function RacePage({
                   pickFirstUrl(sr.fields.LKP_featured_image) ??
                   pickFirstUrl(sr.fields.temporary_image);
                 const srCountry = asText(sr.fields.LKP_country);
+                const srGrad = sr.fields["LKP_%increase"];
+                const srGradNum = srGrad != null && srGrad !== "" ? parseFloat(String(srGrad)) : null;
                 if (!srSlug) return null;
                 return (
                   <a
@@ -995,6 +1002,9 @@ export default async function RacePage({
                       </p>
                       <p className="text-[11px] text-neutral-500 mt-0.5">
                         {[srDist, srCountry].filter(Boolean).join(" · ")}
+                        {srGradNum != null && !isNaN(srGradNum) && (
+                          <> · {srGradNum.toFixed(1)} m/km</>
+                        )}
                       </p>
                       {srEpk != null && (
                         <p className="text-sm font-bold text-neutral-900 mt-2">

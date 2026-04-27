@@ -34,7 +34,7 @@ The application is built with Next.js 16 (App Router) and React 19, leveraging T
     - Layout includes a hero section with race image, name, location, and distance.
     - Key stats grid (Date, Entry fee, €/km, Series).
     - Blurb, planning facts (Terrain, Elevation/% increase), and logistics (Nearest airport).
-    - "Similar races" section displays up to 3 races from the same country.
+    - "Similar races" section displays up to 3 races with a similar elevation gradient (within ±5 m/km of the current race's `LKP_%increase` value), with the gradient shown on each card.
     - Dynamic OpenGraph and Twitter Card metadata generated from race details.
     - Integrates a `HeartButton` for local storage-based favoriting.
 
