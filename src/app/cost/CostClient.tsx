@@ -235,12 +235,14 @@ function RaceCard({ r }: { r: RaceRecord }) {
 function SortButton({
   label,
   subLabel,
+  arrow,
   active,
   onClick,
   className = "",
 }: {
   label: string;
   subLabel: string;
+  arrow: "↑" | "↓";
   active: boolean;
   onClick: () => void;
   className?: string;
@@ -251,13 +253,16 @@ function SortButton({
       className={`flex flex-col items-center gap-0.5 group transition-colors cursor-pointer ${className}`}
     >
       <span
-        className={`text-[10px] uppercase tracking-wider font-semibold transition-colors ${
+        className={`text-[10px] uppercase tracking-wider font-semibold transition-colors flex items-center gap-0.5 ${
           active
             ? "text-neutral-900 underline underline-offset-2 decoration-neutral-400"
             : "text-neutral-400 group-hover:text-neutral-600"
         }`}
       >
         {label}
+        <span className={active ? "opacity-100" : "opacity-0 group-hover:opacity-50"}>
+          {arrow}
+        </span>
       </span>
       <span
         className={`text-[9px] transition-colors ${
@@ -273,6 +278,8 @@ function SortButton({
 export default function CostClient({ records }: { records: RaceRecord[] }) {
   const [selectedMonths, setSelectedMonths] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<SortBy>("price");
+  const [priceDir, setPriceDir] = useState<"asc" | "desc">("asc");
+  const [dateDir, setDateDir] = useState<"asc" | "desc">("asc");
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
 
   const allMonths = useMemo(() => {
@@ -299,16 +306,17 @@ export default function CostClient({ records }: { records: RaceRecord[] }) {
 
   const sorted = useMemo(() => {
     if (sortBy === "date") {
-      return [...filtered].sort((a, b) =>
-        getDateSortKey(a).localeCompare(getDateSortKey(b)),
-      );
+      return [...filtered].sort((a, b) => {
+        const cmp = getDateSortKey(a).localeCompare(getDateSortKey(b));
+        return dateDir === "asc" ? cmp : -cmp;
+      });
     }
     return [...filtered].sort((a, b) => {
       const ea = (a.fields["AUTO €/km"] as number) ?? 9999;
       const eb = (b.fields["AUTO €/km"] as number) ?? 9999;
-      return ea - eb;
+      return priceDir === "asc" ? ea - eb : eb - ea;
     });
-  }, [filtered, sortBy]);
+  }, [filtered, sortBy, priceDir, dateDir]);
 
   const isMonthFiltered = selectedMonths.length > 0;
   const displayed = sorted.slice(0, isMonthFiltered ? sorted.length : visibleCount);
@@ -353,25 +361,41 @@ export default function CostClient({ records }: { records: RaceRecord[] }) {
         <div className="w-40 shrink-0" />
         {/* mirrors card inner flex layout */}
         <div className="flex flex-1 min-w-0 flex-row items-end justify-between gap-3">
-          {/* spacer matching card name/blurb area */}
-          <div className="min-w-0 flex-1 sm:max-w-[50%]" />
+          {/* "Sort By" label right-aligned in the name/blurb spacer */}
+          <div className="min-w-0 flex-1 sm:max-w-[50%] flex items-end justify-end pb-0.5">
+            <span className="text-[10px] uppercase tracking-wider text-neutral-400 font-semibold">
+              Sort By
+            </span>
+          </div>
           {/* sort buttons aligned with stat columns */}
           <div className="flex items-end gap-8 shrink-0">
-            <span className="text-[10px] uppercase tracking-wider text-neutral-400 font-semibold self-center mr-1">
-              Sort
-            </span>
             <SortButton
               label="Price per KM"
-              subLabel="↑ cheapest first"
+              subLabel={priceDir === "asc" ? "cheapest first" : "most expensive"}
+              arrow={priceDir === "asc" ? "↑" : "↓"}
               active={sortBy === "price"}
-              onClick={() => setSortBy("price")}
+              onClick={() => {
+                if (sortBy === "price") {
+                  setPriceDir((d) => (d === "asc" ? "desc" : "asc"));
+                } else {
+                  setSortBy("price");
+                }
+                setVisibleCount(INITIAL_VISIBLE);
+              }}
             />
-            <div className="w-px" />
             <SortButton
               label="Date"
-              subLabel="↑ soonest first"
+              subLabel={dateDir === "asc" ? "soonest first" : "furthest first"}
+              arrow={dateDir === "asc" ? "↑" : "↓"}
               active={sortBy === "date"}
-              onClick={() => setSortBy("date")}
+              onClick={() => {
+                if (sortBy === "date") {
+                  setDateDir((d) => (d === "asc" ? "desc" : "asc"));
+                } else {
+                  setSortBy("date");
+                }
+                setVisibleCount(INITIAL_VISIBLE);
+              }}
               className="min-w-[110px]"
             />
           </div>
