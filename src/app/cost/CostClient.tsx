@@ -279,7 +279,6 @@ export default function CostClient({ records }: { records: RaceRecord[] }) {
   const [selectedMonths, setSelectedMonths] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<SortBy>("price");
   const [priceDir, setPriceDir] = useState<"asc" | "desc">("asc");
-  const [dateDir, setDateDir] = useState<"asc" | "desc">("asc");
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
 
   const allMonths = useMemo(() => {
@@ -306,17 +305,16 @@ export default function CostClient({ records }: { records: RaceRecord[] }) {
 
   const sorted = useMemo(() => {
     if (sortBy === "date") {
-      return [...filtered].sort((a, b) => {
-        const cmp = getDateSortKey(a).localeCompare(getDateSortKey(b));
-        return dateDir === "asc" ? cmp : -cmp;
-      });
+      return [...filtered].sort((a, b) =>
+        getDateSortKey(a).localeCompare(getDateSortKey(b)),
+      );
     }
     return [...filtered].sort((a, b) => {
       const ea = (a.fields["AUTO €/km"] as number) ?? 9999;
       const eb = (b.fields["AUTO €/km"] as number) ?? 9999;
       return priceDir === "asc" ? ea - eb : eb - ea;
     });
-  }, [filtered, sortBy, priceDir, dateDir]);
+  }, [filtered, sortBy, priceDir]);
 
   const isMonthFiltered = selectedMonths.length > 0;
   const displayed = sorted.slice(0, isMonthFiltered ? sorted.length : visibleCount);
@@ -385,13 +383,11 @@ export default function CostClient({ records }: { records: RaceRecord[] }) {
             />
             <SortButton
               label="Date"
-              subLabel={dateDir === "asc" ? "soonest first" : "furthest first"}
-              arrow={dateDir === "asc" ? "↑" : "↓"}
+              subLabel="soonest first"
+              arrow="↑"
               active={sortBy === "date"}
               onClick={() => {
-                if (sortBy === "date") {
-                  setDateDir((d) => (d === "asc" ? "desc" : "asc"));
-                } else {
+                if (sortBy !== "date") {
                   setSortBy("date");
                 }
                 setVisibleCount(INITIAL_VISIBLE);
