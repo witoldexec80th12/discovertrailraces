@@ -238,6 +238,7 @@ function SortButton({
   arrow,
   active,
   onClick,
+  alwaysShowSubLabel = false,
   className = "",
 }: {
   label: string;
@@ -245,6 +246,7 @@ function SortButton({
   arrow: "↑" | "↓";
   active: boolean;
   onClick: () => void;
+  alwaysShowSubLabel?: boolean;
   className?: string;
 }) {
   return (
@@ -266,10 +268,10 @@ function SortButton({
       </span>
       <span
         className={`text-[9px] transition-colors ${
-          active ? "text-neutral-500" : "text-transparent group-hover:text-neutral-300"
+          active || alwaysShowSubLabel ? "text-neutral-500" : "text-transparent group-hover:text-neutral-300"
         }`}
       >
-        {active ? subLabel : "sort by"}
+        {active || alwaysShowSubLabel ? subLabel : "sort by"}
       </span>
     </button>
   );
@@ -359,14 +361,14 @@ export default function CostClient({ records }: { records: RaceRecord[] }) {
         <div className="w-40 shrink-0" />
         {/* mirrors card inner flex layout */}
         <div className="flex flex-1 min-w-0 flex-row items-end justify-between gap-3">
-          {/* "Sort By" label right-aligned in the name/blurb spacer */}
-          <div className="min-w-0 flex-1 sm:max-w-[50%] flex items-end justify-end pb-0.5">
-            <span className="text-[10px] uppercase tracking-wider text-neutral-400 font-semibold">
+          {/* plain spacer for name/blurb area */}
+          <div className="min-w-0 flex-1 sm:max-w-[50%]" />
+          {/* "Sort By" label + sort buttons in stats columns row */}
+          <div className="flex items-end gap-8 shrink-0">
+            {/* Sort By label — sits to the left of Price Per KM */}
+            <span className="text-[10px] uppercase tracking-wider text-neutral-400 font-semibold pb-0.5">
               Sort By
             </span>
-          </div>
-          {/* sort buttons aligned with stat columns */}
-          <div className="flex items-end gap-8 shrink-0">
             <SortButton
               label="Price per KM"
               subLabel={priceDir === "asc" ? "cheapest first" : "most expensive"}
@@ -381,11 +383,18 @@ export default function CostClient({ records }: { records: RaceRecord[] }) {
                 setVisibleCount(INITIAL_VISIBLE);
               }}
             />
+            {/* invisible spacer to match the Race Distance card column width */}
+            <div className="flex flex-col items-center">
+              <span className="text-[10px] uppercase tracking-wider invisible select-none">
+                Race Distance
+              </span>
+            </div>
             <SortButton
               label="Date"
               subLabel="soonest first"
               arrow="↑"
               active={sortBy === "date"}
+              alwaysShowSubLabel
               onClick={() => {
                 if (sortBy !== "date") {
                   setSortBy("date");
